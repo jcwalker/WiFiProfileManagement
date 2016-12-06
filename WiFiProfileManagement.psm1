@@ -190,8 +190,8 @@ function Get-WiFiProfile
         $wlanAccess = 0
         $ProfileListPtr = 0
 
-        [System.Guid]$interfaceGUID = (Get-NetAdapter -Name $WiFiAdapterName).interfaceguid
-        $clientHandle        = New-WiFiHandle
+        [System.Guid]$interfaceGUID = (Get-NetAdapter -Name $WiFiAdapterName).Interfaceguid
+        $clientHandle = New-WiFiHandle
 
         if ($ClearKey)
         {
@@ -222,4 +222,3 @@ function Get-WiFiProfile
     }
 }
 
-Export-ModuleMember -Function *
