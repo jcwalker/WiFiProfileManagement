@@ -32,7 +32,7 @@ Drop the root folder in your PSModulePath, remove the branch name (ex. -dev )fro
 ```PowerShell
 PS C:\>Get-WiFiProfile -ProfileName TestWiFi
 
-        ProfileName       : TestWiFi
+        ProfileName    : TestWiFi
         ConnectionMode : auto
         Authentication : WPA2PSK
         Encyption      : AES
@@ -43,7 +43,7 @@ PS C:\>Get-WiFiProfile -ProfileName TestWiFi
 ```PowerShell
         PS C:\>Get-WiFiProfile -ProfileName TestWiFi -ClearKey
 
-        ProfileName       : TestWiFi
+        ProfileName    : TestWiFi
         ConnectionMode : auto
         Authentication : WPA2PSK
         Encyption      : AES
