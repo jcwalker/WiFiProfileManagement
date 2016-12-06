@@ -116,7 +116,7 @@ function Get-WiFiProfileInfo
         }
 
         [pscustomobject]@{
-            SSIDName       = $wlanProfile.WLANProfile.name
+            ProfileName    = $wlanProfile.WLANProfile.name
             ConnectionMode = $wlanProfile.WLANProfile.connectionMode
             Authentication = $wlanProfile.WLANProfile.MSM.security.authEncryption.authentication
             Encyption      = $wlanProfile.WLANProfile.MSM.security.authEncryption.encryption
@@ -133,6 +133,9 @@ function Get-WiFiProfileInfo
 <#
     .SYNOPSIS
         Lists the wireless profiles and their configuration settings.
+    .DESCRIPTION
+        Returns a list of the all wireless profiles if the ProfileName parameter is omitted.
+        Returns the configure of the wireless profile specified by the ProfileName parameter.
     .PARAMETER ProfileName
         The name of the WiFi profile.
     .PARAMETER WiFiAdapterName
@@ -143,7 +146,7 @@ function Get-WiFiProfileInfo
     .EXAMPLE
         PS C:\>Get-WiFiProfile -ProfileName TestWiFi
 
-        SSIDName       : TestWiFi
+        ProfileName       : TestWiFi
         ConnectionMode : auto
         Authentication : WPA2PSK
         Encyption      : AES
@@ -152,9 +155,9 @@ function Get-WiFiProfileInfo
         Get the WiFi profile information on wireless profile TestWifi
 
     .EXAMPLE 
-        PS C:\>Get-WiFiProfile -ProfileName TestWiFi -CLearKey
+        PS C:\>Get-WiFiProfile -ProfileName TestWiFi -ClearKey
 
-        SSIDName       : TestWiFi
+        ProfileName       : TestWiFi
         ConnectionMode : auto
         Authentication : WPA2PSK
         Encyption      : AES
@@ -174,6 +177,7 @@ function Get-WiFiProfile
     [OutputType([System.Management.Automation.PSCustomObject])]
     param
     (
+        [Parameter(Position=0)]
         [System.String[]]
         $ProfileName,
 
@@ -191,7 +195,7 @@ function Get-WiFiProfile
         $ProfileListPtr = 0
 
         [System.Guid]$interfaceGUID = (Get-NetAdapter -Name $WiFiAdapterName).interfaceguid
-        $clientHandle        = New-WiFiHandle
+        $clientHandle = New-WiFiHandle
 
         if ($ClearKey)
         {
@@ -222,4 +226,61 @@ function Get-WiFiProfile
     }
 }
 
-Export-ModuleMember -Function *
+<#
+    .SYNOPSIS
+        Deletes a wifi profile.
+    .DESCRIPTION
+        Deletes a wireless profile.
+    .PARAMETER ProfileName
+        The name of the profile to be deleted. Profile names are case-sensitive.
+    .PARAMETER WiFiAdapterName
+        Specifies the name of the wireless network adapter on the machine. This is used to obtain the Guid of the interface.
+        The default value is 'Wi-Fi'
+    .EXAMPLE
+    PS C:\>Remove-WiFiProfile -ProfileName FreeWifi
+
+    This examples deletes the FreeWifi profile.
+#>
+function Remove-WiFiProfile
+{
+    [CmdletBinding(SupportsShouldProcess=$true,ConfirmImpact='High')]
+    Param 
+    (
+        [Parameter(Position = 0,
+            Mandatory=$true,
+            ValueFromPipeLine=$true)]
+            [System.String[]]
+            $ProfileName,
+
+        [Parameter(Position = 1,
+            Mandatory=$false)]
+            [System.String]
+            $WiFiAdapterName = 'Wi-Fi'
+    )
+
+    begin
+    {
+        [System.Guid]$interfaceGUID = (Get-NetAdapter -Name $WiFiAdapterName).InterfaceGuid
+        $clientHandle = New-WiFiHandle
+    }
+    process
+    {
+        foreach ($wifiProfile in $ProfileName)
+        {
+            if ($PSCmdlet.ShouldProcess("$($script:localizedData.ShouldProcessDelete -f $wifiProfile)"))
+            {
+                $deleteProfileResult = [WiFi.ProfileManagement]::WlanDeleteProfile($clientHandle,$interfaceGUID,$ProfileName,[System.IntPtr]::zero)            
+
+                if ($deleteProfileResult -ne 0)
+                {                
+                    throw $($script:localizedData.ErrorDeletingProfile -f $deleteProfileResult)
+                }   
+            }
+        }      
+    }
+    end 
+    {
+        Remove-WiFiHandle -ClientHandle $clientHandle
+    }
+}
+

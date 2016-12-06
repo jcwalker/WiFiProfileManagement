@@ -33,6 +33,14 @@ $WlanGetProfileListSig = @'
         [In, Out, Optional] ref uint flags,
         [Out, Optional] out uint grantedAccess
     );
+    
+    [DllImport("wlanapi.dll")]
+    public static extern uint WlanDeleteProfile(
+        [In]IntPtr clientHanle,
+        [In, MarshalAs(UnmanagedType.LPStruct)] Guid interfaceGuid,
+        [In, MarshalAs(UnmanagedType.LPWStr)] string profileName,
+        [In, Out] IntPtr pReserved
+    );
 
     [DllImport("wlanapi.dll", EntryPoint = "WlanFreeMemory")]
     public static extern void WlanFreeMemory(
