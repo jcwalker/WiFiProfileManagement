@@ -143,7 +143,7 @@ function Get-WiFiProfileInfo
     .EXAMPLE
         PS C:\>Get-WiFiProfile -ProfileName TestWiFi
 
-        SSIDName       : TestWiFi
+        ProfileName    : TestWiFi
         ConnectionMode : auto
         Authentication : WPA2PSK
         Encyption      : AES
@@ -154,7 +154,7 @@ function Get-WiFiProfileInfo
     .EXAMPLE 
         PS C:\>Get-WiFiProfile -ProfileName TestWiFi -CLearKey
 
-        SSIDName       : TestWiFi
+        ProfileName    : TestWiFi
         ConnectionMode : auto
         Authentication : WPA2PSK
         Encyption      : AES
