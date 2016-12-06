@@ -115,7 +115,7 @@ function Get-WiFiProfileInfo
             $password = $null
         }
 
-        [pscustomobject]@{
+        [wifi.ProfileManagement+ProfileInfo]@{
             ProfileName    = $wlanProfile.WLANProfile.name
             ConnectionMode = $wlanProfile.WLANProfile.connectionMode
             Authentication = $wlanProfile.WLANProfile.MSM.security.authEncryption.authentication
@@ -133,9 +133,6 @@ function Get-WiFiProfileInfo
 <#
     .SYNOPSIS
         Lists the wireless profiles and their configuration settings.
-    .DESCRIPTION
-        Returns a list of the all wireless profiles if the ProfileName parameter is omitted.
-        Returns the configure of the wireless profile specified by the ProfileName parameter.
     .PARAMETER ProfileName
         The name of the WiFi profile.
     .PARAMETER WiFiAdapterName
@@ -146,7 +143,7 @@ function Get-WiFiProfileInfo
     .EXAMPLE
         PS C:\>Get-WiFiProfile -ProfileName TestWiFi
 
-        ProfileName       : TestWiFi
+        SSIDName       : TestWiFi
         ConnectionMode : auto
         Authentication : WPA2PSK
         Encyption      : AES
@@ -155,9 +152,9 @@ function Get-WiFiProfileInfo
         Get the WiFi profile information on wireless profile TestWifi
 
     .EXAMPLE 
-        PS C:\>Get-WiFiProfile -ProfileName TestWiFi -ClearKey
+        PS C:\>Get-WiFiProfile -ProfileName TestWiFi -CLearKey
 
-        ProfileName       : TestWiFi
+        SSIDName       : TestWiFi
         ConnectionMode : auto
         Authentication : WPA2PSK
         Encyption      : AES
@@ -229,15 +226,13 @@ function Get-WiFiProfile
 <#
     .SYNOPSIS
         Deletes a wifi profile.
-    .DESCRIPTION
-        Deletes a wireless profile.
     .PARAMETER ProfileName
         The name of the profile to be deleted. Profile names are case-sensitive.
     .PARAMETER WiFiAdapterName
         Specifies the name of the wireless network adapter on the machine. This is used to obtain the Guid of the interface.
         The default value is 'Wi-Fi'
     .EXAMPLE
-    PS C:\>Remove-WiFiProfile -ProfileName FreeWifi
+    C:\>Remove-WiFiProfile -ProfileName FreeWifi
 
     This examples deletes the FreeWifi profile.
 #>

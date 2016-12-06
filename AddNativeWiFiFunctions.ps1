@@ -84,6 +84,13 @@ $WlanGetProfileListSig = @'
         User = 2
 	}
 
+    public class ProfileInfo{
+        public string ProfileName;
+        public string ConnectionMode;
+        public string Authentication;
+        public string Encyption;
+        public string Password;
+    }
 '@
 
 Add-Type -MemberDefinition $WlanGetProfileListSig -Name ProfileManagement -Namespace WiFi -PassThru
