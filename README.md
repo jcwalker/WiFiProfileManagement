@@ -20,15 +20,15 @@ Drop the root folder in your PSModulePath, remove the branch name (ex. -dev )fro
 
 ### Unreleased
 
-### 1.0.0.0
+### 0.1.0.0
 *    Initial released with the following functions
      * Get-WiFiProfile
      * Remove-WiFiProfile
 
-### 1.0.1.0
+### 0.1.1.0
 *    Added formating
 
-### 1.0.2.0
+### 0.2.1.0
 *    Added Set-WiFiProfile
 
 ## Examples
