@@ -121,6 +121,7 @@ function Get-WiFiProfileInfo
             Authentication = $wlanProfile.WLANProfile.MSM.security.authEncryption.authentication
             Encyption      = $wlanProfile.WLANProfile.MSM.security.authEncryption.encryption
             Password       = $password
+            Xml            = $pstrProfileXml            
         }
     }
     end 
@@ -143,7 +144,7 @@ function Get-WiFiProfileInfo
     .EXAMPLE
         PS C:\>Get-WiFiProfile -ProfileName TestWiFi
 
-        ProfileName    : TestWiFi
+        SSIDName       : TestWiFi
         ConnectionMode : auto
         Authentication : WPA2PSK
         Encyption      : AES
@@ -154,7 +155,7 @@ function Get-WiFiProfileInfo
     .EXAMPLE 
         PS C:\>Get-WiFiProfile -ProfileName TestWiFi -CLearKey
 
-        ProfileName    : TestWiFi
+        SSIDName       : TestWiFi
         ConnectionMode : auto
         Authentication : WPA2PSK
         Encyption      : AES
@@ -277,5 +278,220 @@ function Remove-WiFiProfile
     {
         Remove-WiFiHandle -ClientHandle $clientHandle
     }
+}
+
+<#
+    .SYNOPSIS
+        An internal function to format the reason code returned by WlanSetProfile
+    .PARAMETER ReasonCode
+        A vlaue that indicates why the profile failed.
+#>
+function Format-WiFiReasonCode
+{
+    [OutputType([System.String])]
+    [Cmdletbinding()]
+    param
+    (
+        [System.IntPtr]
+        $ReasonCode
+    )
+
+    $stringBuilder = [System.Text.StringBuilder]::new(1024)
+    [WiFi.ProfileManagement]::WlanReasonCodeToString($ReasonCode.ToInt32(),$stringBuilder.Capacity,$stringBuilder,[IntPtr]::zero) | Out-Null
+
+    return $stringBuilder.ToString()
+
+}
+
+<#
+    .SYNOPSIS
+        Create a string of XML that represents the wireless profile.
+	.PARAMETER ProfileName
+        The name of the wireless profile to be updated.  Profile names are case sensitive.
+	.PARAMETER ConnectionMode
+        Indicates whether connection to the wireless LAN should be automatic ("auto") or initiated ("manual") by user.
+	.PARAMETER Authentication
+	    Specifies the authentication method to be used to connect to the wireless LAN.
+	.PARAMETER Encryption
+	    Sets the data encryption to use to connect to the wireless LAN.
+#>
+function New-WiFiProfile
+{
+    [OutputType([System.String])]
+    [CmdletBinding()]
+    param 
+    (
+ 		[parameter(Mandatory=$true,Position=0)]
+		[System.String]
+		$ProfileName,
+        
+		[parameter(Mandatory=$false)]
+		[ValidateSet('manual','auto')]
+		[System.String]
+		$ConnectionMode = 'auto',
+        
+		[parameter(Mandatory=$false)]
+		[System.String]
+		$Authentication = 'WPA2PSK',
+        
+		[parameter(Mandatory=$false)]
+		[System.String]
+		$Encryption = 'AES',
+        
+        [parameter(Mandatory=$true)]
+		[System.String]
+        $Password   
+    )
+    
+    process
+    {
+        $stringWriter = [System.IO.StringWriter]::new()
+        $xmlWriter    = [System.Xml.XmlTextWriter]::new($stringWriter)
+
+        $xmlWriter.WriteStartDocument()
+        $xmlWriter.WriteStartElement("WLANProfile","http://www.microsoft.com/networking/WLAN/profile/v1");
+        $xmlWriter.WriteElementString("name", "$profileName");
+        $xmlWriter.WriteStartElement("SSIDConfig");
+        $xmlWriter.WriteStartElement("SSID");
+        $xmlWriter.WriteElementString("name", "$profileName");
+        $xmlWriter.WriteEndElement();
+        $xmlWriter.WriteEndElement();
+        $xmlWriter.WriteElementString("connectionType", "ESS");
+        $xmlWriter.WriteElementString("connectionMode", $ConnectionMode);
+        $xmlWriter.WriteStartElement("MSM");
+        $xmlWriter.WriteStartElement("security");
+        $xmlWriter.WriteStartElement("authEncryption");
+        $xmlWriter.WriteElementString("authentication", $Authentication);
+        $xmlWriter.WriteElementString("encryption", "$Encryption");
+        $xmlWriter.WriteEndElement();
+        $xmlWriter.WriteStartElement("sharedKey");
+        $xmlWriter.WriteElementString("keyType", "passPhrase");
+        $xmlWriter.WriteElementString("protected", "false");
+        $xmlWriter.WriteElementString("keyMaterial", $plainPassword);
+        $xmlWriter.WriteEndElement();
+        $xmlWriter.WriteEndElement();
+        $xmlWriter.WriteEndElement();
+        $xmlWriter.WriteEndElement();
+        $xmlWriter.WriteEndDocument();
+
+        $xmlWriter.Close()
+        $stringWriter.ToString()
+    }
+}
+
+<#
+    .SYNOPSIS
+	    Sets or creates the content of a specified wireless profile.
+	.PARAMETER ProfileName
+        The name of the wireless profile to be updated.  Profile names are case sensitive.
+	.PARAMETER ConnectionMode
+        Indicates whether connection to the wireless LAN should be automatic ("auto") or initiated ("manual") by user.
+	.PARAMETER Authentication
+	    Specifies the authentication method to be used to connect to the wireless LAN.
+	.PARAMETER Encryption
+	    Sets the data encryption to use to connect to the wireless LAN.
+    .PARAMETER XmlProfile
+        The XML representation of the profile. 
+    .EXAMPLE
+        PS C:\>$password = Read-Host -AsSecureString
+        **********
+
+        PS C:\>Set-WiFiProfile -ProfileName MyNetwork -ConnectionMode auto -Authentication WPA2PSK -Encryption AES -Password $password 
+
+        This examples shows how to update or create a wireless profile by using the individual parameters.
+	.NOTES
+        https://msdn.microsoft.com/en-us/library/windows/desktop/ms706795(v=vs.85).aspx
+	    https://msdn.microsoft.com/en-us/library/windows/desktop/ms707381(v=vs.85).aspx
+#>
+function Set-WiFiProfile
+{
+	[CmdletBinding()]
+	param 
+	(
+		[parameter(Mandatory=$true,Position=0,ParameterSetName='UsingArguments')]
+		[System.String]
+		$ProfileName,
+        
+		[parameter(Mandatory=$false,ParameterSetName='UsingArguments')]
+		[ValidateSet('manual','auto')]
+		[System.String]
+		$ConnectionMode = 'auto',
+        
+		[parameter(Mandatory=$true,ParameterSetName='UsingArguments')]
+		[System.String]
+		$Authentication = 'WPA2PSK',
+        
+		[parameter(Mandatory=$false,ParameterSetName='UsingArguments')]
+		[System.String]
+		$Encryption = 'AES',
+
+        [parameter(Mandatory=$true,ParameterSetName='UsingArguments')]
+		[System.Security.SecureString]
+        $Password,
+        
+		[parameter(Mandatory=$false)]
+		[System.String]
+        $WiFiAdapterName = 'Wi-Fi',
+
+		[parameter(Mandatory=$true,ParameterSetName='UsingXml')]
+		[System.String]
+		$XmlProfile
+
+	)
+
+    begin
+    {
+        if ($Password)
+		{
+            $secureStringToBstr = [System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($Password)
+            $plainPassword = [System.Runtime.InteropServices.Marshal]::PtrToStringAuto($secureStringToBstr) 
+		}
+		$clientHandle = New-WiFiHandle
+        [System.Guid]$interfaceGuid = (Get-NetAdapter -Name $WiFiAdapterName).InterfaceGuid
+        $Flags = 0
+        $allUserProfileSecurity = [System.IntPtr]::zero
+        $overwrite = $true
+        $reasonCode = [IntPtr]::Zero
+                  
+
+        if ($XmlProfile)
+		{
+            $profileXML = $XmlProfile
+		}
+		else
+		{
+            $newProfileParameters = @{
+                ProfileName    = $ProfileName
+                ConnectionMode = $ConnectionMode
+                Authentication = $Authentication
+                Password       = $plainPassword
+            }
+
+            $profileXML = New-WiFiProfile @newProfileParameters
+		}
+    }
+
+    process
+    {
+        $profilePtr = [System.Runtime.InteropServices.Marshal]::StringToHGlobalUni($profileXML)
+
+        $setProfileResults = [WiFi.ProfileManagement]::WlanSetProfile(
+	                                    $clientHandle,
+		                                [ref]$interfaceGuid,
+										$Flags,
+										$profilePtr,
+										[IntPtr]::Zero,
+										$overwrite,
+										[IntPtr]::Zero,
+										[ref]$reasonCode
+										)
+
+        Format-WiFiReasonCode -ReasonCode $reasonCode
+    }
+
+    end
+	{
+        Remove-WiFiHandle -ClientHandle $clientHandle
+	}
 }
 

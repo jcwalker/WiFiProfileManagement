@@ -47,6 +47,26 @@ $WlanGetProfileListSig = @'
         [In] IntPtr pMemory
     );
 
+    [DllImport("Wlanapi.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+    public static extern uint WlanSetProfile(
+        [In] IntPtr clientHanle,
+        [In] ref Guid interfaceGuid,
+        [In] uint flags,
+        [In] IntPtr ProfileXml,
+        [In, Optional] IntPtr AllUserProfileSecurity,
+        [In] bool Overwrite,
+        [In, Out] IntPtr pReserved,
+        [In, Out]ref IntPtr pdwReasonCode
+    );
+
+    [DllImport("wlanapi.dll",SetLastError = true, CharSet = CharSet.Unicode)]
+    public static extern uint WlanReasonCodeToString(
+        [In] uint reasonCode,
+        [In] uint bufferSize,
+        [In, Out] StringBuilder builder,
+        [In, Out] IntPtr Reserved
+    );
+
     public struct WLAN_PROFILE_INFO_LIST
     {
         public uint dwNumberOfItems;
@@ -90,7 +110,8 @@ $WlanGetProfileListSig = @'
         public string Authentication;
         public string Encyption;
         public string Password;
+        public string Xml;
     }
 '@
 
-Add-Type -MemberDefinition $WlanGetProfileListSig -Name ProfileManagement -Namespace WiFi -PassThru
+Add-Type -MemberDefinition $WlanGetProfileListSig -Name ProfileManagement -Namespace WiFi -Using System.Text -PassThru

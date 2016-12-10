@@ -28,6 +28,9 @@ Drop the root folder in your PSModulePath, remove the branch name (ex. -dev )fro
 ### 1.0.1.0
 *    Added formating
 
+### 1.0.2.0
+*    Added Set-WiFiProfile
+
 ## Examples
 
 ### Get the WiFi profile information on wireless profile TestWifi
