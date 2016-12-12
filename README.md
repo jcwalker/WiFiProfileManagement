@@ -16,6 +16,13 @@ Drop the root folder in your PSModulePath, remove the branch name (ex. -dev )fro
 * **WiFiAdapterName**: Specifies the name of the wireless network adapter on the machine. This is used to obtain the Guid of the interface. The default value is 'Wi-Fi'
 * **ClearKey**: Specifies if the password of the profile is to be returned.
 
+## Set-WiFiProfile
+* **ProfileName**: The name of the WiFi profile.
+* **ConnectionMode**: Indicates whether connection to the wireless LAN should be automatic ("auto") or initiated ("manual") by user.
+* **Authentication**: Specifies the authentication method to be used to connect to the wireless LAN.
+* **Encryption**: Sets the data encryption to use to connect to the wireless LAN.
+* **XmlProfile**: The XML representation of the profile. 
+
 ## Versions
 
 ### Unreleased
@@ -58,4 +65,45 @@ PS C:\>Get-WiFiProfile -ProfileName TestWiFi
 ### Deleting a WiFi profile
 ```PowerShell
 PS C:\>Remove-WiFiProfile -ProfileName FreeWifi
+```
+
+### Updating a wireless profile
+```PowerShell
+         PS C:\>$password = Read-Host -AsSecureString
+         **********
+
+        PS C:\>Set-WiFiProfile -ProfileName MyNetwork -ConnectionMode auto -Authentication WPA2PSK -Encryption AES -Password $password
+```
+
+### Updating a wireless profile using the XmlProfile parameter.
+```PowerShell
+        PS C:\>$templateProfileXML = @"
+        <?xml version="1.0"?>
+        <WLANProfile xmlns="http://www.microsoft.com/networking/WLAN/profile/v1">
+            <name>MyNetwork</name>
+            <SSIDConfig>
+                <SSID>            
+                    <name>MyNetwork</name>
+                </SSID>
+            </SSIDConfig>
+            <connectionType>ESS</connectionType>
+            <connectionMode>manual</connectionMode>
+            <MSM>
+                <security>
+                    <authEncryption>
+                        <authentication>WPA2PSK</authentication>
+                        <encryption>AES</encryption>
+                        <useOneX>false</useOneX>
+                    </authEncryption>
+                    <sharedKey>
+                        <keyType>passPhrase</keyType>
+                        <protected>false</protected>
+                        <keyMaterial>password1</keyMaterial>
+                    </sharedKey>
+                </security>
+            </MSM>
+        </WLANProfile>
+        "@
+
+        PS C:\>Set-WiFiProfile -XmlProfile $templateProfileXML
 ```

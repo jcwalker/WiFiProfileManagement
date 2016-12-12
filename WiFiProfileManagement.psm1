@@ -399,6 +399,38 @@ function New-WiFiProfile
         PS C:\>Set-WiFiProfile -ProfileName MyNetwork -ConnectionMode auto -Authentication WPA2PSK -Encryption AES -Password $password 
 
         This examples shows how to update or create a wireless profile by using the individual parameters.
+    .EXAMPLE
+        PS C:\>$templateProfileXML = @"
+        <?xml version="1.0"?>
+        <WLANProfile xmlns="http://www.microsoft.com/networking/WLAN/profile/v1">
+            <name>MyNetwork</name>
+            <SSIDConfig>
+                <SSID>            
+                    <name>MyNetwork</name>
+                </SSID>
+            </SSIDConfig>
+            <connectionType>ESS</connectionType>
+            <connectionMode>manual</connectionMode>
+            <MSM>
+                <security>
+                    <authEncryption>
+                        <authentication>WPA2PSK</authentication>
+                        <encryption>AES</encryption>
+                        <useOneX>false</useOneX>
+                    </authEncryption>
+                    <sharedKey>
+                        <keyType>passPhrase</keyType>
+                        <protected>false</protected>
+                        <keyMaterial>password1</keyMaterial>
+                    </sharedKey>
+                </security>
+            </MSM>
+        </WLANProfile>
+        "@
+
+        PS C:\>Set-WiFiProfile -XmlProfile $templateProfileXML
+
+        This example demonstrates how to update a wireless profile with the XmlProfile parameter.
     .NOTES
         https://msdn.microsoft.com/en-us/library/windows/desktop/ms706795(v=vs.85).aspx
         https://msdn.microsoft.com/en-us/library/windows/desktop/ms707381(v=vs.85).aspx
