@@ -1,7 +1,7 @@
 
 $script:localizedData = Import-LocalizedData -BaseDirectory "$PSScriptRoot\en-US" -FileName WiFiProfileManagement.strings.psd1
 <#
-	.SYNOPSIS
+    .SYNOPSIS
         Opens a wifi handle
 #>
 function New-WiFiHandle
@@ -24,7 +24,7 @@ function New-WiFiHandle
     else
     {
         throw $($Script:localizedData.ErrorOpeningHandle)
-    }    	
+    }        
 }
 
 <#
@@ -35,8 +35,8 @@ function New-WiFiHandle
 #>
 function Remove-WiFiHandle
 {
-	[CmdletBinding()]
-	param
+    [CmdletBinding()]
+    param
     (
         [System.IntPtr]$ClientHandle    
     )
@@ -306,14 +306,14 @@ function Format-WiFiReasonCode
 <#
     .SYNOPSIS
         Create a string of XML that represents the wireless profile.
-	.PARAMETER ProfileName
+    .PARAMETER ProfileName
         The name of the wireless profile to be updated.  Profile names are case sensitive.
-	.PARAMETER ConnectionMode
+    .PARAMETER ConnectionMode
         Indicates whether connection to the wireless LAN should be automatic ("auto") or initiated ("manual") by user.
-	.PARAMETER Authentication
-	    Specifies the authentication method to be used to connect to the wireless LAN.
-	.PARAMETER Encryption
-	    Sets the data encryption to use to connect to the wireless LAN.
+    .PARAMETER Authentication
+        Specifies the authentication method to be used to connect to the wireless LAN.
+    .PARAMETER Encryption
+        Sets the data encryption to use to connect to the wireless LAN.
 #>
 function New-WiFiProfile
 {
@@ -321,25 +321,25 @@ function New-WiFiProfile
     [CmdletBinding()]
     param 
     (
- 		[parameter(Mandatory=$true,Position=0)]
-		[System.String]
-		$ProfileName,
+         [parameter(Mandatory=$true,Position=0)]
+        [System.String]
+        $ProfileName,
         
-		[parameter(Mandatory=$false)]
-		[ValidateSet('manual','auto')]
-		[System.String]
-		$ConnectionMode = 'auto',
+        [parameter(Mandatory=$false)]
+        [ValidateSet('manual','auto')]
+        [System.String]
+        $ConnectionMode = 'auto',
         
-		[parameter(Mandatory=$false)]
-		[System.String]
-		$Authentication = 'WPA2PSK',
+        [parameter(Mandatory=$false)]
+        [System.String]
+        $Authentication = 'WPA2PSK',
         
-		[parameter(Mandatory=$false)]
-		[System.String]
-		$Encryption = 'AES',
+        [parameter(Mandatory=$false)]
+        [System.String]
+        $Encryption = 'AES',
         
         [parameter(Mandatory=$true)]
-		[System.String]
+        [System.String]
         $Password   
     )
     
@@ -381,15 +381,15 @@ function New-WiFiProfile
 
 <#
     .SYNOPSIS
-	    Sets or creates the content of a specified wireless profile.
-	.PARAMETER ProfileName
+        Sets or creates the content of a specified wireless profile.
+    .PARAMETER ProfileName
         The name of the wireless profile to be updated.  Profile names are case sensitive.
-	.PARAMETER ConnectionMode
+    .PARAMETER ConnectionMode
         Indicates whether connection to the wireless LAN should be automatic ("auto") or initiated ("manual") by user.
-	.PARAMETER Authentication
-	    Specifies the authentication method to be used to connect to the wireless LAN.
-	.PARAMETER Encryption
-	    Sets the data encryption to use to connect to the wireless LAN.
+    .PARAMETER Authentication
+        Specifies the authentication method to be used to connect to the wireless LAN.
+    .PARAMETER Encryption
+        Sets the data encryption to use to connect to the wireless LAN.
     .PARAMETER XmlProfile
         The XML representation of the profile. 
     .EXAMPLE
@@ -399,54 +399,54 @@ function New-WiFiProfile
         PS C:\>Set-WiFiProfile -ProfileName MyNetwork -ConnectionMode auto -Authentication WPA2PSK -Encryption AES -Password $password 
 
         This examples shows how to update or create a wireless profile by using the individual parameters.
-	.NOTES
+    .NOTES
         https://msdn.microsoft.com/en-us/library/windows/desktop/ms706795(v=vs.85).aspx
-	    https://msdn.microsoft.com/en-us/library/windows/desktop/ms707381(v=vs.85).aspx
+        https://msdn.microsoft.com/en-us/library/windows/desktop/ms707381(v=vs.85).aspx
 #>
 function Set-WiFiProfile
 {
-	[CmdletBinding()]
-	param 
-	(
-		[parameter(Mandatory=$true,Position=0,ParameterSetName='UsingArguments')]
-		[System.String]
-		$ProfileName,
+    [CmdletBinding()]
+    param 
+    (
+        [parameter(Mandatory=$true,Position=0,ParameterSetName='UsingArguments')]
+        [System.String]
+        $ProfileName,
         
-		[parameter(Mandatory=$false,ParameterSetName='UsingArguments')]
-		[ValidateSet('manual','auto')]
-		[System.String]
-		$ConnectionMode = 'auto',
+        [parameter(Mandatory=$false,ParameterSetName='UsingArguments')]
+        [ValidateSet('manual','auto')]
+        [System.String]
+        $ConnectionMode = 'auto',
         
-		[parameter(Mandatory=$true,ParameterSetName='UsingArguments')]
-		[System.String]
-		$Authentication = 'WPA2PSK',
+        [parameter(Mandatory=$true,ParameterSetName='UsingArguments')]
+        [System.String]
+        $Authentication = 'WPA2PSK',
         
-		[parameter(Mandatory=$false,ParameterSetName='UsingArguments')]
-		[System.String]
-		$Encryption = 'AES',
+        [parameter(Mandatory=$false,ParameterSetName='UsingArguments')]
+        [System.String]
+        $Encryption = 'AES',
 
         [parameter(Mandatory=$true,ParameterSetName='UsingArguments')]
-		[System.Security.SecureString]
+        [System.Security.SecureString]
         $Password,
         
-		[parameter(Mandatory=$false)]
-		[System.String]
+        [parameter(Mandatory=$false)]
+        [System.String]
         $WiFiAdapterName = 'Wi-Fi',
 
-		[parameter(Mandatory=$true,ParameterSetName='UsingXml')]
-		[System.String]
-		$XmlProfile
+        [parameter(Mandatory=$true,ParameterSetName='UsingXml')]
+        [System.String]
+        $XmlProfile
 
-	)
+    )
 
     begin
     {
         if ($Password)
-		{
-            $secureStringToBstr = [System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($Password)
-            $plainPassword = [System.Runtime.InteropServices.Marshal]::PtrToStringAuto($secureStringToBstr) 
-		}
-		$clientHandle = New-WiFiHandle
+        {
+            $secureStringToBstr = [System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($Password)
+            $plainPassword = [System.Runtime.InteropServices.Marshal]::PtrToStringAuto($secureStringToBstr) 
+        }
+        $clientHandle = New-WiFiHandle
         [System.Guid]$interfaceGuid = (Get-NetAdapter -Name $WiFiAdapterName).InterfaceGuid
         $Flags = 0
         $allUserProfileSecurity = [System.IntPtr]::zero
@@ -455,11 +455,11 @@ function Set-WiFiProfile
                   
 
         if ($XmlProfile)
-		{
+        {
             $profileXML = $XmlProfile
-		}
-		else
-		{
+        }
+        else
+        {
             $newProfileParameters = @{
                 ProfileName    = $ProfileName
                 ConnectionMode = $ConnectionMode
@@ -468,7 +468,7 @@ function Set-WiFiProfile
             }
 
             $profileXML = New-WiFiProfile @newProfileParameters
-		}
+        }
     }
 
     process
@@ -476,22 +476,22 @@ function Set-WiFiProfile
         $profilePtr = [System.Runtime.InteropServices.Marshal]::StringToHGlobalUni($profileXML)
 
         $setProfileResults = [WiFi.ProfileManagement]::WlanSetProfile(
-	                                    $clientHandle,
-		                                [ref]$interfaceGuid,
-										$Flags,
-										$profilePtr,
-										[IntPtr]::Zero,
-										$overwrite,
-										[IntPtr]::Zero,
-										[ref]$reasonCode
-										)
+                                        $clientHandle,
+                                        [ref]$interfaceGuid,
+                                        $Flags,
+                                        $profilePtr,
+                                        [IntPtr]::Zero,
+                                        $overwrite,
+                                        [IntPtr]::Zero,
+                                        [ref]$reasonCode
+                                        )
 
         Format-WiFiReasonCode -ReasonCode $reasonCode
     }
 
     end
-	{
+    {
         Remove-WiFiHandle -ClientHandle $clientHandle
-	}
+    }
 }
 
