@@ -116,7 +116,7 @@ function Get-WiFiProfileInfo
         }
 
         [wifi.ProfileManagement+ProfileInfo]@{
-            ProfileName    = $wlanProfile.WLANProfile.name
+            ProfileName    = $wlanProfile.WLANProfile.SSIDConfig.SSID.name
             ConnectionMode = $wlanProfile.WLANProfile.connectionMode
             Authentication = $wlanProfile.WLANProfile.MSM.security.authEncryption.authentication
             Encyption      = $wlanProfile.WLANProfile.MSM.security.authEncryption.encryption
