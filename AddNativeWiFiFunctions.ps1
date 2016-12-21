@@ -25,7 +25,7 @@ $WlanGetProfileListSig = @'
     
     [DllImport("wlanapi.dll")]
     public static extern uint WlanGetProfile(
-        [In]IntPtr clientHanle,
+        [In]IntPtr clientHandle,
  	    [In, MarshalAs(UnmanagedType.LPStruct)] Guid interfaceGuid,
         [In, MarshalAs(UnmanagedType.LPWStr)] string profileName,
 	    [In, Out] IntPtr pReserved,

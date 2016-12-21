@@ -17,10 +17,19 @@ Drop the root folder in your PSModulePath, remove the branch name (ex. -dev )fro
 * **ClearKey**: Specifies if the password of the profile is to be returned.
 
 ## Set-WiFiProfile
-* **ProfileName**: The name of the WiFi profile.
+* **ProfileName**: The name of the WiFi profile to modify.
 * **ConnectionMode**: Indicates whether connection to the wireless LAN should be automatic ("auto") or initiated ("manual") by user.
 * **Authentication**: Specifies the authentication method to be used to connect to the wireless LAN.
 * **Encryption**: Sets the data encryption to use to connect to the wireless LAN.
+* **Password**: The network key or passpharse of the wireless profile in the form of a secure string.
+* **XmlProfile**: The XML representation of the profile. 
+
+## New-WiFiProfile
+* **ProfileName**: The name of the new WiFi profile.
+* **ConnectionMode**: Indicates whether connection to the wireless LAN should be automatic ("auto") or initiated ("manual") by user.
+* **Authentication**: Specifies the authentication method to be used to connect to the wireless LAN.
+* **Encryption**: Sets the data encryption to use to connect to the wireless LAN.
+* **Password**: The network key or passpharse of the wireless profile in the form of a secure string.
 * **XmlProfile**: The XML representation of the profile. 
 
 ## Versions
@@ -37,6 +46,9 @@ Drop the root folder in your PSModulePath, remove the branch name (ex. -dev )fro
 
 ### 0.2.1.0
 *    Added Set-WiFiProfile
+
+### 0.3.0.0
+*    Added New-WiFiProfile
 
 ## Examples
 
@@ -69,8 +81,8 @@ PS C:\>Remove-WiFiProfile -ProfileName FreeWifi
 
 ### Updating a wireless profile
 ```PowerShell
-         PS C:\>$password = Read-Host -AsSecureString
-         **********
+        PS C:\>$password = Read-Host -AsSecureString
+        **********
 
         PS C:\>Set-WiFiProfile -ProfileName MyNetwork -ConnectionMode auto -Authentication WPA2PSK -Encryption AES -Password $password
 ```
@@ -106,4 +118,12 @@ PS C:\>Remove-WiFiProfile -ProfileName FreeWifi
         "@
 
         PS C:\>Set-WiFiProfile -XmlProfile $templateProfileXML
+```
+
+### Creating a wireless profile
+```PowerShell
+        PS C:\>$password = Read-Host -AsSecureString
+        **********
+
+        PS C:\>New-WiFiProfile -ProfileName MyNetwork -ConnectionMode auto -Authentication WPA2PSK -Encryption AES -Password $password
 ```
