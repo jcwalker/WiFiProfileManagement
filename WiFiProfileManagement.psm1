@@ -193,7 +193,7 @@ function Get-WiFiProfile
         $ProfileListPtr = 0
 
         $OSVersion = [Environment]::OSVersion.Version
-        if ($OSVersion -gt (New-Object 'Version' 6,1))
+        if ($OSVersion -ge (New-Object 'Version' 6,2))
         {
             [System.Guid]$interfaceGUID = (Get-NetAdapter -Name $WiFiAdapterName).interfaceguid
         }
