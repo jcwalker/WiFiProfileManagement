@@ -67,6 +67,15 @@ $WlanGetProfileListSig = @'
         [In, Out] IntPtr Reserved
     );
 
+    [DllImport("Wlanapi.dll", SetLastError = true)]
+    public static extern uint WlanGetAvailableNetworkList (
+        [In] IntPtr hClientHandle,
+        [In, MarshalAs(UnmanagedType.LPStruct)] Guid interfaceGuid,
+        [In] uint dwFlags, 
+        [In] IntPtr pReserved, 
+        [Out] out IntPtr ppAvailableNetworkList
+    );
+
     public struct WLAN_PROFILE_INFO_LIST
     {
         public uint dwNumberOfItems;
@@ -95,6 +104,137 @@ $WlanGetProfileListSig = @'
         public string strProfileName;
         public WlanProfileFlags ProfileFLags;
     }
+
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)] 
+    public struct WLAN_AVAILABLE_NETWORK_LIST
+    {          
+        public uint dwNumberOfItems;
+        public uint dwIndex;
+        public WLAN_AVAILABLE_NETWORK[] wlanAvailableNetwork;
+        public WLAN_AVAILABLE_NETWORK_LIST(IntPtr ppAvailableNetworkList)
+        {              
+            dwNumberOfItems = (uint)Marshal.ReadInt64 (ppAvailableNetworkList);
+            dwIndex = (uint)Marshal.ReadInt64 (ppAvailableNetworkList, 4);
+            wlanAvailableNetwork = new WLAN_AVAILABLE_NETWORK[dwNumberOfItems];
+            for (int i = 0; i < dwNumberOfItems; i++)              
+            {                
+                IntPtr pWlanAvailableNetwork = new IntPtr (ppAvailableNetworkList.ToInt64() + i * Marshal.SizeOf (typeof(WLAN_AVAILABLE_NETWORK)) + 8);
+                wlanAvailableNetwork[i] = (WLAN_AVAILABLE_NETWORK)Marshal.PtrToStructure (pWlanAvailableNetwork, typeof(WLAN_AVAILABLE_NETWORK));              
+            }          
+        }      
+    }
+
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]      
+    public struct WLAN_AVAILABLE_NETWORK      
+    {
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
+        public string strProfileName;
+        public DOT11_SSID dot11Ssid;
+        public DOT11_BSS_TYPE dot11BssType; 
+        public uint uNumberOfBssids;       
+        public bool bNetworkConnectable;    
+        public uint wlanNotConnectableReason; 
+        public uint uNumberOfPhyTypes;
+            
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
+        public DOT11_PHY_TYPE[] dot11PhyTypes;
+        public bool bMorePhyTypes; 
+        public uint wlanSignalQuality;
+        public bool bSecurityEnabled;
+        public DOT11_AUTH_ALGORITHM dot11DefaultAuthAlgorithm;
+        public DOT11_CIPHER_ALGORITHM dot11DefaultCipherAlgorithm;
+        public uint dwFlags;          
+        public uint dwReserved;      
+    }
+
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
+    public struct DOT11_SSID
+    {        
+        public uint uSSIDLength;
+        
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]
+        public string ucSSID;
+    }
+
+    public enum DOT11_BSS_TYPE
+    {
+        dot11_BSS_type_infrastructure = 1,
+        dot11_BSS_type_independent = 2,
+        dot11_BSS_type_any = 3,
+    }
+    public enum DOT11_PHY_TYPE
+    {
+        dot11_phy_type_unknown = 0,
+
+        dot11_phy_type_any = 0,
+
+        dot11_phy_type_fhss = 1,
+
+        dot11_phy_type_dsss = 2,
+
+        dot11_phy_type_irbaseband = 3,
+
+        dot11_phy_type_ofdm = 4,
+
+        dot11_phy_type_hrdsss = 5,
+
+        dot11_phy_type_erp = 6,
+
+        dot11_phy_type_ht = 7,
+
+        dot11_phy_type_vht = 8,
+
+        dot11_phy_type_IHV_start = -2147483648,
+
+        dot11_phy_type_IHV_end = -1,
+    }
+
+    public enum DOT11_AUTH_ALGORITHM
+    {
+        DOT11_AUTH_ALGO_80211_OPEN = 1,
+        DOT11_AUTH_ALGO_80211_SHARED_KEY = 2,
+        DOT11_AUTH_ALGO_WPA = 3,
+        DOT11_AUTH_ALGO_WPA_PSK = 4,
+        DOT11_AUTH_ALGO_WPA_NONE = 5,
+        DOT11_AUTH_ALGO_RSNA = 6,
+        DOT11_AUTH_ALGO_RSNA_PSK = 7,
+        DOT11_AUTH_ALGO_IHV_START = -2147483648,
+        DOT11_AUTH_ALGO_IHV_END = -1,
+    }
+
+    public enum DOT11_CIPHER_ALGORITHM
+    {
+
+        /// DOT11_CIPHER_ALGO_NONE -> 0x00
+        DOT11_CIPHER_ALGO_NONE = 0,
+
+        /// DOT11_CIPHER_ALGO_WEP40 -> 0x01
+        DOT11_CIPHER_ALGO_WEP40 = 1,
+
+        /// DOT11_CIPHER_ALGO_TKIP -> 0x02
+        DOT11_CIPHER_ALGO_TKIP = 2,
+
+        /// DOT11_CIPHER_ALGO_CCMP -> 0x04
+        DOT11_CIPHER_ALGO_CCMP = 4,
+
+        /// DOT11_CIPHER_ALGO_WEP104 -> 0x05
+        DOT11_CIPHER_ALGO_WEP104 = 5,
+
+        /// DOT11_CIPHER_ALGO_WPA_USE_GROUP -> 0x100
+        DOT11_CIPHER_ALGO_WPA_USE_GROUP = 256,
+
+        /// DOT11_CIPHER_ALGO_RSN_USE_GROUP -> 0x100
+        DOT11_CIPHER_ALGO_RSN_USE_GROUP = 256,
+
+        /// DOT11_CIPHER_ALGO_WEP -> 0x101
+        DOT11_CIPHER_ALGO_WEP = 257,
+
+        /// DOT11_CIPHER_ALGO_IHV_START -> 0x80000000
+        DOT11_CIPHER_ALGO_IHV_START = -2147483648,
+
+        /// DOT11_CIPHER_ALGO_IHV_END -> 0xffffffff
+        DOT11_CIPHER_ALGO_IHV_END = -1,
+    }
 
     [Flags]
 	public enum WlanProfileFlags

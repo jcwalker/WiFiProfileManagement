@@ -472,7 +472,6 @@ function Set-WiFiProfile
         [parameter(Mandatory=$true,ParameterSetName='UsingXml')]
         [System.String]
         $XmlProfile
-
     )
 
     begin
@@ -681,3 +680,37 @@ function New-WiFiProfile
     }
 }
 
+<#
+    .SYNOPSIS
+        Retrieves the list of available networks on a wireless LAN interface.
+    .PARAMETER WiFiAdapterName
+        Specifies the name of the wireless network adapter on the machine. This is used to obtain the Guid of the interface.
+        The default value is 'Wi-Fi'
+#>
+function Get-WiFiAvailableNetwork
+{
+    [CmdletBinding()]
+    [OutputType([WiFi.ProfileManagement+WLAN_AVAILABLE_NETWORK])]
+    param
+    (
+        [System.String]
+        $WiFiAdapterName = 'Wi-Fi'
+    )    
+
+    begin
+    {
+        [System.Guid]$interfaceGUID = (Get-NetAdapter -Name $WiFiAdapterName).interfaceguid
+        $clientHandle = New-WiFiHandle
+        $networkPointer = 0
+    }
+    process
+    {        
+        [WiFi.ProfileManagement]::WlanGetAvailableNetworkList($clientHandle,$interfaceGUID,2,[System.IntPtr]::zero,[ref]$networkPointer)
+        $availableNetowrks = [WiFi.ProfileManagement+WLAN_AVAILABLE_NETWORK_LIST]::new($networkPointer)
+        $availableNetowrks.wlanAvailableNetwork
+    }
+    end
+    {        
+        Remove-WiFiHandle -ClientHandle $clientHandle
+    }
+}
