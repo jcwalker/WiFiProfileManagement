@@ -707,7 +707,17 @@ function Get-WiFiAvailableNetwork
     {        
         [WiFi.ProfileManagement]::WlanGetAvailableNetworkList($clientHandle,$interfaceGUID,2,[System.IntPtr]::zero,[ref]$networkPointer)
         $availableNetowrks = [WiFi.ProfileManagement+WLAN_AVAILABLE_NETWORK_LIST]::new($networkPointer)
-        $availableNetowrks.wlanAvailableNetwork
+        
+        foreach ($network in $availableNetworks)
+        {
+            [pscustomobject]@{
+                SSID = $network.dot11Ssid.ucSSID
+                SignalStength = $network.wlanSignalQuality
+                SecurityEnabled = $network.bSecurityEnabled
+                dot11DefaultAuthAlgorithm = $network.dot11DefaultAuthAlgorithm
+                dot11DefaultCipherAlgorithm = $network.dot11DefaultCipherAlgorithm
+            }
+        }
     }
     end
     {        

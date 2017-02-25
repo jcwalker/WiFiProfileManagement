@@ -1,4 +1,4 @@
-
+﻿
 $WlanGetProfileListSig = @'   
 
 	[DllImport("wlanapi.dll")]
@@ -107,49 +107,49 @@ $WlanGetProfileListSig = @'
 
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)] 
     public struct WLAN_AVAILABLE_NETWORK_LIST
-    {          
+    {
         public uint dwNumberOfItems;
         public uint dwIndex;
         public WLAN_AVAILABLE_NETWORK[] wlanAvailableNetwork;
         public WLAN_AVAILABLE_NETWORK_LIST(IntPtr ppAvailableNetworkList)
-        {              
+        {
             dwNumberOfItems = (uint)Marshal.ReadInt64 (ppAvailableNetworkList);
             dwIndex = (uint)Marshal.ReadInt64 (ppAvailableNetworkList, 4);
             wlanAvailableNetwork = new WLAN_AVAILABLE_NETWORK[dwNumberOfItems];
-            for (int i = 0; i < dwNumberOfItems; i++)              
-            {                
+            for (int i = 0; i < dwNumberOfItems; i++)
+            {
                 IntPtr pWlanAvailableNetwork = new IntPtr (ppAvailableNetworkList.ToInt64() + i * Marshal.SizeOf (typeof(WLAN_AVAILABLE_NETWORK)) + 8);
-                wlanAvailableNetwork[i] = (WLAN_AVAILABLE_NETWORK)Marshal.PtrToStructure (pWlanAvailableNetwork, typeof(WLAN_AVAILABLE_NETWORK));              
-            }          
-        }      
+                wlanAvailableNetwork[i] = (WLAN_AVAILABLE_NETWORK)Marshal.PtrToStructure (pWlanAvailableNetwork, typeof(WLAN_AVAILABLE_NETWORK));
+            }
+        }
     }
 
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]      
-    public struct WLAN_AVAILABLE_NETWORK      
+    public struct WLAN_AVAILABLE_NETWORK
     {
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
         public string strProfileName;
         public DOT11_SSID dot11Ssid;
-        public DOT11_BSS_TYPE dot11BssType; 
-        public uint uNumberOfBssids;       
-        public bool bNetworkConnectable;    
-        public uint wlanNotConnectableReason; 
+        public DOT11_BSS_TYPE dot11BssType;
+        public uint uNumberOfBssids;
+        public bool bNetworkConnectable;
+        public uint wlanNotConnectableReason;
         public uint uNumberOfPhyTypes;
-            
+
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
         public DOT11_PHY_TYPE[] dot11PhyTypes;
-        public bool bMorePhyTypes; 
+        public bool bMorePhyTypes;
         public uint wlanSignalQuality;
         public bool bSecurityEnabled;
         public DOT11_AUTH_ALGORITHM dot11DefaultAuthAlgorithm;
         public DOT11_CIPHER_ALGORITHM dot11DefaultCipherAlgorithm;
-        public uint dwFlags;          
-        public uint dwReserved;      
+        public uint dwFlags;
+        public uint dwReserved;
     }
 
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
     public struct DOT11_SSID
-    {        
+    {
         public uint uSSIDLength;
         
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]
@@ -165,27 +165,16 @@ $WlanGetProfileListSig = @'
     public enum DOT11_PHY_TYPE
     {
         dot11_phy_type_unknown = 0,
-
         dot11_phy_type_any = 0,
-
         dot11_phy_type_fhss = 1,
-
         dot11_phy_type_dsss = 2,
-
         dot11_phy_type_irbaseband = 3,
-
         dot11_phy_type_ofdm = 4,
-
         dot11_phy_type_hrdsss = 5,
-
         dot11_phy_type_erp = 6,
-
         dot11_phy_type_ht = 7,
-
         dot11_phy_type_vht = 8,
-
         dot11_phy_type_IHV_start = -2147483648,
-
         dot11_phy_type_IHV_end = -1,
     }
 
@@ -204,7 +193,6 @@ $WlanGetProfileListSig = @'
 
     public enum DOT11_CIPHER_ALGORITHM
     {
-
         /// DOT11_CIPHER_ALGO_NONE -> 0x00
         DOT11_CIPHER_ALGO_NONE = 0,
 
@@ -244,7 +232,8 @@ $WlanGetProfileListSig = @'
         User = 2
 	}
 
-    public class ProfileInfo{
+    public class ProfileInfo
+    {
         public string ProfileName;
         public string ConnectionMode;
         public string Authentication;
