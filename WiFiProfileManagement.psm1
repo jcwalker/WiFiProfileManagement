@@ -192,7 +192,16 @@ function Get-WiFiProfile
         $wlanAccess = 0
         $ProfileListPtr = 0
 
-        [System.Guid]$interfaceGUID = (Get-NetAdapter -Name $WiFiAdapterName).interfaceguid
+        $OSVersion = [Environment]::OSVersion.Version
+        if ($OSVersion -ge (New-Object 'Version' 6,2))
+        {
+            [System.Guid]$interfaceGUID = (Get-NetAdapter -Name $WiFiAdapterName).interfaceguid
+        }
+        else
+        {
+            $wifiAdapterInfo = Get-WmiObject -Query "select Name, NetConnectionID from Win32_NetworkAdapter where NetConnectionID = '$WiFiAdapterName'"
+            [System.Guid]$interfaceGUID = (Get-WmiObject -Query "select SettingID from Win32_NetworkAdapterConfiguration where Description = '$($wifiAdapterInfo.Name)'").SettingID
+        }
         $clientHandle = New-WiFiHandle
 
         if ($ClearKey)
