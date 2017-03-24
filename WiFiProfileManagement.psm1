@@ -2,7 +2,7 @@
 $script:localizedData = Import-LocalizedData -BaseDirectory "$PSScriptRoot\en-US" -FileName WiFiProfileManagement.strings.psd1
 <#
     .SYNOPSIS
-        Opens a wifi handle
+        Opens a WiFi handle
 #>
 function New-WiFiHandle
 {
@@ -15,7 +15,7 @@ function New-WiFiHandle
     [Ref]$negotiatedVersion = 0
     $clientHandle = [System.IntPtr]::zero
 
-    $handle = [Wifi.ProfileManagement]::WlanOpenHandle($maxClient,[IntPtr]::Zero,$negotiatedVersion,[ref]$clientHandle)
+    $handle = [WiFi.ProfileManagement]::WlanOpenHandle($maxClient,[IntPtr]::Zero,$negotiatedVersion,[ref]$clientHandle)
     
     if ($handle -eq 0)
     {
@@ -29,9 +29,9 @@ function New-WiFiHandle
 
 <#
     .SYNOPSIS
-        Closes an open wifi handle
+        Closes an open WiFi handle
     .Parameter ClientHandle
-        Specifies the object that represents the open wifi handle.
+        Specifies the object that represents the open WiFi handle.
 #>
 function Remove-WiFiHandle
 {
@@ -41,7 +41,7 @@ function Remove-WiFiHandle
         [System.IntPtr]$ClientHandle    
     )
 
-    $closeHandle = [wifi.ProfileManagement]::WlanCloseHandle($ClientHandle,[System.IntPtr]::zero)
+    $closeHandle = [WiFi.ProfileManagement]::WlanCloseHandle($ClientHandle,[System.IntPtr]::zero)
 
     if ($closeHandle -eq 0)
     {
@@ -59,9 +59,9 @@ function Remove-WiFiHandle
     .PARAMETER ProfileName
         The name of the WiFi profile.
     .PARAMETER InterfaceGuid
-        Specifies the Guid of the wireless network card. This is required by the native wifi functions.
+        Specifies the Guid of the wireless network card. This is required by the native WiFi functions.
     .PARAMETER ClientHandle
-        Specifies the handle used by the natvie wifi functions.
+        Specifies the handle used by the natvie WiFi functions.
     .PARAMETER WlanProfileFlags
         A pointer to the address location used to provide additional information about the request.
 
@@ -115,7 +115,7 @@ function Get-WiFiProfileInfo
             $password = $null
         }
 
-        [wifi.ProfileManagement+ProfileInfo]@{
+        [WiFi.ProfileManagement+ProfileInfo]@{
             ProfileName    = $wlanProfile.WLANProfile.SSIDConfig.SSID.name
             ConnectionMode = $wlanProfile.WLANProfile.connectionMode
             Authentication = $wlanProfile.WLANProfile.MSM.security.authEncryption.authentication
@@ -150,7 +150,7 @@ function Get-WiFiProfileInfo
         Encyption      : AES
         Password       : 
 
-        Get the WiFi profile information on wireless profile TestWifi
+        Get the WiFi profile information on wireless profile TestWiFi
 
     .EXAMPLE 
         PS C:\>Get-WiFiProfile -ProfileName TestWiFi -CLearKey
@@ -208,14 +208,14 @@ function Get-WiFiProfile
     {        
         if (!$ProfileName)
         {
-            [wifi.ProfileManagement]::WlanGetProfileList($clientHandle,$interfaceGUID,[System.IntPtr]::zero,[ref]$ProfileListPtr) | Out-Null
-            $wifiProfileList = [WiFi.ProfileManagement+WLAN_PROFILE_INFO_LIST]::new($ProfileListPtr)
-            $ProfileName = ($wifiProfileList.ProfileInfo).strProfileName
+            [WiFi.ProfileManagement]::WlanGetProfileList($clientHandle,$interfaceGUID,[System.IntPtr]::zero,[ref]$ProfileListPtr) | Out-Null
+            $WiFiProfileList = [WiFi.ProfileManagement+WLAN_PROFILE_INFO_LIST]::new($ProfileListPtr)
+            $ProfileName = ($WiFiProfileList.ProfileInfo).strProfileName
         }
 
-        foreach ($wifiProfile in $ProfileName)
+        foreach ($WiFiProfile in $ProfileName)
         {
-            Get-WiFiProfileInfo -ProfileName $wifiProfile -InterfaceGuid $interfaceGUID -ClientHandle $clientHandle -WlanProfileFlags $wlanProfileFlags
+            Get-WiFiProfileInfo -ProfileName $WiFiProfile -InterfaceGuid $interfaceGUID -ClientHandle $clientHandle -WlanProfileFlags $wlanProfileFlags
         }        
     }
     end
@@ -226,16 +226,16 @@ function Get-WiFiProfile
 
 <#
     .SYNOPSIS
-        Deletes a wifi profile.
+        Deletes a WiFi profile.
     .PARAMETER ProfileName
         The name of the profile to be deleted. Profile names are case-sensitive.
     .PARAMETER WiFiAdapterName
         Specifies the name of the wireless network adapter on the machine. This is used to obtain the Guid of the interface.
         The default value is 'Wi-Fi'
     .EXAMPLE
-    C:\>Remove-WiFiProfile -ProfileName FreeWifi
+    C:\>Remove-WiFiProfile -ProfileName FreeWiFi
 
-    This examples deletes the FreeWifi profile.
+    This examples deletes the FreeWiFi profile.
 #>
 function Remove-WiFiProfile
 {
@@ -261,9 +261,9 @@ function Remove-WiFiProfile
     }
     process
     {
-        foreach ($wifiProfile in $ProfileName)
+        foreach ($WiFiProfile in $ProfileName)
         {
-            if ($PSCmdlet.ShouldProcess("$($script:localizedData.ShouldProcessDelete -f $wifiProfile)"))
+            if ($PSCmdlet.ShouldProcess("$($script:localizedData.ShouldProcessDelete -f $WiFiProfile)"))
             {
                 $deleteProfileResult = [WiFi.ProfileManagement]::WlanDeleteProfile($clientHandle,$interfaceGUID,$ProfileName,[System.IntPtr]::zero)            
 
@@ -686,6 +686,13 @@ function New-WiFiProfile
     .PARAMETER WiFiAdapterName
         Specifies the name of the wireless network adapter on the machine. This is used to obtain the Guid of the interface.
         The default value is 'Wi-Fi'
+    .EXAMPLE
+        PS C:\>Get-WiFiAvailableNetwork
+
+        SSID         SignalStength SecurityEnabled  dot11DefaultAuthAlgorithm dot11DefaultCipherAlgorithm
+        ----         ------------- ---------------  ------------------------- ---------------------------
+                                63            True   DOT11_AUTH_ALGO_RSNA_PSK      DOT11_CIPHER_ALGO_CCMP
+        gogoinflight            63           False DOT11_AUTH_ALGO_80211_OPEN      DOT11_CIPHER_ALGO_NONE
 #>
 function Get-WiFiAvailableNetwork
 {
@@ -705,10 +712,10 @@ function Get-WiFiAvailableNetwork
     }
     process
     {        
-        [WiFi.ProfileManagement]::WlanGetAvailableNetworkList($clientHandle,$interfaceGUID,2,[System.IntPtr]::zero,[ref]$networkPointer)
-        $availableNetowrks = [WiFi.ProfileManagement+WLAN_AVAILABLE_NETWORK_LIST]::new($networkPointer)
+        [void][WiFi.ProfileManagement]::WlanGetAvailableNetworkList($clientHandle,$interfaceGUID,2,[System.IntPtr]::zero,[ref]$networkPointer)
+        $availableNetworks = [WiFi.ProfileManagement+WLAN_AVAILABLE_NETWORK_LIST]::new($networkPointer)
         
-        foreach ($network in $availableNetworks)
+        foreach ($network in $availableNetworks.wlanAvailableNetwork)
         {
             [pscustomobject]@{
                 SSID = $network.dot11Ssid.ucSSID
