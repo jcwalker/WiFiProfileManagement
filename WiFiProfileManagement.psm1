@@ -219,7 +219,7 @@ function Get-WiFiProfile
         [String]$pstrProfileXml = $null
         $wlanAccess = 0
         $ProfileListPtr = 0
-
+        $interfaceGuid = Get-WiFiInterfaceGuid -WiFiAdapterName $WiFiAdapterName
 
         $clientHandle = New-WiFiHandle
 
@@ -348,7 +348,7 @@ function New-WiFiProfileXml
     [CmdletBinding()]
     param 
     (
-         [parameter(Mandatory=$true,Position=0)]
+        [parameter(Mandatory=$true,Position=0)]
         [System.String]
         $ProfileName,
         
@@ -744,13 +744,16 @@ function Get-WiFiAvailableNetwork
         
         foreach ($network in $availableNetworks.wlanAvailableNetwork)
         {
-            [pscustomobject]@{
+            <#
+            [WiFi.ProfileManagement+WLAN_AVAILABLE_NETWORK]@{
                 SSID = $network.dot11Ssid.ucSSID
                 SignalStength = $network.wlanSignalQuality
                 SecurityEnabled = $network.bSecurityEnabled
                 dot11DefaultAuthAlgorithm = $network.dot11DefaultAuthAlgorithm
                 dot11DefaultCipherAlgorithm = $network.dot11DefaultCipherAlgorithm
             }
+            #>
+            [WiFi.ProfileManagement+WLAN_AVAILABLE_NETWORK]$network
         }
     }
     end
