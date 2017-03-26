@@ -220,7 +220,7 @@ function Get-WiFiProfile
         $wlanAccess = 0
         $ProfileListPtr = 0
 
-        $interfaceGUID = Get-WiFiInterfaceGuid -WiFiAdapterName $WiFiAdapterName
+
         $clientHandle = New-WiFiHandle
 
         if ($ClearKey)
