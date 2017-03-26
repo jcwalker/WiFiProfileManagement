@@ -8,6 +8,8 @@ $script:localizedData = Import-LocalizedData -BaseDirectory "$PSScriptRoot\en-US
 #>
 function Get-WiFiInterfaceGuid
 {
+    [CmdletBinding()]
+    [OutputType([System.Guid])]
     param 
     (
         [System.String]
@@ -33,8 +35,7 @@ function Get-WiFiInterfaceGuid
         Opens a WiFi handle
 #>
 function New-WiFiHandle
-{
-    
+{    
     [CmdletBinding()]
     [OutputType([System.IntPtr])]
     param()
@@ -270,16 +271,13 @@ function Remove-WiFiProfile
     [CmdletBinding(SupportsShouldProcess=$true,ConfirmImpact='High')]
     Param 
     (
-        [Parameter(Position = 0,
-            Mandatory=$true,
-            ValueFromPipeLine=$true)]
-            [System.String[]]
-            $ProfileName,
+        [Parameter(Position = 0,Mandatory=$true,ValueFromPipeLine=$true)]
+        [System.String[]]
+        $ProfileName,
 
-        [Parameter(Position = 1,
-            Mandatory=$false)]
-            [System.String]
-            $WiFiAdapterName = 'Wi-Fi'
+        [Parameter(Position = 1,Mandatory=$false)]
+        [System.String]
+        $WiFiAdapterName = 'Wi-Fi'
     )
 
     begin
@@ -531,7 +529,6 @@ function Set-WiFiProfile
             $profileXML = New-WiFiProfileXml @newProfileParameters
         }
     }
-
     process
     {
         $profilePtr = [System.Runtime.InteropServices.Marshal]::StringToHGlobalUni($profileXML)
@@ -549,7 +546,6 @@ function Set-WiFiProfile
 
         Format-WiFiReasonCode -ReasonCode $reasonCode
     }
-
     end
     {
         Remove-WiFiHandle -ClientHandle $clientHandle
@@ -682,7 +678,6 @@ function New-WiFiProfile
             $profileXML = New-WiFiProfileXml @newProfileParameters
         }
     }
-
     process
     {
         $profilePtr = [System.Runtime.InteropServices.Marshal]::StringToHGlobalUni($profileXML)
@@ -700,7 +695,6 @@ function New-WiFiProfile
 
         Format-WiFiReasonCode -ReasonCode $reasonCode
     }
-
     end
     {
         Remove-WiFiHandle -ClientHandle $clientHandle
