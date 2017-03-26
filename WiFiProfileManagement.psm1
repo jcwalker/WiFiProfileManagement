@@ -2,6 +2,34 @@
 $script:localizedData = Import-LocalizedData -BaseDirectory "$PSScriptRoot\en-US" -FileName WiFiProfileManagement.strings.psd1
 <#
     .SYNOPSIS
+        Retrieves the guid of the network interface.
+    .PARAMETER WiFiAdapterName
+        The name of the wireless network adapter.
+#>
+function Get-WiFiInterfaceGuid
+{
+    param 
+    (
+        [System.String]
+        $WiFiAdapterName = 'Wi-Fi'
+    )
+    $osVersion = [Environment]::OSVersion.Version
+
+    if ($osVersion -ge ([Version] 6.2))
+    {
+        [Guid]$interfaceGuid = (Get-NetAdapter -Name $WiFiAdapterName).interfaceguid
+    }
+    else
+    {
+        $wifiAdapterInfo = Get-WmiObject -Query "select Name, NetConnectionID from Win32_NetworkAdapter where NetConnectionID = '$WiFiAdapterName'"
+        [Guid]$interfaceGuid = (Get-WmiObject -Query "select SettingID from Win32_NetworkAdapterConfiguration where Description = '$($wifiAdapterInfo.Name)'").SettingID
+    }
+
+    return $interfaceGuid
+}
+
+<#
+    .SYNOPSIS
         Opens a WiFi handle
 #>
 function New-WiFiHandle
@@ -13,7 +41,7 @@ function New-WiFiHandle
 
     $maxClient = 2
     [Ref]$negotiatedVersion = 0
-    $clientHandle = [System.IntPtr]::zero
+    $clientHandle = [IntPtr]::zero
 
     $handle = [WiFi.ProfileManagement]::WlanOpenHandle($maxClient,[IntPtr]::Zero,$negotiatedVersion,[ref]$clientHandle)
     
@@ -38,10 +66,10 @@ function Remove-WiFiHandle
     [CmdletBinding()]
     param
     (
-        [System.IntPtr]$ClientHandle    
+        [IntPtr]$ClientHandle    
     )
 
-    $closeHandle = [WiFi.ProfileManagement]::WlanCloseHandle($ClientHandle,[System.IntPtr]::zero)
+    $closeHandle = [WiFi.ProfileManagement]::WlanCloseHandle($ClientHandle,[IntPtr]::zero)
 
     if ($closeHandle -eq 0)
     {
@@ -87,7 +115,7 @@ function Get-WiFiProfileInfo
     
     begin
     {
-        [System.String]$pstrProfileXml = $null    
+        [String]$pstrProfileXml = $null    
         $wlanAccess = 0
         $WlanProfileFlagsInput = $WlanProfileFlags
     }
@@ -188,11 +216,11 @@ function Get-WiFiProfile
 
     begin
     {
-        [System.String]$pstrProfileXml = $null
+        [String]$pstrProfileXml = $null
         $wlanAccess = 0
         $ProfileListPtr = 0
 
-        [System.Guid]$interfaceGUID = (Get-NetAdapter -Name $WiFiAdapterName).interfaceguid
+        $interfaceGUID = Get-WiFiInterfaceGuid -WiFiAdapterName $WiFiAdapterName
         $clientHandle = New-WiFiHandle
 
         if ($ClearKey)
@@ -208,7 +236,7 @@ function Get-WiFiProfile
     {        
         if (!$ProfileName)
         {
-            [WiFi.ProfileManagement]::WlanGetProfileList($clientHandle,$interfaceGUID,[System.IntPtr]::zero,[ref]$ProfileListPtr) | Out-Null
+            [WiFi.ProfileManagement]::WlanGetProfileList($clientHandle,$interfaceGUID,[IntPtr]::zero,[ref]$ProfileListPtr) | Out-Null
             $WiFiProfileList = [WiFi.ProfileManagement+WLAN_PROFILE_INFO_LIST]::new($ProfileListPtr)
             $ProfileName = ($WiFiProfileList.ProfileInfo).strProfileName
         }
@@ -256,7 +284,7 @@ function Remove-WiFiProfile
 
     begin
     {
-        [System.Guid]$interfaceGUID = (Get-NetAdapter -Name $WiFiAdapterName).InterfaceGuid
+        $interfaceGUID = Get-WiFiInterfaceGuid
         $clientHandle = New-WiFiHandle
     }
     process
@@ -265,7 +293,7 @@ function Remove-WiFiProfile
         {
             if ($PSCmdlet.ShouldProcess("$($script:localizedData.ShouldProcessDelete -f $WiFiProfile)"))
             {
-                $deleteProfileResult = [WiFi.ProfileManagement]::WlanDeleteProfile($clientHandle,$interfaceGUID,$ProfileName,[System.IntPtr]::zero)            
+                $deleteProfileResult = [WiFi.ProfileManagement]::WlanDeleteProfile($clientHandle,$interfaceGUID,$ProfileName,[IntPtr]::zero)            
 
                 if ($deleteProfileResult -ne 0)
                 {                
@@ -296,11 +324,10 @@ function Format-WiFiReasonCode
         $ReasonCode
     )
 
-    $stringBuilder = [System.Text.StringBuilder]::new(1024)
+    $stringBuilder = [Text.StringBuilder]::new(1024)
     [WiFi.ProfileManagement]::WlanReasonCodeToString($ReasonCode.ToInt32(),$stringBuilder.Capacity,$stringBuilder,[IntPtr]::zero) | Out-Null
 
     return $stringBuilder.ToString()
-
 }
 
 <#
@@ -482,9 +509,9 @@ function Set-WiFiProfile
             $plainPassword      = [System.Runtime.InteropServices.Marshal]::PtrToStringAuto($secureStringToBstr) 
         }
         $clientHandle = New-WiFiHandle
-        [System.Guid]$interfaceGuid = (Get-NetAdapter -Name $WiFiAdapterName).InterfaceGuid
+        $interfaceGuid = Get-WiFiInterfaceGuid -WiFiAdapterName $WiFiAdapterName
         $flags = 0
-        $allUserProfileSecurity = [System.IntPtr]::zero
+        $allUserProfileSecurity = [IntPtr]::zero
         $overwrite = $true
         $reasonCode = [IntPtr]::Zero                  
 
@@ -633,7 +660,7 @@ function New-WiFiProfile
             $plainPassword      = [System.Runtime.InteropServices.Marshal]::PtrToStringAuto($secureStringToBstr) 
         }
         $clientHandle = New-WiFiHandle
-        [System.Guid]$interfaceGuid = (Get-NetAdapter -Name $WiFiAdapterName).InterfaceGuid
+        $interfaceGuid = Get-WiFiInterfaceGuid -WiFiAdapterName $WiFiAdapterName
         $flags = 0
         $allUserProfileSecurity = [System.IntPtr]::zero
         $overwrite = $false
@@ -706,13 +733,13 @@ function Get-WiFiAvailableNetwork
 
     begin
     {
-        [System.Guid]$interfaceGUID = (Get-NetAdapter -Name $WiFiAdapterName).interfaceguid
+        $interfaceGUID = Get-WiFiInterfaceGuid -WiFiAdapterName $WiFiAdapterName
         $clientHandle = New-WiFiHandle
         $networkPointer = 0
     }
     process
     {        
-        [void][WiFi.ProfileManagement]::WlanGetAvailableNetworkList($clientHandle,$interfaceGUID,2,[System.IntPtr]::zero,[ref]$networkPointer)
+        [void][WiFi.ProfileManagement]::WlanGetAvailableNetworkList($clientHandle,$interfaceGUID,2,[IntPtr]::zero,[ref]$networkPointer)
         $availableNetworks = [WiFi.ProfileManagement+WLAN_AVAILABLE_NETWORK_LIST]::new($networkPointer)
         
         foreach ($network in $availableNetworks.wlanAvailableNetwork)
