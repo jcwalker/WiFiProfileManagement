@@ -235,6 +235,7 @@ function Get-WiFiProfile
     }
     process
     {        
+        [Guid]$interfaceGuid = (Get-NetAdapter -Name $WiFiAdapterName).interfaceguid
         if (!$ProfileName)
         {
             [WiFi.ProfileManagement]::WlanGetProfileList($clientHandle,$interfaceGUID,[IntPtr]::zero,[ref]$ProfileListPtr) | Out-Null
