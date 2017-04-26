@@ -128,8 +128,8 @@ $WlanGetProfileListSig = @'
     public struct WLAN_AVAILABLE_NETWORK
     {
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
-        public string strProfileName;
-        public DOT11_SSID dot11Ssid;
+        public string ProfileName;
+        public DOT11_SSID Dot11Ssid;
         public DOT11_BSS_TYPE dot11BssType;
         public uint uNumberOfBssids;
         public bool bNetworkConnectable;
@@ -139,8 +139,8 @@ $WlanGetProfileListSig = @'
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
         public DOT11_PHY_TYPE[] dot11PhyTypes;
         public bool bMorePhyTypes;
-        public uint wlanSignalQuality;
-        public bool bSecurityEnabled;
+        public uint SignalQuality;
+        public bool SecurityEnabled;
         public DOT11_AUTH_ALGORITHM dot11DefaultAuthAlgorithm;
         public DOT11_CIPHER_ALGORITHM dot11DefaultCipherAlgorithm;
         public uint dwFlags;
@@ -241,6 +241,7 @@ $WlanGetProfileListSig = @'
         public string Password;
         public string Xml;
     }
+
 '@
 
 Add-Type -MemberDefinition $WlanGetProfileListSig -Name ProfileManagement -Namespace WiFi -Using System.Text -PassThru
