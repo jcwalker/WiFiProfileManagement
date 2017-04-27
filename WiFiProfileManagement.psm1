@@ -322,7 +322,8 @@ function Format-WiFiReasonCode
         $ReasonCode
     )
 
-    $stringBuilder = [Text.StringBuilder]::new(1024)
+    $stringBuilder = New-Object -TypeName Text.StringBuilder
+    $stringBuilder.Capacity = 1024
     [WiFi.ProfileManagement]::WlanReasonCodeToString($ReasonCode.ToInt32(),$stringBuilder.Capacity,$stringBuilder,[IntPtr]::zero) | Out-Null
 
     return $stringBuilder.ToString()
