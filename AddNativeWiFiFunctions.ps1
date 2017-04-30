@@ -76,6 +76,56 @@ $WlanGetProfileListSig = @'
         [Out] out IntPtr ppAvailableNetworkList
     );
 
+    [DllImport("Wlanapi.dll", SetLastError = true)]
+    public static extern uint WlanEnumInterfaces (
+        [In] IntPtr hClientHandle,
+        [In] IntPtr pReserved,
+        [Out] out IntPtr ppInterfaceList
+    );
+
+    public struct WLAN_INTERFACE_INFO_LIST
+    {
+        public uint dwNumberOfItems;
+        public uint dwIndex;
+        public WLAN_INTERFACE_INFO[] wlanInterfaceInfo;
+
+        public WLAN_INTERFACE_INFO_LIST(IntPtr ppInterfaceInfoList)
+        {
+            dwNumberOfItems = (uint)Marshal.ReadInt32(ppInterfaceInfoList);
+            dwIndex = (uint)Marshal.ReadInt32(ppInterfaceInfoList, 4);
+            wlanInterfaceInfo = new WLAN_INTERFACE_INFO[dwNumberOfItems];
+            IntPtr ppInterfaceInfoListTemp = new IntPtr(ppInterfaceInfoList.ToInt64() + 8);
+
+            for (int i = 0; i < dwNumberOfItems; i++)
+            {
+                ppInterfaceInfoList = new IntPtr(ppInterfaceInfoListTemp.ToInt64() + i * Marshal.SizeOf(typeof(WLAN_INTERFACE_INFO)));
+                wlanInterfaceInfo[i] = (WLAN_INTERFACE_INFO)Marshal.PtrToStructure(ppInterfaceInfoList, typeof(WLAN_INTERFACE_INFO));
+            }
+        }
+    }
+
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+    public struct WLAN_INTERFACE_INFO
+    {
+        public Guid Guid;
+
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
+        public string Description;
+
+        public WLAN_INTERFACE_STATE State;
+    }
+
+    public enum WLAN_INTERFACE_STATE { 
+        not_ready              = 0,
+        connected              = 1,
+        ad_hoc_network_formed  = 2,
+        disconnecting          = 3,
+        disconnected           = 4,
+        associating            = 5,
+        discovering            = 6,
+        authenticating         = 7
+    }
+
     public struct WLAN_PROFILE_INFO_LIST
     {
         public uint dwNumberOfItems;
@@ -145,7 +195,7 @@ $WlanGetProfileListSig = @'
         public DOT11_CIPHER_ALGORITHM dot11DefaultCipherAlgorithm;
         public uint dwFlags;
         public uint dwReserved;
-    }
+    }       
 
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
     public struct DOT11_SSID

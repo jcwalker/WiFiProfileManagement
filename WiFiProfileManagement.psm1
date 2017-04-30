@@ -755,3 +755,26 @@ function Get-WiFiAvailableNetwork
         Remove-WiFiHandle -ClientHandle $clientHandle
     }
 }
+
+<#
+    .SYNOPSIS
+        Lists the wireless interfaces and their state.  
+#>
+    function Get-WiFiInterface
+    {
+        [CmdletBinding()]
+        [OutputType([WiFi.ProfileManagement+WLAN_INTERFACE_INFO])]
+
+        $InterfaceListPtr = 0
+        $clientHandle = New-WiFiHandle
+
+        [WiFi.ProfileManagement]::WlanEnumInterfaces($clientHandle,[IntPtr]::zero,[ref]$InterfaceListPtr) | Out-Null
+        $WiFiInterfaceList = [WiFi.ProfileManagement+WLAN_INTERFACE_INFO_LIST]::new($InterfaceListPtr)
+
+        Remove-WiFiHandle -ClientHandle $clientHandle
+
+        foreach ($wlanInterfaceInfo in $WiFiInterfaceList.wlanInterfaceInfo)
+        {
+            [WiFi.ProfileManagement+WLAN_INTERFACE_INFO]$wlanInterfaceInfo
+        }
+    }
