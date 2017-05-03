@@ -124,13 +124,13 @@ function Get-WiFiProfileInfo
     {
         $profileInfoResult = [WiFi.ProfileManagement]::WlanGetProfile($ClientHandle,$InterfaceGuid,$ProfileName,[IntPtr]::Zero,[ref]$pstrProfileXml,[ref]$WlanProfileFlags,[ref]$wlanAccess)
 
-        if ($profileInfoResult -ne 0)
+        If ($profileInfoResult -eq 1168)
+        {
+            return
+        }
+        elseif ($profileInfoResult -ne 0)
         {
             throw $($script:localizedData.ErrorGettingProfile -f $profileInfoResult)
-        }
-        elseIf ($profileInfoResult -eq 1168)
-        {
-            throw $($script:localizedData.ProfileNotFound -f $ProfileName)
         }
 
         $wlanProfile = [xml]$pstrProfileXml
@@ -209,7 +209,7 @@ function Get-WiFiProfile
         $ProfileName,
 
         [System.String]
-        $WiFiAdapterName = 'Wi-Fi',
+        $WiFiAdapterName,
 
         [Switch]
         $ClearKey
@@ -220,7 +220,12 @@ function Get-WiFiProfile
         [String]$pstrProfileXml = $null
         $wlanAccess = 0
         $ProfileListPtr = 0
-        $interfaceGuid = Get-WiFiInterfaceGuid -WiFiAdapterName $WiFiAdapterName
+
+        if (!$WiFiAdapterName) {
+            $interfaceGuids = (Get-WiFiInterface).Guid
+        } else {
+            $interfaceGuids = Get-WiFiInterfaceGuid -WiFiAdapterName $WiFiAdapterName
+        }
 
         $clientHandle = New-WiFiHandle
 
@@ -237,14 +242,20 @@ function Get-WiFiProfile
     {        
         if (!$ProfileName)
         {
-            [WiFi.ProfileManagement]::WlanGetProfileList($clientHandle,$interfaceGUID,[IntPtr]::zero,[ref]$ProfileListPtr) | Out-Null
-            $WiFiProfileList = [WiFi.ProfileManagement+WLAN_PROFILE_INFO_LIST]::new($ProfileListPtr)
-            $ProfileName = ($WiFiProfileList.ProfileInfo).strProfileName
+            foreach ($interfaceGUID in $interfaceGuids)
+            {
+                [WiFi.ProfileManagement]::WlanGetProfileList($clientHandle,$interfaceGUID,[IntPtr]::zero,[ref]$ProfileListPtr) | Out-Null
+                $WiFiProfileList = [WiFi.ProfileManagement+WLAN_PROFILE_INFO_LIST]::new($ProfileListPtr)
+                $ProfileName += ($WiFiProfileList.ProfileInfo).strProfileName
+            }
         }
 
         foreach ($WiFiProfile in $ProfileName)
         {
-            Get-WiFiProfileInfo -ProfileName $WiFiProfile -InterfaceGuid $interfaceGUID -ClientHandle $clientHandle -WlanProfileFlags $wlanProfileFlags
+            foreach ($interfaceGUID in $interfaceGuids)
+            {
+                Get-WiFiProfileInfo -ProfileName $WiFiProfile -InterfaceGuid $interfaceGUID -ClientHandle $clientHandle -WlanProfileFlags $wlanProfileFlags
+            }
         }        
     }
     end
