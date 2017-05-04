@@ -124,7 +124,7 @@ function Get-WiFiProfileInfo
     {
         $profileInfoResult = [WiFi.ProfileManagement]::WlanGetProfile($ClientHandle,$InterfaceGuid,$ProfileName,[IntPtr]::Zero,[ref]$pstrProfileXml,[ref]$WlanProfileFlags,[ref]$wlanAccess)
 
-        If ($profileInfoResult -eq 1168)
+        if ($profileInfoResult -eq 1168)
         {
             return
         }

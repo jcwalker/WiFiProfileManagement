@@ -195,7 +195,7 @@ $WlanGetProfileListSig = @'
         public DOT11_CIPHER_ALGORITHM dot11DefaultCipherAlgorithm;
         public uint dwFlags;
         public uint dwReserved;
-    }       
+    }
 
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
     public struct DOT11_SSID
