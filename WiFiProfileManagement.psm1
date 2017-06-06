@@ -12,9 +12,11 @@ function Get-WiFiInterfaceGuid
     [OutputType([System.Guid])]
     param 
     (
+        [Parameter()]
         [System.String]
         $WiFiAdapterName = 'Wi-Fi'
     )
+    
     $osVersion = [Environment]::OSVersion.Version
 
     if ($osVersion -ge ([Version] 6.2))
@@ -67,6 +69,7 @@ function Remove-WiFiHandle
     [CmdletBinding()]
     param
     (
+        [Parameter()]
         [IntPtr]$ClientHandle    
     )
 
@@ -101,12 +104,15 @@ function Get-WiFiProfileInfo
     [CmdletBinding()]    
     param
     (
+        [Parameter()]
         [System.String]
         $ProfileName,
 
+        [Parameter()]
         [System.Guid]
         $InterfaceGuid,
 
+        [Parameter()]
         [System.IntPtr]
         $ClientHandle,
 
@@ -208,9 +214,11 @@ function Get-WiFiProfile
         [System.String[]]
         $ProfileName,
 
+        [Parameter()]
         [System.String]
         $WiFiAdapterName = 'Wi-Fi',
 
+        [Parameter()]
         [Switch]
         $ClearKey
     )    
@@ -318,6 +326,7 @@ function Format-WiFiReasonCode
     [Cmdletbinding()]
     param
     (
+        [Parameter()]
         [System.IntPtr]
         $ReasonCode
     )
@@ -347,24 +356,24 @@ function New-WiFiProfileXml
     [CmdletBinding()]
     param 
     (
-        [parameter(Mandatory=$true,Position=0)]
+        [Parameter(Mandatory=$true,Position=0)]
         [System.String]
         $ProfileName,
         
-        [parameter(Mandatory=$false)]
+        [Parameter(Mandatory=$false)]
         [ValidateSet('manual','auto')]
         [System.String]
         $ConnectionMode = 'auto',
         
-        [parameter(Mandatory=$false)]
+        [Parameter(Mandatory=$false)]
         [System.String]
         $Authentication = 'WPA2PSK',
         
-        [parameter(Mandatory=$false)]
+        [Parameter(Mandatory=$false)]
         [System.String]
         $Encryption = 'AES',
         
-        [parameter(Mandatory=$true)]
+        [Parameter(Mandatory=$true)]
         [System.String]
         $Password   
     )
@@ -404,6 +413,7 @@ function New-WiFiProfileXml
         $stringWriter.ToString()
     }
 }
+
 
 <#
     .SYNOPSIS
@@ -470,16 +480,16 @@ function Set-WiFiProfile
     [CmdletBinding()]
     param 
     (
-        [parameter(Mandatory=$true,Position=0,ParameterSetName='UsingArguments')]
+        [Parameter(Mandatory=$true,Position=0,ParameterSetName='UsingArguments')]
         [System.String]
         $ProfileName,
         
-        [parameter(Mandatory=$false,ParameterSetName='UsingArguments')]
+        [Parameter(Mandatory=$false,ParameterSetName='UsingArguments')]
         [ValidateSet('manual','auto')]
         [System.String]
         $ConnectionMode = 'auto',
         
-        [parameter(Mandatory=$true,ParameterSetName='UsingArguments')]
+        [Parameter(Mandatory=$true,ParameterSetName='UsingArguments')]
         [System.String]
         $Authentication = 'WPA2PSK',
         
@@ -487,15 +497,15 @@ function Set-WiFiProfile
         [System.String]
         $Encryption = 'AES',
 
-        [parameter(Mandatory=$true,ParameterSetName='UsingArguments')]
+        [Parameter(Mandatory=$true,ParameterSetName='UsingArguments')]
         [System.Security.SecureString]
         $Password,
         
-        [parameter(Mandatory=$false)]
+        [Parameter(Mandatory=$false)]
         [System.String]
         $WiFiAdapterName = 'Wi-Fi',
 
-        [parameter(Mandatory=$true,ParameterSetName='UsingXml')]
+        [Parameter(Mandatory=$true,ParameterSetName='UsingXml')]
         [System.String]
         $XmlProfile
     )
@@ -507,6 +517,7 @@ function Set-WiFiProfile
             $secureStringToBstr = [System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($Password)
             $plainPassword      = [System.Runtime.InteropServices.Marshal]::PtrToStringAuto($secureStringToBstr) 
         }
+        
         $clientHandle = New-WiFiHandle
         $interfaceGuid = Get-WiFiInterfaceGuid -WiFiAdapterName $WiFiAdapterName
         $flags = 0
@@ -552,6 +563,7 @@ function Set-WiFiProfile
         Remove-WiFiHandle -ClientHandle $clientHandle
     }
 }
+
 
 <#
     .SYNOPSIS
@@ -618,32 +630,32 @@ function New-WiFiProfile
     [CmdletBinding()]
     param 
     (
-        [parameter(Mandatory=$true,Position=0,ParameterSetName='UsingArguments')]
+        [Parameter(Mandatory=$true,Position=0,ParameterSetName='UsingArguments')]
         [System.String]
         $ProfileName,
         
-        [parameter(Mandatory=$false,ParameterSetName='UsingArguments')]
+        [Parameter(Mandatory=$false,ParameterSetName='UsingArguments')]
         [ValidateSet('manual','auto')]
         [System.String]
         $ConnectionMode = 'auto',
         
-        [parameter(Mandatory=$true,ParameterSetName='UsingArguments')]
+        [Parameter(Mandatory=$true,ParameterSetName='UsingArguments')]
         [System.String]
         $Authentication = 'WPA2PSK',
         
-        [parameter(Mandatory=$false,ParameterSetName='UsingArguments')]
+        [Parameter(Mandatory=$false,ParameterSetName='UsingArguments')]
         [System.String]
         $Encryption = 'AES',
 
-        [parameter(Mandatory=$true,ParameterSetName='UsingArguments')]
+        [Parameter(Mandatory=$true,ParameterSetName='UsingArguments')]
         [System.Security.SecureString]
         $Password,
         
-        [parameter(Mandatory=$false)]
+        [Parameter(Mandatory=$false)]
         [System.String]
         $WiFiAdapterName = 'Wi-Fi',
 
-        [parameter(Mandatory=$true,ParameterSetName='UsingXml')]
+        [Parameter(Mandatory=$true,ParameterSetName='UsingXml')]
         [System.String]
         $XmlProfile
 
@@ -656,6 +668,7 @@ function New-WiFiProfile
             $secureStringToBstr = [System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($Password)
             $plainPassword      = [System.Runtime.InteropServices.Marshal]::PtrToStringAuto($secureStringToBstr) 
         }
+
         $clientHandle = New-WiFiHandle
         $interfaceGuid = Get-WiFiInterfaceGuid -WiFiAdapterName $WiFiAdapterName
         $flags = 0
@@ -683,7 +696,7 @@ function New-WiFiProfile
     {
         $profilePointer = [System.Runtime.InteropServices.Marshal]::StringToHGlobalUni($profileXML)
 
-        $setProfileResults = [WiFi.ProfileManagement]::WlanSetProfile(
+        [WiFi.ProfileManagement]::WlanSetProfile(
                                         $clientHandle,
                                         [ref]$interfaceGuid,
                                         $flags,
@@ -701,6 +714,7 @@ function New-WiFiProfile
         Remove-WiFiHandle -ClientHandle $clientHandle
     }
 }
+
 
 <#
     .SYNOPSIS
@@ -722,6 +736,7 @@ function Get-WiFiAvailableNetwork
     [OutputType([WiFi.ProfileManagement+WLAN_AVAILABLE_NETWORK])]
     param
     (
+        [Parameter()]
         [System.String]
         $WiFiAdapterName = 'Wi-Fi'
     )    
