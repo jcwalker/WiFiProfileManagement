@@ -62,7 +62,7 @@ PS C:\>Get-WiFiProfile -ProfileName TestWiFi
         ProfileName    : TestWiFi
         ConnectionMode : auto
         Authentication : WPA2PSK
-        Encyption      : AES
+        Encryption      : AES
         Password       : 
 ```
 
@@ -73,7 +73,7 @@ PS C:\>Get-WiFiProfile -ProfileName TestWiFi
         ProfileName    : TestWiFi
         ConnectionMode : auto
         Authentication : WPA2PSK
-        Encyption      : AES
+        Encryption      : AES
         Password       : password1
 ```
 

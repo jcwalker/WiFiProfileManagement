@@ -68,7 +68,7 @@ $WlanGetProfileListSig = @'
     );
 
     [DllImport("Wlanapi.dll", SetLastError = true)]
-    public static extern uint WlanGetAvailableNetworkList (
+    public static extern uint WlanGetAvailableNetworkList(
         [In] IntPtr hClientHandle,
         [In, MarshalAs(UnmanagedType.LPStruct)] Guid interfaceGuid,
         [In] uint dwFlags, 
@@ -237,7 +237,7 @@ $WlanGetProfileListSig = @'
         public string ProfileName;
         public string ConnectionMode;
         public string Authentication;
-        public string Encyption;
+        public string Encryption;
         public string Password;
         public string Xml;
     }

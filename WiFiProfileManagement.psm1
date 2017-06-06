@@ -148,7 +148,7 @@ function Get-WiFiProfileInfo
             ProfileName    = $wlanProfile.WLANProfile.SSIDConfig.SSID.name
             ConnectionMode = $wlanProfile.WLANProfile.connectionMode
             Authentication = $wlanProfile.WLANProfile.MSM.security.authEncryption.authentication
-            Encyption      = $wlanProfile.WLANProfile.MSM.security.authEncryption.encryption
+            Encryption      = $wlanProfile.WLANProfile.MSM.security.authEncryption.encryption
             Password       = $password
             Xml            = $pstrProfileXml            
         }
@@ -176,7 +176,7 @@ function Get-WiFiProfileInfo
         SSIDName       : TestWiFi
         ConnectionMode : auto
         Authentication : WPA2PSK
-        Encyption      : AES
+        Encryption      : AES
         Password       : 
 
         Get the WiFi profile information on wireless profile TestWiFi
@@ -187,7 +187,7 @@ function Get-WiFiProfileInfo
         SSIDName       : TestWiFi
         ConnectionMode : auto
         Authentication : WPA2PSK
-        Encyption      : AES
+        Encryption      : AES
         Password       : password1
 
         This examples shows the use of the ClearKey switch to return the WiFi profile password.
@@ -219,7 +219,7 @@ function Get-WiFiProfile
     {
         [String]$pstrProfileXml = $null
         $wlanAccess = 0
-        $ProfileListPtr = 0
+        $ProfileListPointer = 0
         $interfaceGuid = Get-WiFiInterfaceGuid -WiFiAdapterName $WiFiAdapterName
 
         $clientHandle = New-WiFiHandle
@@ -237,8 +237,8 @@ function Get-WiFiProfile
     {        
         if (!$ProfileName)
         {
-            [WiFi.ProfileManagement]::WlanGetProfileList($clientHandle,$interfaceGUID,[IntPtr]::zero,[ref]$ProfileListPtr) | Out-Null
-            $WiFiProfileList = [WiFi.ProfileManagement+WLAN_PROFILE_INFO_LIST]::new($ProfileListPtr)
+            [void][WiFi.ProfileManagement]::WlanGetProfileList($clientHandle,$interfaceGUID,[IntPtr]::zero,[ref]$ProfileListPointer)
+            $WiFiProfileList = [WiFi.ProfileManagement+WLAN_PROFILE_INFO_LIST]::new($ProfileListPointer)
             $ProfileName = ($WiFiProfileList.ProfileInfo).strProfileName
         }
 
@@ -531,13 +531,13 @@ function Set-WiFiProfile
     }
     process
     {
-        $profilePtr = [System.Runtime.InteropServices.Marshal]::StringToHGlobalUni($profileXML)
+        $profilePointer = [System.Runtime.InteropServices.Marshal]::StringToHGlobalUni($profileXML)
 
         $setProfileResults = [WiFi.ProfileManagement]::WlanSetProfile(
                                         $clientHandle,
                                         [ref]$interfaceGuid,
                                         $flags,
-                                        $profilePtr,
+                                        $profilePointer,
                                         [IntPtr]::Zero,
                                         $overwrite,
                                         [IntPtr]::Zero,
@@ -680,13 +680,13 @@ function New-WiFiProfile
     }
     process
     {
-        $profilePtr = [System.Runtime.InteropServices.Marshal]::StringToHGlobalUni($profileXML)
+        $profilePointer = [System.Runtime.InteropServices.Marshal]::StringToHGlobalUni($profileXML)
 
         $setProfileResults = [WiFi.ProfileManagement]::WlanSetProfile(
                                         $clientHandle,
                                         [ref]$interfaceGuid,
                                         $flags,
-                                        $profilePtr,
+                                        $profilePointer,
                                         [IntPtr]::Zero,
                                         $overwrite,
                                         [IntPtr]::Zero,
@@ -733,25 +733,17 @@ function Get-WiFiAvailableNetwork
     }
     process
     {        
-        [void][WiFi.ProfileManagement]::WlanGetAvailableNetworkList($clientHandle,$interfaceGUID,2,[IntPtr]::zero,[ref]$networkPointer)
+        [void][WiFi.ProfileManagement]::WlanGetAvailableNetworkList($clientHandle,$interfaceGUID,0,[IntPtr]::zero,[ref]$networkPointer)
         $availableNetworks = [WiFi.ProfileManagement+WLAN_AVAILABLE_NETWORK_LIST]::new($networkPointer)
         
         foreach ($network in $availableNetworks.wlanAvailableNetwork)
         {
-            <#
-            [WiFi.ProfileManagement+WLAN_AVAILABLE_NETWORK]@{
-                SSID = $network.dot11Ssid.ucSSID
-                SignalStength = $network.wlanSignalQuality
-                SecurityEnabled = $network.bSecurityEnabled
-                dot11DefaultAuthAlgorithm = $network.dot11DefaultAuthAlgorithm
-                dot11DefaultCipherAlgorithm = $network.dot11DefaultCipherAlgorithm
-            }
-            #>
             [WiFi.ProfileManagement+WLAN_AVAILABLE_NETWORK]$network
         }
     }
     end
     {        
+        [WiFi.ProfileManagement]::WlanFreeMemory($networkPointer) 
         Remove-WiFiHandle -ClientHandle $clientHandle
     }
 }
