@@ -1,5 +1,5 @@
-
-$script:localizedData = Import-LocalizedData -BaseDirectory "$PSScriptRoot\en-US" -FileName WiFiProfileManagement.strings.psd1
+if(!$PSScriptRoot){ $PSScriptRoot = Split-Path $Script:MyInvocation.MyCommand.Path }
+Import-LocalizedData -BaseDirectory "$PSScriptRoot\en-US" -FileName WiFiProfileManagement.strings.psd1 -BindingVariable localizedData
 <#
     .SYNOPSIS
         Retrieves the guid of the network interface.
