@@ -1,3 +1,4 @@
+
 <#
     .SYNOPSIS
         Lists the wireless profiles and their configuration settings.
@@ -34,7 +35,6 @@
         PS C:\>Get-WiFiProfile | where {$_.ConnectionMode -eq 'auto' -and $_.Authentication -eq 'open'}
 
         This example shows how to find WiFi profiles with insecure connection settings.
-
 #>
 function Get-WiFiProfile
 {

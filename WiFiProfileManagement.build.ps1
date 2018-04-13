@@ -1,22 +1,20 @@
 task . Clean, Build, Tests, Stats
 task Tests ImportCompipledModule, Pester
 task CreateManifest CopyPSD, UpdatPublicFunctionsToExport
-task Build Compile, CreateManifest
+task Build Compile, CreateManifest, CopyFormatXml, CopyLocalization
 task Stats RemoveStats, WriteStats
 
 $script:ModuleName = Split-Path -Path $PSScriptRoot -Leaf
 $script:ModuleRoot = $PSScriptRoot
 $script:OutPutFolder = "$PSScriptRoot\Release"
-$script:ImportFolders = @('Public','Private','Classes')
+$script:ImportFolders = @('PreReqs','Public','Private','Classes')
 $script:PsmPath = Join-Path -Path $PSScriptRoot -ChildPath "Release\$($script:ModuleName)\$($script:ModuleName).psm1"
 $script:PsdPath = Join-Path -Path $PSScriptRoot -ChildPath "Release\$($script:ModuleName)\$($script:ModuleName).psd1"
-
-
+$script:ps1XmlPath  = Join-Path -Path $PSScriptRoot -ChildPath "Release\$($script:ModuleName)\$($script:ModuleName).Format.ps1xml"
+$script:LocalizationPath = Join-Path -Path $PSScriptRoot -ChildPath "Release\$($script:ModuleName)\en-US"
 $script:PublicFolder = 'Public'
-$script:DSCResourceFolder = 'DSCResources'
 
-
-task "Clean" {
+task Clean {
     if (-not(Test-Path $script:OutPutFolder))
     {
         New-Item -ItemType Directory -Path $script:OutPutFolder > $null
@@ -43,8 +41,9 @@ task Compile @compileParams {
     {
         Remove-Item -Path $script:PsmPath -Recurse -Force
     }
-    New-Item -Path $script:PsmPath -Force > $null
 
+    New-Item -Path $script:PsmPath -Force > $null
+ 
     foreach ($folder in $script:ImportFolders)
     {
         $currentFolder = Join-Path -Path $script:ModuleRoot -ChildPath $folder
@@ -57,6 +56,7 @@ task Compile @compileParams {
             {
                 Write-Verbose -Message "Adding $($file.FullName)"
                 Get-Content -Path $file.FullName >> $script:PsmPath
+                
             }
         }
     }
@@ -68,7 +68,29 @@ task CopyPSD {
         Path        = "$($script:ModuleName).psd1"
         Destination = $script:PsdPath
         Force       = $true
-        Verbose  = $true
+        Verbose     = $true
+    }
+    Copy-Item @copy
+}
+
+task CopyFormatXml {
+    $copy = @{
+        Path        = "$($script:ModuleName).Format.ps1xml"
+        Destination = $script:ps1XmlPath
+        Force       = $true
+        Verbose     = $true
+    }
+    Copy-Item @copy
+}
+
+task CopyLocalization {
+    $copy = @{
+        Path        = "en-US"
+        Destination = $script:LocalizationPath
+        Force       = $true
+        Verbose     = $true
+        Container   = $true
+        Recurse     = $true
     }
     Copy-Item @copy
 }
@@ -83,8 +105,6 @@ task UpdatPublicFunctionsToExport -if (Test-Path -Path $script:PublicFolder) {
         Set-Content -Path $script:PsdPath
 }
 
-
-
 task ImportCompipledModule -if (Test-Path -Path $script:PsmPath) {
     Get-Module -Name $script:ModuleName |
         Remove-Module -Force
@@ -95,10 +115,7 @@ task Pester {
     $resultFile = "{0}\testResults{1}.xml" -f $script:OutPutFolder, (Get-date -Format 'yyyyMMdd_hhmmss')
     $testFolder = Join-Path -Path $PSScriptRoot -ChildPath 'Tests\*'
     Invoke-Pester -Path $testFolder -OutputFile $resultFile -OutputFormat NUnitxml
-}     
-
-
-
+}
 
 task RemoveStats -if (Test-Path -Path "$($script:OutPutFolder)\stats.json") {
     Remove-Item -Force -Verbose -Path "$($script:OutPutFolder)\stats.json" 
@@ -120,5 +137,3 @@ task WriteStats {
     }
     $stats | ConvertTo-Json > "$script:OutPutFolder\stats.json"
 }
-
-
