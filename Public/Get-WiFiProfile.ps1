@@ -1,4 +1,3 @@
-
 <#
     .SYNOPSIS
         Lists the wireless profiles and their configuration settings.

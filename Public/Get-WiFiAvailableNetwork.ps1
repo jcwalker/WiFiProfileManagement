@@ -1,4 +1,3 @@
-
 <#
     .SYNOPSIS
         Retrieves the list of available networks on a wireless LAN interface.
