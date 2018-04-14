@@ -14,8 +14,8 @@
         SSIDName       : TestWiFi
         ConnectionMode : auto
         Authentication : WPA2PSK
-        Encryption      : AES
-        Password       : 
+        Encryption     : AES
+        Password       :
 
         Get the WiFi profile information on wireless profile TestWiFi
 
@@ -84,10 +84,10 @@ function Get-WiFiProfile
         foreach ($WiFiProfile in $ProfileName)
         {
             Get-WiFiProfileInfo -ProfileName $WiFiProfile -InterfaceGuid $interfaceGUID -ClientHandle $clientHandle -WlanProfileFlags $wlanProfileFlags
-        }        
+        }
     }
     end
-    {        
+    {
         Remove-WiFiHandle -ClientHandle $clientHandle
     }
 }

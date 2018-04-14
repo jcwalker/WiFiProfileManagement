@@ -76,6 +76,40 @@ $WlanGetProfileListSig = @'
         [Out] out IntPtr ppAvailableNetworkList
     );
 
+    [DllImport("Wlanapi.dll", SetLastError = true)]
+    public static extern uint WlanConnect(
+        [In] IntPtr hClientHandle,
+        [In] ref Guid interfaceGuid,
+        [In] ref WLAN_CONNECTION_PARAMETERS pConnectionParameters,
+        [In, Out] IntPtr pReserved
+    );
+    
+    [StructLayout(LayoutKind.Sequential,CharSet=CharSet.Unicode)]
+    public struct WLAN_CONNECTION_PARAMETERS
+    {
+        public WLAN_CONNECTION_MODE wlanConnectionMode;
+        public string strProfile;
+        public DOT11_SSID[] pDot11Ssid;  
+        public DOT11_BSSID_LIST[] pDesiredBssidList;   
+        public DOT11_BSS_TYPE dot11BssType;  
+        public uint dwFlags; 
+    }
+
+    public struct DOT11_BSSID_LIST
+    {
+        public NDIS_OBJECT_HEADER Header;
+        public ulong uNumOfEntries;
+        public ulong uTotalNumOfEntries;
+        public IntPtr BSSIDs;
+    }
+
+    public struct NDIS_OBJECT_HEADER
+    {
+        public byte Type;
+        public byte Revision;
+        public ushort Size;
+    }
+
     public struct WLAN_PROFILE_INFO_LIST
     {
         public uint dwNumberOfItems;
@@ -223,6 +257,16 @@ $WlanGetProfileListSig = @'
         /// DOT11_CIPHER_ALGO_IHV_END -> 0xffffffff
         DOT11_CIPHER_ALGO_IHV_END = -1,
     }
+
+    public enum WLAN_CONNECTION_MODE
+    {
+        wlan_connection_mode_profile,
+        wlan_connection_mode_temporary_profile,
+        wlan_connection_mode_discovery_secure,
+        wlan_connection_mode_discovery_unsecure,
+        wlan_connection_mode_auto,
+        wlan_connection_mode_invalid,
+    };
 
     [Flags]
 	public enum WlanProfileFlags

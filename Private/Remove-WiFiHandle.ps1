@@ -1,52 +1,26 @@
 <#
     .SYNOPSIS
-        Deletes a WiFi profile.
-    .PARAMETER ProfileName
-        The name of the profile to be deleted. Profile names are case-sensitive.
-    .PARAMETER WiFiAdapterName
-        Specifies the name of the wireless network adapter on the machine. This is used to obtain the Guid of the interface.
-        The default value is 'Wi-Fi'
-    .EXAMPLE
-    C:\>Remove-WiFiProfile -ProfileName FreeWiFi
-
-    This examples deletes the FreeWiFi profile.
+        Closes an open WiFi handle
+    .Parameter ClientHandle
+        Specifies the object that represents the open WiFi handle.
 #>
-function Remove-WiFiProfile
+function Remove-WiFiHandle
 {
-    [CmdletBinding(SupportsShouldProcess=$true,ConfirmImpact='High')]
-    Param 
+    [CmdletBinding()]
+    param
     (
-        [Parameter(Position = 0,Mandatory=$true,ValueFromPipeLine=$true)]
-        [System.String[]]
-        $ProfileName,
-
-        [Parameter(Position = 1,Mandatory=$false)]
-        [System.String]
-        $WiFiAdapterName = 'Wi-Fi'
+        [Parameter()]
+        [IntPtr]$ClientHandle
     )
 
-    begin
-    {
-        $interfaceGUID = Get-WiFiInterfaceGuid
-        $clientHandle = New-WiFiHandle
-    }
-    process
-    {
-        foreach ($WiFiProfile in $ProfileName)
-        {
-            if ($PSCmdlet.ShouldProcess("$($script:localizedData.ShouldProcessDelete -f $WiFiProfile)"))
-            {
-                $deleteProfileResult = [WiFi.ProfileManagement]::WlanDeleteProfile($clientHandle,$interfaceGUID,$ProfileName,[IntPtr]::zero)            
+    $closeHandle = [WiFi.ProfileManagement]::WlanCloseHandle($ClientHandle,[IntPtr]::zero)
 
-                if ($deleteProfileResult -ne 0)
-                {                
-                    throw $($script:localizedData.ErrorDeletingProfile -f $deleteProfileResult)
-                }   
-            }
-        }      
-    }
-    end 
+    if ($closeHandle -eq 0)
     {
-        Remove-WiFiHandle -ClientHandle $clientHandle
+        Write-Verbose -Message $script:localizedData.HandleClosed
+    }
+    else
+    {
+        throw $($script:localizedData.ErrorClosingHandle)
     }
 }
