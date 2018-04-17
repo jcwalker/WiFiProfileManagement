@@ -21,5 +21,5 @@ function New-WiFiHandle
     else
     {
         throw $($Script:localizedData.ErrorOpeningHandle)
-    }        
+    }
 }

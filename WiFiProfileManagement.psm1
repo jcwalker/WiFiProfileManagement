@@ -3,8 +3,7 @@ $script:localizedData = Import-LocalizedData -BaseDirectory "$PSScriptRoot\en-US
 
 # Import everything in these folders
 foreach($folder in @('private', 'public', 'classes'))
-{
-    
+{    
     $root = Join-Path -Path $PSScriptRoot -ChildPath $folder
     if(Test-Path -Path $root)
     {

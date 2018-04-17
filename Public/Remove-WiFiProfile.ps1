@@ -20,7 +20,7 @@ function Remove-WiFiProfile
         [System.String[]]
         $ProfileName,
 
-        [Parameter(Position = 1,Mandatory=$false)]
+        [Parameter(Position = 1)]
         [System.String]
         $WiFiAdapterName = 'Wi-Fi'
     )

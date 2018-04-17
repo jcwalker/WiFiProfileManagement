@@ -67,7 +67,7 @@ function Set-WiFiProfile
         [System.String]
         $ProfileName,
         
-        [Parameter(Mandatory=$false,ParameterSetName='UsingArguments')]
+        [Parameter(ParameterSetName='UsingArguments')]
         [ValidateSet('manual','auto')]
         [System.String]
         $ConnectionMode = 'auto',
@@ -76,7 +76,7 @@ function Set-WiFiProfile
         [System.String]
         $Authentication = 'WPA2PSK',
         
-        [parameter(Mandatory=$false,ParameterSetName='UsingArguments')]
+        [parameter(ParameterSetName='UsingArguments')]
         [System.String]
         $Encryption = 'AES',
 
@@ -84,7 +84,7 @@ function Set-WiFiProfile
         [System.Security.SecureString]
         $Password,
         
-        [Parameter(Mandatory=$false)]
+        [Parameter()]
         [System.String]
         $WiFiAdapterName = 'Wi-Fi',
 
@@ -106,7 +106,7 @@ function Set-WiFiProfile
         $flags = 0
         $allUserProfileSecurity = [IntPtr]::zero
         $overwrite = $true
-        $reasonCode = [IntPtr]::Zero                  
+        $reasonCode = [IntPtr]::Zero
 
         if ($XmlProfile)
         {

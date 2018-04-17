@@ -20,16 +20,16 @@ function New-WiFiProfileXml
         [System.String]
         $ProfileName,
         
-        [Parameter(Mandatory=$false)]
+        [Parameter()]
         [ValidateSet('manual','auto')]
         [System.String]
         $ConnectionMode = 'auto',
         
-        [Parameter(Mandatory=$false)]
+        [Parameter()]
         [System.String]
         $Authentication = 'WPA2PSK',
         
-        [Parameter(Mandatory=$false)]
+        [Parameter()]
         [System.String]
         $Encryption = 'AES',
         

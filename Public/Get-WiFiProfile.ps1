@@ -52,7 +52,7 @@ function Get-WiFiProfile
         [Parameter()]
         [Switch]
         $ClearKey
-    )    
+    )
 
     begin
     {
@@ -73,7 +73,7 @@ function Get-WiFiProfile
         }
     }
     process
-    {        
+    {
         if (!$ProfileName)
         {
             [void][WiFi.ProfileManagement]::WlanGetProfileList($clientHandle,$interfaceGUID,[IntPtr]::zero,[ref]$ProfileListPointer)

@@ -30,7 +30,7 @@ function Get-WiFiAvailableNetwork
         $networkPointer = 0
     }
     process
-    {        
+    {
         [void][WiFi.ProfileManagement]::WlanGetAvailableNetworkList($clientHandle,$interfaceGUID,0,[IntPtr]::zero,[ref]$networkPointer)
         $availableNetworks = [WiFi.ProfileManagement+WLAN_AVAILABLE_NETWORK_LIST]::new($networkPointer)
         
@@ -40,7 +40,7 @@ function Get-WiFiAvailableNetwork
         }
     }
     end
-    {        
+    {
         [WiFi.ProfileManagement]::WlanFreeMemory($networkPointer) 
         Remove-WiFiHandle -ClientHandle $clientHandle
     }

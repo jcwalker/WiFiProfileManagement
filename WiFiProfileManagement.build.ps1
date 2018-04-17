@@ -55,8 +55,7 @@ task Compile @compileParams {
             foreach ($file in $files)
             {
                 Write-Verbose -Message "Adding $($file.FullName)"
-                Get-Content -Path $file.FullName -Raw | Out-File -FilePath $script:PsmPath -Append -Encoding utf8
-                
+                Get-Content -Path $file.FullName -Raw | Out-File -FilePath $script:PsmPath -Append -Encoding utf8 
             }
         }
     }
