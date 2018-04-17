@@ -10,7 +10,7 @@ function Connect-WifIProfile
 
     begin
     {
-        # $clientHandle = New-WiFiHandle 
+        # $clientHandle = New-WiFiHandle
         # $interfaceGuid = Get-WiFiInterfaceGuid -WiFiAdapterName $WiFiAdapterName
     }
     
