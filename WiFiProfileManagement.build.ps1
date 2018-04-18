@@ -105,8 +105,7 @@ task UpdatPublicFunctionsToExport -if (Test-Path -Path $script:PublicFolder) {
 }
 
 task ImportCompipledModule -if (Test-Path -Path $script:PsmPath) {
-    Get-Module -Name $script:ModuleName |
-        Remove-Module -Force
+    Get-Module -Name $script:ModuleName | Remove-Module -Force
     Import-Module -Name $script:PsdPath -Force
 }
 
