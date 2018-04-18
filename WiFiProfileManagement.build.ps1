@@ -138,7 +138,7 @@ task WriteStats {
 
 task DeployToGallery {
     Set-BuildEnvironment
-    # Gate deployment 
+    # Gate deployment
     if (
         $ENV:BHBuildSystem -ne 'Unknown' -and
         $ENV:BHBranchName -eq "master" -and
