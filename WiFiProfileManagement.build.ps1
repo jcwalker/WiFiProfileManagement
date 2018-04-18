@@ -1,4 +1,4 @@
-task . Clean, Build, Tests, Stats
+task . Clean, Build, Tests, Stats, DeployToGallery
 task Tests ImportCompipledModule, Pester
 task CreateManifest CopyPSD, UpdatPublicFunctionsToExport
 task Build Compile, CreateManifest, CopyFormatXml, CopyLocalization
@@ -135,4 +135,28 @@ task WriteStats {
         }
     }
     $stats | ConvertTo-Json > "$script:OutPutFolder\stats.json"
+}
+
+task DeployToGallery {
+    # Gate deployment
+    if (
+        $ENV:BHBuildSystem -ne 'Unknown' -and
+        $ENV:BHBranchName -eq "master" -and
+        $ENV:BHCommitMessage -match '!deploy'
+    )
+    {
+        $Params = @{
+            Path  = $ProjectRoot
+            Force = $true
+        }
+
+        Invoke-PSDeploy @Verbose @Params
+    }
+    else
+    {
+        "Skipping deployment: To deploy, ensure that...`n" +
+        "`t* You are in a known build system (Current: $ENV:BHBuildSystem)`n" +
+        "`t* You are committing to the master branch (Current: $ENV:BHBranchName) `n" +
+        "`t* Your commit message includes !deploy (Current: $ENV:BHCommitMessage)"
+    }
 }
