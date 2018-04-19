@@ -1,0 +1,20 @@
+version: 1.0.{build}
+image: WMF 5
+install:
+- ps: >-
+    Write-Host 'Installing NuGet PackageProvide'
+
+    $pkg = Install-PackageProvider -Name NuGet -Force -ErrorAction Stop
+
+    Write-Host "Installed NuGet version '$($pkg.version)'"
+
+    Install-Module InvokeBuild -Force
+
+    Install-Module Pester -Force
+
+    Install-Module BuildHelpers -Force
+build_script:
+- ps: >-
+    Invoke-Build -File .\WiFiProfileManagement.build.ps1
+
+    (New-Object 'System.Net.WebClient').UploadFile("https://ci.appveyor.com/api/testresults/nunit/$($env:APPVEYOR_JOB_ID)", (Resolve-Path .\Release\testResults*.xml))
