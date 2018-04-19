@@ -1,6 +1,5 @@
 Output/
 Release/
-Private/New-WiFiConnectionParameter.ps1
 stats.json
 testResult*.xml
 launch.json
