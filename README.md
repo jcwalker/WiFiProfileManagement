@@ -1,3 +1,5 @@
+![Build status](https://ci.appveyor.com/api/projects/status/sqnddntj7ruifjt8/branch/master?svg=true)
+
 # WiFiProfileManagement
 Module used for management of wireless profiles.
 
