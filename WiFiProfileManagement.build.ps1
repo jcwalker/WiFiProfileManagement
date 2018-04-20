@@ -145,6 +145,9 @@ task DeployToGallery {
         $ENV:BHCommitMessage -match '!deploy'
     )
     {
+
+        Install-Module psdeploy -Force
+
         $Params = @{
             Path  = $ProjectRoot
             Force = $true
