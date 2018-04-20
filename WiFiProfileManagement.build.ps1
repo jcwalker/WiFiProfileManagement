@@ -149,7 +149,7 @@ task DeployToGallery {
         Install-Module psdeploy -Force
 
         $Params = @{
-            Path  = $ProjectRoot
+            Path  = $PSScriptRoot\Release\$env:BHProjectName
             Force = $true
         }
 
