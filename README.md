@@ -1,4 +1,4 @@
-[![Build status](https://ci.appveyor.com/api/projects/status/sqnddntj7ruifjt8/branch/master?svg=true)]
+[![Build Status](https://ci.appveyor.com/api/projects/status/sqnddntj7ruifjt8/branch/master?svg=true)](https://ci.appveyor.com/project/jcwalker/wifiprofilemanagement/branch/master)
 
 # WiFiProfileManagement
 Module used for management of wireless profiles.
