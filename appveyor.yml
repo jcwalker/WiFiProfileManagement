@@ -1,5 +1,8 @@
 version: 1.0.{build}
 image: WMF 5
+environment:
+  NugetApiKey:
+    secure: ledbDE6pSWvJOaTv2cxN8WNv8WJl2gz+d/fcUQuc+5XiVS4iBQyPdweURgEHIpPg
 install:
 - ps: >-
     Write-Host 'Installing NuGet PackageProvide'
