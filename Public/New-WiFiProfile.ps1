@@ -14,7 +14,7 @@
     .PARAMETER Password
         The network key or passpharse of the wireless profile in the form of a secure string.
     .PARAMETER XmlProfile
-        The XML representation of the profile. 
+        The XML representation of the profile.
     .EXAMPLE
         PS C:\>$password = Read-Host -AsSecureString
         **********
