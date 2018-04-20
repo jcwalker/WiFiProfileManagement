@@ -25,7 +25,7 @@
         SSIDName       : TestWiFi
         ConnectionMode : auto
         Authentication : WPA2PSK
-        Encryption      : AES
+        Encryption     : AES
         Password       : password1
 
         This examples shows the use of the ClearKey switch to return the WiFi profile password.
