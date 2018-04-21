@@ -55,6 +55,9 @@ Drop the root folder in your PSModulePath, remove the branch name (ex. -dev )fro
 ### 0.4.0.0
 *    Added Get-WiFiAvailableNetwork.  Moved code that enables Windows 7 compatibility to a function.
 
+###0.4.0.1
+*   Added Connect-WiFiProfile.  Add new scaffolding.
+
 ## Examples
 
 ### Get the WiFi profile information on wireless profile TestWifi
@@ -141,3 +144,15 @@ PS C:\>Remove-WiFiProfile -ProfileName FreeWifi
         ----         ------------- ---------------  ------------------------- ---------------------------
                                 63            True   DOT11_AUTH_ALGO_RSNA_PSK      DOT11_CIPHER_ALGO_CCMP
         gogoinflight            63           False DOT11_AUTH_ALGO_80211_OPEN      DOT11_CIPHER_ALGO_NONE
+```
+
+### Connect to a WiFi profile
+```PowerShell
+        PS C:\> $password = Read-Host -AsSecureString
+        ************
+
+        PS C:\> New-WiFiProfile -ProfileName MyNetwork -ConnectionMode auto -Authentication WPA2PSK -Encryption AES -Password $password
+
+        The operation was successful.
+        PS C:\> Connect-WifIProfile -ProfileName MyNetwork
+```

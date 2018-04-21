@@ -41,7 +41,7 @@ function Get-WiFiProfile
     [OutputType([System.Management.Automation.PSCustomObject])]
     param
     (
-        [Parameter(Position=0)]
+        [Parameter(Position = 0)]
         [System.String[]]
         $ProfileName,
 
@@ -54,39 +54,40 @@ function Get-WiFiProfile
         $ClearKey
     )
 
-    begin
+    try
     {
         [String]$pstrProfileXml = $null
-        $wlanAccess = 0
-        $ProfileListPointer = 0
+        $profileListPointer = 0
         $interfaceGuid = Get-WiFiInterfaceGuid -WiFiAdapterName $WiFiAdapterName
 
         $clientHandle = New-WiFiHandle
 
         if ($ClearKey)
         {
-          $wlanProfileFlags = 13
+            $wlanProfileFlags = 13
         }
         else
         {
-           $wlanProfileFlags = 0
-        }
-    }
-    process
-    {
-        if (!$ProfileName)
-        {
-            [void][WiFi.ProfileManagement]::WlanGetProfileList($clientHandle,$interfaceGUID,[IntPtr]::zero,[ref]$ProfileListPointer)
-            $WiFiProfileList = [WiFi.ProfileManagement+WLAN_PROFILE_INFO_LIST]::new($ProfileListPointer)
-            $ProfileName = ($WiFiProfileList.ProfileInfo).strProfileName
+            $wlanProfileFlags = 0
         }
 
-        foreach ($WiFiProfile in $ProfileName)
+        if (!$ProfileName)
         {
-            Get-WiFiProfileInfo -ProfileName $WiFiProfile -InterfaceGuid $interfaceGUID -ClientHandle $clientHandle -WlanProfileFlags $wlanProfileFlags
+            [void][WiFi.ProfileManagement]::WlanGetProfileList($clientHandle, $interfaceGUID, [IntPtr]::zero, [ref]$profileListPointer)
+            $wiFiProfileList = [WiFi.ProfileManagement+WLAN_PROFILE_INFO_LIST]::new($profileListPointer)
+            $ProfileName = ($wiFiProfileList.ProfileInfo).strProfileName
+        }
+
+        foreach ($wiFiProfile in $ProfileName)
+        {
+            Get-WiFiProfileInfo -ProfileName $wiFiProfile -InterfaceGuid $interfaceGUID -ClientHandle $clientHandle -WlanProfileFlags $wlanProfileFlags
         }
     }
-    end
+    catch
+    {
+        Write-Error $_
+    }
+    finally
     {
         Remove-WiFiHandle -ClientHandle $clientHandle
     }

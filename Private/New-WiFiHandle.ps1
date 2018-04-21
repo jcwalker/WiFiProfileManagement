@@ -12,14 +12,20 @@ function New-WiFiHandle
     [Ref]$negotiatedVersion = 0
     $clientHandle = [IntPtr]::zero
 
-    $handle = [WiFi.ProfileManagement]::WlanOpenHandle($maxClient,[IntPtr]::Zero,$negotiatedVersion,[ref]$clientHandle)
+    $result = [WiFi.ProfileManagement]::WlanOpenHandle(
+        $maxClient,
+        [IntPtr]::Zero,
+        $negotiatedVersion,
+        [ref]$clientHandle
+    )
     
-    if ($handle -eq 0)
+    if ($result -eq 0)
     {
         return $clientHandle
     }
     else
     {
-        throw $($Script:localizedData.ErrorOpeningHandle)
+        $errorMessage = Format-Win32Exception -ReturnCode $result
+        throw $($script:localizedData.ErrorOpeningHandle -f $errorMessage)
     }
 }

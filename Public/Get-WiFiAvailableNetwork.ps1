@@ -11,6 +11,8 @@
         ----         ------------- ---------------  ------------------------- ---------------------------
                                 63            True   DOT11_AUTH_ALGO_RSNA_PSK      DOT11_CIPHER_ALGO_CCMP
         gogoinflight            63           False DOT11_AUTH_ALGO_80211_OPEN      DOT11_CIPHER_ALGO_NONE
+    .NOTES
+        https://msdn.microsoft.com/en-us/library/windows/desktop/ms706749(v=vs.85).aspx
 #>
 function Get-WiFiAvailableNetwork
 {
@@ -21,27 +23,44 @@ function Get-WiFiAvailableNetwork
         [Parameter()]
         [System.String]
         $WiFiAdapterName = 'Wi-Fi'
-    )    
+    )
 
-    begin
+    $interfaceGUID = Get-WiFiInterfaceGuid -WiFiAdapterName $WiFiAdapterName
+    $clientHandle = New-WiFiHandle
+    $networkPointer = 0
+    $flag = 0
+
+    try
     {
-        $interfaceGUID = Get-WiFiInterfaceGuid -WiFiAdapterName $WiFiAdapterName
-        $clientHandle = New-WiFiHandle
-        $networkPointer = 0
-    }
-    process
-    {
-        [void][WiFi.ProfileManagement]::WlanGetAvailableNetworkList($clientHandle,$interfaceGUID,0,[IntPtr]::zero,[ref]$networkPointer)
+        $result = [WiFi.ProfileManagement]::WlanGetAvailableNetworkList(
+            $clientHandle,
+            $interfaceGUID,
+            $flag,
+            [IntPtr]::zero,
+            [ref]$networkPointer
+        )
+
+        if ( $result -ne 0 )
+        {
+            $errorMessage = Format-Win32Exception -ReturnCode $result
+            throw $($script:localizedData.ErrorGetAvailableNetworkList -f $errorMessage)
+        }
+
         $availableNetworks = [WiFi.ProfileManagement+WLAN_AVAILABLE_NETWORK_LIST]::new($networkPointer)
-        
+
         foreach ($network in $availableNetworks.wlanAvailableNetwork)
         {
             [WiFi.ProfileManagement+WLAN_AVAILABLE_NETWORK]$network
         }
     }
-    end
+    catch
     {
-        [WiFi.ProfileManagement]::WlanFreeMemory($networkPointer) 
+        Write-Error $_
+    }
+    finally
+    {
+        Invoke-WlanFreeMemory -Pointer $networkPointer
         Remove-WiFiHandle -ClientHandle $clientHandle
     }
+    
 }

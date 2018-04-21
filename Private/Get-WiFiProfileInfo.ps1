@@ -2,19 +2,18 @@
     .SYNOPSIS
         Retrieves the information of a WiFi profile.
     .PARAMETER ProfileName
-        The name of the WiFi profile.
+        The name of the WiFi profile. Profile names are case-sensitive.
     .PARAMETER InterfaceGuid
         Specifies the Guid of the wireless network card. This is required by the native WiFi functions.
     .PARAMETER ClientHandle
         Specifies the handle used by the natvie WiFi functions.
     .PARAMETER WlanProfileFlags
         A pointer to the address location used to provide additional information about the request.
-
 #>
 function Get-WiFiProfileInfo
 {
     [OutputType([System.Management.Automation.PSCustomObject])]
-    [CmdletBinding()]    
+    [CmdletBinding()]
     param
     (
         [Parameter()]
@@ -35,21 +34,26 @@ function Get-WiFiProfileInfo
     
     begin
     {
-        [String]$pstrProfileXml = $null    
+        [String]$pstrProfileXml = $null
         $wlanAccess = 0
         $WlanProfileFlagsInput = $WlanProfileFlags
     }
     process
     {
-        $profileInfoResult = [WiFi.ProfileManagement]::WlanGetProfile($ClientHandle,$InterfaceGuid,$ProfileName,[IntPtr]::Zero,[ref]$pstrProfileXml,[ref]$WlanProfileFlags,[ref]$wlanAccess)
+        $result = [WiFi.ProfileManagement]::WlanGetProfile(
+            $ClientHandle,
+            $InterfaceGuid,
+            $ProfileName,
+            [IntPtr]::Zero,
+            [ref]$pstrProfileXml,
+            [ref]$WlanProfileFlags,
+            [ref]$wlanAccess
+        )
 
-        if ($profileInfoResult -ne 0)
+        if ($result -ne 0)
         {
-            throw $($script:localizedData.ErrorGettingProfile -f $profileInfoResult)
-        }
-        elseIf ($profileInfoResult -eq 1168)
-        {
-            throw $($script:localizedData.ProfileNotFound -f $ProfileName)
+            $errorMessage = Format-Win32Exception -ReturnCode $result
+            throw $($script:localizedData.ErrorGettingProfile -f $errorMessage)
         }
 
         $wlanProfile = [xml]$pstrProfileXml
@@ -69,12 +73,12 @@ function Get-WiFiProfileInfo
             Authentication = $wlanProfile.WLANProfile.MSM.security.authEncryption.authentication
             Encryption     = $wlanProfile.WLANProfile.MSM.security.authEncryption.encryption
             Password       = $password
-            Xml            = $pstrProfileXml            
+            Xml            = $pstrProfileXml
         }
     }
-    end 
+    end
     {
         $xmlPtr = [System.Runtime.InteropServices.Marshal]::StringToHGlobalAuto($pstrProfileXml)
-        [WiFi.ProfileManagement]::WlanFreeMemory($xmlPtr) 
+        Invoke-WlanFreeMemory -Pointer $xmlPtr
     }
 }

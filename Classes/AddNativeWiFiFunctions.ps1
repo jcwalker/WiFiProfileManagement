@@ -191,10 +191,10 @@ $WlanGetProfileListSig = @'
     }
 
     public enum DOT11_BSS_TYPE
-    {
-        dot11_BSS_type_infrastructure = 1,
-        dot11_BSS_type_independent = 2,
-        dot11_BSS_type_any = 3,
+    {
+        Infrastructure = 1,
+        Independent    = 2,
+        Any            = 3,
     }
 
     public enum DOT11_PHY_TYPE
@@ -268,6 +268,19 @@ $WlanGetProfileListSig = @'
         wlan_connection_mode_auto,
         wlan_connection_mode_invalid,
     };
+
+    [Flags]
+    public enum WlanConnectionFlag
+    {
+        Default                                    = 0,
+        HiddenNetwork                              = 1,
+        AdhocJoinOnly                              = 2,
+        IgnorePrivayBit                            = 4,
+        EapolPassThrough                           = 8,
+        PersistDiscoveryProfile                    = 10,
+        PersistDiscoveryProfileConnectionModeAuto  = 20,
+        PersistDiscoveryProfileOverwriteExisting   = 40
+    }
 
     [Flags]
     public enum WlanProfileFlags

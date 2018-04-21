@@ -1,7 +1,7 @@
 task . Clean, Build, Tests, Stats, DeployToGallery
 task Tests ImportCompipledModule, Pester
-task CreateManifest CopyPSD, UpdatPublicFunctionsToExport
-task Build Compile, CreateManifest, CopyFormatXml, CopyLocalization
+task CreateManifest CopyPSD
+task Build Compile, CreateManifest, CopyFormatXml, UpdatePublicFunctionsToExport, CopyLocalization
 task Stats RemoveStats, WriteStats
 
 $script:ModuleName = Split-Path -Path $PSScriptRoot -Leaf
@@ -94,14 +94,10 @@ task CopyLocalization {
     Copy-Item @copy
 }
 
-task UpdatPublicFunctionsToExport -if (Test-Path -Path $script:PublicFolder) {
-    $publicFunctions = (Get-ChildItem -Path $script:PublicFolder |
-            Select-Object -ExpandProperty BaseName) -join "', '"
-
-    $publicFunctions = "FunctionsToExport = @('{0}')" -f $publicFunctions
-
-    (Get-Content -Path $script:PsdPath) -replace "FunctionsToExport = '\*'", $publicFunctions |
-        Set-Content -Path $script:PsdPath
+task UpdatePublicFunctionsToExport -if (Test-Path -Path $script:PublicFolder) {
+    $publicFunctions = (Get-ChildItem -Path $script:PublicFolder).BaseName
+    $pathToRelease = Join-Path -Path $script:OutPutFolder  -ChildPath $script:ModuleName
+    Set-ModuleFunctions -Name $pathToRelease -FunctionsToExport $publicFunctions # -FunctionsToExport $publicFunctions -Path $script:PsdPath
 }
 
 task ImportCompipledModule -if (Test-Path -Path $script:PsmPath) {
@@ -140,9 +136,9 @@ task DeployToGallery {
     Set-BuildEnvironment
     # Gate deployment
     if (
-        $ENV:BHBuildSystem -ne 'Unknown' -and
-        $ENV:BHBranchName -eq "master" -and
-        $ENV:BHCommitMessage -match '!deploy'
+        $env:BHBuildSystem -ne 'Unknown' -and
+        $env:BHBranchName -eq "master" -and
+        $env:BHCommitMessage -match '!deploy'
     )
     {
 
@@ -158,8 +154,8 @@ task DeployToGallery {
     else
     {
         "Skipping deployment: To deploy, ensure that...`n" +
-        "`t* You are in a known build system (Current: $ENV:BHBuildSystem)`n" +
-        "`t* You are committing to the master branch (Current: $ENV:BHBranchName) `n" +
-        "`t* Your commit message includes !deploy (Current: $ENV:BHCommitMessage)"
+        "`t* You are in a known build system (Current: $env:BHBuildSystem)`n" +
+        "`t* You are committing to the master branch (Current: $env:BHBranchName) `n" +
+        "`t* Your commit message includes !deploy (Current: $env:BHCommitMessage)"
     }
 }

@@ -61,7 +61,7 @@
 function New-WiFiProfile
 {
     [CmdletBinding()]
-    param 
+    param
     (
         [Parameter(Mandatory=$true,Position=0,ParameterSetName='UsingArguments')]
         [System.String]
@@ -80,7 +80,7 @@ function New-WiFiProfile
         [System.String]
         $Encryption = 'AES',
 
-        [Parameter(Mandatory=$true,ParameterSetName='UsingArguments')]
+        [Parameter(ParameterSetName='UsingArguments')]
         [System.Security.SecureString]
         $Password,
 
@@ -93,20 +93,13 @@ function New-WiFiProfile
         $XmlProfile
     )
 
-    begin
+    try
     {
-        if ($Password)
-        {
-            $secureStringToBstr = [System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($Password)
-            $plainPassword      = [System.Runtime.InteropServices.Marshal]::PtrToStringAuto($secureStringToBstr) 
-        }
-
         $clientHandle = New-WiFiHandle
         $interfaceGuid = Get-WiFiInterfaceGuid -WiFiAdapterName $WiFiAdapterName
         $flags = 0
-        $allUserProfileSecurity = [System.IntPtr]::zero
         $overwrite = $false
-        $reasonCode = [IntPtr]::Zero                  
+        $reasonCode = [IntPtr]::Zero
 
         if ($XmlProfile)
         {
@@ -118,30 +111,34 @@ function New-WiFiProfile
                 ProfileName    = $ProfileName
                 ConnectionMode = $ConnectionMode
                 Authentication = $Authentication
-                Password       = $plainPassword
+                Password       = $Password
             }
 
             $profileXML = New-WiFiProfileXml @newProfileParameters
         }
-    }
-    process
-    {
+
         $profilePointer = [System.Runtime.InteropServices.Marshal]::StringToHGlobalUni($profileXML)
 
-        [WiFi.ProfileManagement]::WlanSetProfile(
-                                        $clientHandle,
-                                        [ref]$interfaceGuid,
-                                        $flags,
-                                        $profilePointer,
-                                        [IntPtr]::Zero,
-                                        $overwrite,
-                                        [IntPtr]::Zero,
-                                        [ref]$reasonCode
-                                        )
+        [void][WiFi.ProfileManagement]::WlanSetProfile(
+            $clientHandle,
+            [ref]$interfaceGuid,
+            $flags,
+            $profilePointer,
+            [IntPtr]::Zero,
+            $overwrite,
+            [IntPtr]::Zero,
+            [ref]$reasonCode
+        )
 
-        Format-WiFiReasonCode -ReasonCode $reasonCode
+        $reasonCodeMessage = Format-WiFiReasonCode -ReasonCode $reasonCode
+
+        Write-Verbose -Message $reasonCodeMessage
     }
-    end
+    catch
+    {
+        Write-Error $_
+    }
+    finally
     {
         Remove-WiFiHandle -ClientHandle $clientHandle
     }

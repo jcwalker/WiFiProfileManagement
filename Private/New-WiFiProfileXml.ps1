@@ -16,35 +16,41 @@ function New-WiFiProfileXml
     [CmdletBinding()]
     param 
     (
-        [Parameter(Mandatory=$true,Position=0)]
+        [Parameter(Mandatory = $true, Position = 0)]
         [System.String]
         $ProfileName,
-        
+
         [Parameter()]
-        [ValidateSet('manual','auto')]
+        [ValidateSet('manual', 'auto')]
         [System.String]
         $ConnectionMode = 'auto',
-        
+
         [Parameter()]
         [System.String]
         $Authentication = 'WPA2PSK',
-        
+
         [Parameter()]
         [System.String]
         $Encryption = 'AES',
-        
-        [Parameter(Mandatory=$true)]
-        [System.String]
-        $Password   
+
+        [Parameter()]
+        [System.Security.SecureString]
+        $Password
     )
     
-    process
+    try
     {
+        if ($Password)
+        {
+            $secureStringToBstr = [System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($Password)
+            $plainPassword = [System.Runtime.InteropServices.Marshal]::PtrToStringAuto($secureStringToBstr) 
+        }
+
         $stringWriter = [System.IO.StringWriter]::new()
-        $xmlWriter    = [System.Xml.XmlTextWriter]::new($stringWriter)
+        $xmlWriter = [System.Xml.XmlTextWriter]::new($stringWriter)
 
         $xmlWriter.WriteStartDocument()
-        $xmlWriter.WriteStartElement("WLANProfile","http://www.microsoft.com/networking/WLAN/profile/v1");
+        $xmlWriter.WriteStartElement("WLANProfile", "http://www.microsoft.com/networking/WLAN/profile/v1");
         $xmlWriter.WriteElementString("name", "$profileName");
         $xmlWriter.WriteStartElement("SSIDConfig");
         $xmlWriter.WriteStartElement("SSID");
@@ -60,7 +66,7 @@ function New-WiFiProfileXml
         $xmlWriter.WriteElementString("encryption", "$Encryption");
         $xmlWriter.WriteEndElement();
         $xmlWriter.WriteStartElement("sharedKey");
-        $xmlWriter.WriteElementString("keyType", "passPhrase");
+        $xmlWriter.WriteElementString("keyType", "passPhrase")
         $xmlWriter.WriteElementString("protected", "false");
         $xmlWriter.WriteElementString("keyMaterial", $plainPassword);
         $xmlWriter.WriteEndElement();
@@ -71,5 +77,9 @@ function New-WiFiProfileXml
 
         $xmlWriter.Close()
         $stringWriter.ToString()
+    }
+    catch
+    {
+        throw $_
     }
 }
