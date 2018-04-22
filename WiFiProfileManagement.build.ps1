@@ -97,7 +97,7 @@ task CopyLocalization {
 task UpdatePublicFunctionsToExport -if (Test-Path -Path $script:PublicFolder) {
     $publicFunctions = (Get-ChildItem -Path $script:PublicFolder).BaseName
     $pathToRelease = Join-Path -Path $script:OutPutFolder  -ChildPath $script:ModuleName
-    Set-ModuleFunctions -Name $pathToRelease -FunctionsToExport $publicFunctions # -FunctionsToExport $publicFunctions -Path $script:PsdPath
+    Set-ModuleFunctions -Name $pathToRelease -FunctionsToExport $publicFunctions
 }
 
 task ImportCompipledModule -if (Test-Path -Path $script:PsmPath) {
