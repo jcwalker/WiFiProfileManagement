@@ -7,16 +7,16 @@
         Specifies the name of the wireless network adapter on the machine. This is used to obtain the Guid of the interface.
         The default value is 'Wi-Fi'
     .EXAMPLE
-    C:\>Remove-WiFiProfile -ProfileName FreeWiFi
+    PS C:\>Remove-WiFiProfile -ProfileName FreeWiFi
 
     This examples deletes the FreeWiFi profile.
 #>
 function Remove-WiFiProfile
 {
-    [CmdletBinding(SupportsShouldProcess=$true,ConfirmImpact='High')]
+    [CmdletBinding(SupportsShouldProcess = $true, ConfirmImpact = 'High')]
     Param 
     (
-        [Parameter(Position = 0,Mandatory=$true,ValueFromPipelineByPropertyName=$true)]
+        [Parameter(Position = 0, Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
         [System.String[]]
         $ProfileName,
 
@@ -32,21 +32,28 @@ function Remove-WiFiProfile
     }
     process
     {
-        foreach ($wiFiProfile in $ProfileName)
+        try
         {
-            if ($PSCmdlet.ShouldProcess("$($script:localizedData.ShouldProcessDelete -f $WiFiProfile)"))
+            foreach ($wiFiProfile in $ProfileName)
             {
-                $deleteProfileResult = [WiFi.ProfileManagement]::WlanDeleteProfile($clientHandle,$interfaceGUID,$wiFiProfile,[IntPtr]::zero)            
-
-                if ($deleteProfileResult -ne 0)
+                if ($PSCmdlet.ShouldProcess("$($script:localizedData.ShouldProcessDelete -f $WiFiProfile)"))
                 {
-                    throw $($script:localizedData.ErrorDeletingProfile -f $deleteProfileResult)
+                    $deleteProfileResult = [WiFi.ProfileManagement]::WlanDeleteProfile($clientHandle, $interfaceGUID, $wiFiProfile, [IntPtr]::zero)
+
+                    if ($deleteProfileResult -ne 0)
+                    {
+                        Write-Error -Message ($script:localizedData.ErrorDeletingProfile -f $deleteProfileResult)
+                    }
                 }
             }
         }
-    }
-    end
-    {
-        Remove-WiFiHandle -ClientHandle $clientHandle
+        catch
+        {
+            Write-Error $_
+        }
+        finally
+        {
+            Remove-WiFiHandle -ClientHandle $clientHandle
+        }
     }
 }

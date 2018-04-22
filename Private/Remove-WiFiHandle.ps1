@@ -6,21 +6,23 @@
 #>
 function Remove-WiFiHandle
 {
+    [OutputType([void])]
     [CmdletBinding()]
     param
     (
         [Parameter()]
-        [IntPtr]$ClientHandle
+        [System.IntPtr]$ClientHandle
     )
 
-    $closeHandle = [WiFi.ProfileManagement]::WlanCloseHandle($ClientHandle,[IntPtr]::zero)
+    $result = [WiFi.ProfileManagement]::WlanCloseHandle($ClientHandle, [IntPtr]::zero)
 
-    if ($closeHandle -eq 0)
+    if ($result -eq 0)
     {
-        Write-Verbose -Message $script:localizedData.HandleClosed
+        Write-Verbose -Message ($script:localizedData.HandleClosed)
     }
     else
     {
-        throw $($script:localizedData.ErrorClosingHandle)
+        $errorMessage = Format-Win32Exception -ReturnCode $result
+        throw $($script:localizedData.ErrorClosingHandle -f $errorMessage)
     }
 }
