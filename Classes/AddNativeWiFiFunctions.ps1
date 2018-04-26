@@ -1,5 +1,5 @@
 ﻿
-$WlanGetProfileListSig = @'   
+$WlanGetProfileListSig = @'
 
     [DllImport("wlanapi.dll")]
     public static extern uint WlanOpenHandle(
