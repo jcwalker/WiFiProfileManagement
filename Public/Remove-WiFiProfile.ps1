@@ -28,12 +28,13 @@ function Remove-WiFiProfile
     begin
     {
         $interfaceGUID = Get-WiFiInterfaceGuid -ErrorAction Stop
-        $clientHandle = New-WiFiHandle
     }
     process
     {
         try
         {
+            $clientHandle = New-WiFiHandle
+
             foreach ($wiFiProfile in $ProfileName)
             {
                 if ($PSCmdlet.ShouldProcess("$($script:localizedData.ShouldProcessDelete -f $WiFiProfile)"))
@@ -53,7 +54,10 @@ function Remove-WiFiProfile
         }
         finally
         {
-            Remove-WiFiHandle -ClientHandle $clientHandle
+            if ($clientHandle)
+            {
+                Remove-WiFiHandle -ClientHandle $clientHandle
+            }
         }
     }
 }

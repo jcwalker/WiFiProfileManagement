@@ -55,12 +55,13 @@ function Connect-WiFiProfile
     begin
     {
         $interfaceGuid = Get-WiFiInterfaceGuid -WiFiAdapterName $WiFiAdapterName -ErrorAction Stop
-        $clientHandle = New-WiFiHandle
     }
     process
     {
         try
         {
+            $clientHandle = New-WiFiHandle
+
             $connectionParameterList = New-WiFiConnectionParameter -ProfileName $ProfileName -ConnectionMode $ConnectionMode -Dot11BssType $Dot11BssType
 
             Invoke-WlanConnect -ClientHandle $clientHandle -InterfaceGuid $interfaceGuid -ConnectionParameterList $connectionParameterList
@@ -71,7 +72,10 @@ function Connect-WiFiProfile
         }
         finally
         {
-            Remove-WiFiHandle -ClientHandle $clientHandle
+            if ($clientHandle)
+            {
+                Remove-WiFiHandle -ClientHandle $clientHandle
+            }
         }
     }
 }

@@ -60,7 +60,11 @@ function Get-WiFiAvailableNetwork
     finally
     {
         Invoke-WlanFreeMemory -Pointer $networkPointer
-        Remove-WiFiHandle -ClientHandle $clientHandle
+
+        if ($clientHandle)
+        {
+            Remove-WiFiHandle -ClientHandle $clientHandle
+        }
     }
     
 }

@@ -89,6 +89,9 @@ function Get-WiFiProfile
     }
     finally
     {
-        Remove-WiFiHandle -ClientHandle $clientHandle
+        if ($clientHandle)
+        {
+            Remove-WiFiHandle -ClientHandle $clientHandle
+        }
     }
 }
