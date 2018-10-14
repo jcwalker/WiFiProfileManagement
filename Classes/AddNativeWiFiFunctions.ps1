@@ -297,6 +297,10 @@ $WlanGetProfileListSig = @'
         public string Authentication;
         public string Encryption;
         public string Password;
+        public bool ConnectHiddenSSID;
+        public string EAPType;
+        public string ServerNames;
+        public string TrustedRootCA;
         public string Xml;
     }
 '@

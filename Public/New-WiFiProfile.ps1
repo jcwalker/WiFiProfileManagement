@@ -13,6 +13,14 @@
         Sets the data encryption to use to connect to the wireless LAN.
     .PARAMETER Password
         The network key or passphrase of the wireless profile in the form of a secure string.
+    .PARAMETER ConnectHiddenSSID
+        Specifies whether the profile can connect to networks which does not broadcast SSID. The default is false.
+    .PARAMETER EAPType
+        (Only 802.1X) Specifies the type of 802.1X EAP. You can select "PEAP"(aka MSCHAPv2) or "TLS".
+    .PARAMETER ServerNames
+        (Only 802.1X) Specifies the server that will be connect to validate certification.
+    .PARAMETER TrustedRootCA
+        (Only 802.1X) Specifies the certificate thumbprint of the Trusted Root CA.
     .PARAMETER XmlProfile
         The XML representation of the profile.
     .EXAMPLE
@@ -22,6 +30,10 @@
         PS C:\>New-WiFiProfile -ProfileName MyNetwork -ConnectionMode auto -Authentication WPA2PSK -Encryption AES -Password $password 
 
         This examples shows how to create a wireless profile by using the individual parameters.
+    .EXAMPLE
+        PS C:\>New-WiFiProfile -ProfileName OneXNetwork -Authentication WPA2 -Encryption AES -EAPType PEAP -TrustedRootCA '041101cca5b336a9c6e50d173489f5929e1b4b00'
+
+        This examples shows how to create a 802.1X wireless profile by using the individual parameters.
     .EXAMPLE
         PS C:\>$templateProfileXML = @"
         <?xml version="1.0"?>
@@ -64,21 +76,25 @@ function New-WiFiProfile
     param
     (
         [Parameter(Mandatory = $true, Position = 0, ParameterSetName = 'UsingArguments')]
+        [Parameter(Mandatory = $true, Position = 0, ParameterSetName = 'UsingArgumentsWithEAP')]
         [Alias('SSID', 'Name')]
         [System.String]
         $ProfileName,
 
         [Parameter(ParameterSetName = 'UsingArguments')]
+        [Parameter(ParameterSetName = 'UsingArgumentsWithEAP')]
         [ValidateSet('manual', 'auto')]
         [System.String]
         $ConnectionMode = 'auto',
 
         [Parameter(ParameterSetName = 'UsingArguments')]
+        [Parameter(ParameterSetName = 'UsingArgumentsWithEAP')]
         [ValidateSet('open', 'shared', 'WPA', 'WPAPSK', 'WPA2', 'WPA2PSK')]
         [System.String]
         $Authentication = 'WPA2PSK',
 
         [Parameter(ParameterSetName = 'UsingArguments')]
+        [Parameter(ParameterSetName = 'UsingArgumentsWithEAP')]
         [ValidateSet('none', 'WEP', 'TKIP', 'AES')]
         [System.String]
         $Encryption = 'AES',
@@ -86,6 +102,25 @@ function New-WiFiProfile
         [Parameter(ParameterSetName = 'UsingArguments')]
         [System.Security.SecureString]
         $Password,
+
+        [Parameter(ParameterSetName = 'UsingArguments')]
+        [Parameter(ParameterSetName = 'UsingArgumentsWithEAP')]
+        [System.Boolean]
+        $ConnectHiddenSSID = $false,
+
+        [Parameter(ParameterSetName = 'UsingArgumentsWithEAP')]
+        [ValidateSet('PEAP', 'TLS')]
+        [System.String]
+        $EAPType,
+
+        [Parameter(ParameterSetName = 'UsingArgumentsWithEAP')]
+        [AllowEmptyString()]
+        [System.String]
+        $ServerNames = '',
+
+        [Parameter(ParameterSetName = 'UsingArgumentsWithEAP')]
+        [System.String]
+        $TrustedRootCA,
 
         [Parameter()]
         [System.String]
@@ -114,10 +149,14 @@ function New-WiFiProfile
         else
         {
             $newProfileParameters = @{
-                ProfileName    = $ProfileName
-                ConnectionMode = $ConnectionMode
-                Authentication = $Authentication
-                Password       = $Password
+                ProfileName       = $ProfileName
+                ConnectionMode    = $ConnectionMode
+                Authentication    = $Authentication
+                Password          = $Password
+                ConnectHiddenSSID = $ConnectHiddenSSID
+                EAPType           = $EAPType
+                ServerNames       = $ServerNames
+                TrustedRootCA     = $TrustedRootCA
             }
 
             $profileXML = New-WiFiProfileXml @newProfileParameters
