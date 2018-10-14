@@ -39,12 +39,24 @@ function Remove-WiFiProfile
             {
                 if ($PSCmdlet.ShouldProcess("$($script:localizedData.ShouldProcessDelete -f $WiFiProfile)"))
                 {
-                    $deleteProfileResult = [WiFi.ProfileManagement]::WlanDeleteProfile($clientHandle, $interfaceGUID, $wiFiProfile, [IntPtr]::zero)
+                    $deleteProfileResult = [WiFi.ProfileManagement]::WlanDeleteProfile(
+                        $clientHandle,
+                        $interfaceGUID,
+                        $wiFiProfile,
+                        [IntPtr]::Zero
+                    )
+
+                    $deleteProfileResultMessage = Format-Win32Exception -ReturnCode $deleteProfileResult
 
                     if ($deleteProfileResult -ne 0)
                     {
-                        Write-Error -Message ($script:localizedData.ErrorDeletingProfile -f $deleteProfileResult)
+                        Write-Error -Message ($script:localizedData.ErrorDeletingProfile -f $deleteProfileResultMessage)
                     }
+                    else
+                    {
+                        Write-Verbose -Message $deleteProfileResultMessage
+                    }
+
                 }
             }
         }

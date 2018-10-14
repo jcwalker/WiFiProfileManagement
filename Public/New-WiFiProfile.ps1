@@ -164,7 +164,7 @@ function New-WiFiProfile
 
         $profilePointer = [System.Runtime.InteropServices.Marshal]::StringToHGlobalUni($profileXML)
 
-        [void][WiFi.ProfileManagement]::WlanSetProfile(
+        $returnCode = [WiFi.ProfileManagement]::WlanSetProfile(
             $clientHandle,
             [ref]$interfaceGuid,
             $flags,
@@ -175,7 +175,17 @@ function New-WiFiProfile
             [ref]$reasonCode
         )
 
+        $returnCodeMessage = Format-Win32Exception -ReturnCode $returnCode
         $reasonCodeMessage = Format-WiFiReasonCode -ReasonCode $reasonCode
+
+        if ($returnCode -eq 0)
+        {
+            Write-Verbose -Message $returnCodeMessage
+        }
+        else
+        {
+            throw $returnCodeMessage
+        }
 
         Write-Verbose -Message $reasonCodeMessage
     }
