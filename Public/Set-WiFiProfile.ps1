@@ -64,6 +64,7 @@ function Set-WiFiProfile
     param
     (
         [Parameter(Mandatory = $true, Position = 0, ParameterSetName = 'UsingArguments')]
+        [Alias('SSID', 'Name')]
         [System.String]
         $ProfileName,
 
