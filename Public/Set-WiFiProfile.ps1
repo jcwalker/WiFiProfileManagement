@@ -74,10 +74,12 @@ function Set-WiFiProfile
         $ConnectionMode = 'auto',
 
         [Parameter(ParameterSetName = 'UsingArguments')]
+        [ValidateSet('open', 'shared', 'WPA', 'WPAPSK', 'WPA2', 'WPA2PSK')]
         [System.String]
         $Authentication = 'WPA2PSK',
 
         [Parameter(ParameterSetName = 'UsingArguments')]
+        [ValidateSet('none', 'WEP', 'TKIP', 'AES')]
         [System.String]
         $Encryption = 'AES',
 
