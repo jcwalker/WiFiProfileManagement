@@ -93,57 +93,5 @@ function Set-WiFiProfile
         $XmlProfile
     )
 
-    try
-    {
-        if ($Password)
-        {
-            $secureStringToBstr = [System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($Password)
-            $plainPassword = [System.Runtime.InteropServices.Marshal]::PtrToStringAuto($secureStringToBstr) 
-        }
-        
-        $clientHandle = New-WiFiHandle
-        $interfaceGuid = Get-WiFiInterfaceGuid -WiFiAdapterName $WiFiAdapterName
-        $flags = 0
-        $overwrite = $true
-        $reasonCode = [IntPtr]::Zero
-
-        if ($XmlProfile)
-        {
-            $profileXML = $XmlProfile
-        }
-        else
-        {
-            $newProfileParameters = @{
-                ProfileName    = $ProfileName
-                ConnectionMode = $ConnectionMode
-                Authentication = $Authentication
-                Password       = $plainPassword
-            }
-
-            $profileXML = New-WiFiProfileXml @newProfileParameters
-        }
-    
-        $profilePointer = [System.Runtime.InteropServices.Marshal]::StringToHGlobalUni($profileXML)
-
-        [void][WiFi.ProfileManagement]::WlanSetProfile(
-            $clientHandle,
-            [ref]$interfaceGuid,
-            $flags,
-            $profilePointer,
-            [IntPtr]::Zero,
-            $overwrite,
-            [IntPtr]::Zero,
-            [ref]$reasonCode
-        )
-
-        Format-WiFiReasonCode -ReasonCode $reasonCode
-    }
-    catch
-    {
-        Write-Error $_
-    }
-    finally
-    {
-        Remove-WiFiHandle -ClientHandle $clientHandle
-    }
+    New-WiFiProfile @PSBoundParameters -Overwrite $true
 }

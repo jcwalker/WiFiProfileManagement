@@ -90,7 +90,11 @@ function New-WiFiProfile
 
         [Parameter(Mandatory=$true,ParameterSetName='UsingXml')]
         [System.String]
-        $XmlProfile
+        $XmlProfile,
+
+        [Parameter(DontShow = $true)]
+        [System.Boolean]
+        $Overwrite = $false
     )
 
     try
@@ -98,7 +102,6 @@ function New-WiFiProfile
         $interfaceGuid = Get-WiFiInterfaceGuid -WiFiAdapterName $WiFiAdapterName -ErrorAction Stop
         $clientHandle = New-WiFiHandle
         $flags = 0
-        $overwrite = $false
         $reasonCode = [IntPtr]::Zero
 
         if ($XmlProfile)
@@ -125,7 +128,7 @@ function New-WiFiProfile
             $flags,
             $profilePointer,
             [IntPtr]::Zero,
-            $overwrite,
+            $Overwrite,
             [IntPtr]::Zero,
             [ref]$reasonCode
         )
