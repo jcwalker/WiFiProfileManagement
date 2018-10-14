@@ -1,6 +1,6 @@
 <#
     .SYNOPSIS
-        Creates a WLAN_CONNECTION_PARAMETERS structure that contains the requried parameters when using the WlanConnect function
+        Creates a WLAN_CONNECTION_PARAMETERS structure that contains the required parameters when using the WlanConnect function
     .PARAMETER ProfileName
         The name of the profile to connect to. Profile names are case-sensitive.
     .PARAMETER ConnectionMode

@@ -11,7 +11,7 @@
         Specifies the name of the wireless network adapter on the machine. This is used to obtain the Guid of the interface.
         The default value is 'Wi-Fi'
     .EXAMPLE
-        PS C:\>Connect-WifIProfile -ProfileName FreeWiFi
+        PS C:\>Connect-WiFiProfile -ProfileName FreeWiFi
 
         This example connects to the FreeWiFi profile which is already saved on the local machine.
     .EXAMPLE
@@ -21,13 +21,13 @@
         PS C:\> New-WiFiProfile -ProfileName MyNetwork -ConnectionMode auto -Authentication WPA2PSK -Encryption AES -Password $password
 
         The operation was successful.
-        PS C:\> Connect-WifIProfile -ProfileName MyNetwork
+        PS C:\> Connect-WiFiProfile -ProfileName MyNetwork
 
-        This example demonstrates how to create a Wifi profile and then connect to it.
+        This example demonstrates how to create a WiFi profile and then connect to it.
     .NOTES
         https://msdn.microsoft.com/en-us/library/windows/desktop/ms706613(v=vs.85).aspx
 #>
-function Connect-WifIProfile
+function Connect-WiFiProfile
 {
     [OutputType([void])]
     [CmdletBinding()]

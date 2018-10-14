@@ -2,9 +2,9 @@
     .SYNOPSIS
         Sets the content of a specified wireless profile.
     .DESCRIPTION
-        Calls the WlanSetProfile native function with overide parameter set to true.
+        Calls the WlanSetProfile native function with override parameter set to true.
     .PARAMETER ProfileName
-        The name of the wireless profile to be updated.  Profile names are case sensitive.
+        The name of the wireless profile to be updated. Profile names are case sensitive.
     .PARAMETER ConnectionMode
         Indicates whether connection to the wireless LAN should be automatic ("auto") or initiated ("manual") by user.
     .PARAMETER Authentication
@@ -12,7 +12,7 @@
     .PARAMETER Encryption
         Sets the data encryption to use to connect to the wireless LAN.
     .PARAMETER Password
-        The network key or passpharse of the wireless profile in the form of a secure string.
+        The network key or passphrase of the wireless profile in the form of a secure string.
     .PARAMETER XmlProfile
         The XML representation of the profile. 
     .EXAMPLE
