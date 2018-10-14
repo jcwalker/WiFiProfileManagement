@@ -26,7 +26,7 @@ function New-WiFiConnectionParameter
         $ConnectionMode = 'Profile',
 
         [Parameter()]
-        [ValidateSet('Any','Independent','Infrastructure')]
+        [ValidateSet('Any', 'Independent', 'Infrastructure')]
         [WiFi.ProfileManagement+DOT11_BSS_TYPE]
         $Dot11BssType = 'Any',
 

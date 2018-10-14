@@ -14,7 +14,7 @@
     .PARAMETER Password
         The network key or passphrase of the wireless profile in the form of a secure string.
     .PARAMETER XmlProfile
-        The XML representation of the profile. 
+        The XML representation of the profile.
     .EXAMPLE
         PS C:\>$password = Read-Host -AsSecureString
         **********
@@ -61,26 +61,26 @@
 function Set-WiFiProfile
 {
     [CmdletBinding()]
-    param 
+    param
     (
-        [Parameter(Mandatory=$true,Position=0,ParameterSetName='UsingArguments')]
+        [Parameter(Mandatory = $true, Position = 0, ParameterSetName = 'UsingArguments')]
         [System.String]
         $ProfileName,
 
-        [Parameter(ParameterSetName='UsingArguments')]
-        [ValidateSet('manual','auto')]
+        [Parameter(ParameterSetName = 'UsingArguments')]
+        [ValidateSet('manual', 'auto')]
         [System.String]
         $ConnectionMode = 'auto',
 
-        [Parameter(ParameterSetName='UsingArguments')]
+        [Parameter(ParameterSetName = 'UsingArguments')]
         [System.String]
         $Authentication = 'WPA2PSK',
 
-        [parameter(ParameterSetName='UsingArguments')]
+        [Parameter(ParameterSetName = 'UsingArguments')]
         [System.String]
         $Encryption = 'AES',
 
-        [Parameter(ParameterSetName='UsingArguments')]
+        [Parameter(ParameterSetName = 'UsingArguments')]
         [System.Security.SecureString]
         $Password,
 
@@ -88,7 +88,7 @@ function Set-WiFiProfile
         [System.String]
         $WiFiAdapterName = 'Wi-Fi',
 
-        [Parameter(Mandatory=$true,ParameterSetName='UsingXml')]
+        [Parameter(Mandatory = $true, ParameterSetName = 'UsingXml')]
         [System.String]
         $XmlProfile
     )

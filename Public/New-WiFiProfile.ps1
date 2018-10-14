@@ -63,24 +63,24 @@ function New-WiFiProfile
     [CmdletBinding()]
     param
     (
-        [Parameter(Mandatory=$true,Position=0,ParameterSetName='UsingArguments')]
+        [Parameter(Mandatory = $true, Position = 0, ParameterSetName = 'UsingArguments')]
         [System.String]
         $ProfileName,
 
-        [Parameter(ParameterSetName='UsingArguments')]
-        [ValidateSet('manual','auto')]
+        [Parameter(ParameterSetName = 'UsingArguments')]
+        [ValidateSet('manual', 'auto')]
         [System.String]
         $ConnectionMode = 'auto',
 
-        [Parameter(ParameterSetName='UsingArguments')]
+        [Parameter(ParameterSetName = 'UsingArguments')]
         [System.String]
         $Authentication = 'WPA2PSK',
 
-        [Parameter(ParameterSetName='UsingArguments')]
+        [Parameter(ParameterSetName = 'UsingArguments')]
         [System.String]
         $Encryption = 'AES',
 
-        [Parameter(ParameterSetName='UsingArguments')]
+        [Parameter(ParameterSetName = 'UsingArguments')]
         [System.Security.SecureString]
         $Password,
 
@@ -88,7 +88,7 @@ function New-WiFiProfile
         [System.String]
         $WiFiAdapterName = 'Wi-Fi',
 
-        [Parameter(Mandatory=$true,ParameterSetName='UsingXml')]
+        [Parameter(Mandatory = $true, ParameterSetName = 'UsingXml')]
         [System.String]
         $XmlProfile,
 
