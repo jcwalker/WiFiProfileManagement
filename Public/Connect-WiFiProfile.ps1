@@ -54,8 +54,8 @@ function Connect-WiFiProfile
 
     begin
     {
+        $interfaceGuid = Get-WiFiInterfaceGuid -WiFiAdapterName $WiFiAdapterName -ErrorAction Stop
         $clientHandle = New-WiFiHandle
-        $interfaceGuid = Get-WiFiInterfaceGuid -WiFiAdapterName $WiFiAdapterName
     }
     process
     {

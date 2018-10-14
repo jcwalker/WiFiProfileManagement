@@ -95,8 +95,8 @@ function New-WiFiProfile
 
     try
     {
+        $interfaceGuid = Get-WiFiInterfaceGuid -WiFiAdapterName $WiFiAdapterName -ErrorAction Stop
         $clientHandle = New-WiFiHandle
-        $interfaceGuid = Get-WiFiInterfaceGuid -WiFiAdapterName $WiFiAdapterName
         $flags = 0
         $overwrite = $false
         $reasonCode = [IntPtr]::Zero

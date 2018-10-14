@@ -19,12 +19,17 @@ function Get-WiFiInterfaceGuid
 
     if ($osVersion -ge ([Version] 6.2))
     {
-        [Guid]$interfaceGuid = (Get-NetAdapter -Name $WiFiAdapterName).interfaceguid
+        $interfaceGuid = (Get-NetAdapter -Name $WiFiAdapterName -ErrorAction SilentlyContinue).interfaceguid
     }
     else
     {
         $wifiAdapterInfo = Get-WmiObject -Query "select Name, NetConnectionID from Win32_NetworkAdapter where NetConnectionID = '$WiFiAdapterName'"
-        [Guid]$interfaceGuid = (Get-WmiObject -Query "select SettingID from Win32_NetworkAdapterConfiguration where Description = '$($wifiAdapterInfo.Name)'").SettingID
+        $interfaceGuid = (Get-WmiObject -Query "select SettingID from Win32_NetworkAdapterConfiguration where Description = '$($wifiAdapterInfo.Name)'").SettingID
+    }
+
+    if (-not ($interfaceGuid -as [System.Guid]))
+    {
+        Write-Error $($script:localizedData.ErrorWiFiInterfaceNotFound)
     }
 
     return $interfaceGuid

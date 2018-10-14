@@ -27,7 +27,7 @@ function Remove-WiFiProfile
 
     begin
     {
-        $interfaceGUID = Get-WiFiInterfaceGuid
+        $interfaceGUID = Get-WiFiInterfaceGuid -ErrorAction Stop
         $clientHandle = New-WiFiHandle
     }
     process
