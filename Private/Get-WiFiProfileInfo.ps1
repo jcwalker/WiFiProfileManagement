@@ -135,7 +135,7 @@ function Get-WiFiProfileInfo
                 'TLS'
                 {
                     $node = $wlanProfile.WLANProfile.MSM.security.OneX.EAPConfig.EapHostConfig.Config.SelectNodes("//*[local-name()='TrustedRootCA']")
-                    $trustedRootCa = $node[0].InnerText -replace ' ', [string]::Empty
+                    $trustedRootCa = ([string]($node[0].InnerText -replace ' ', [string]::Empty)).ToLower()
                 }
             }
         }

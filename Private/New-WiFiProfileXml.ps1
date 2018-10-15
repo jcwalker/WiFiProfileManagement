@@ -231,11 +231,7 @@ function New-WiFiProfileXml
 
             if ($TrustedRootCA)
             {
-                [string]$formattedCaHash = [string[]](& {for ($i = 0; $i -lt $TrustedRootCA.Length; $i += 2)
-                        {
-                            $TrustedRootCA[$i] + $TrustedRootCA[$i + 1]
-                        }}) -join ' '
-
+                [string]$formattedCaHash = $TrustedRootCA -replace '..', '$& '
                 $profileXml.WLANProfile.MSM.security.OneX.EAPConfig.EapHostConfig.Config.Eap.EapType.ServerValidation.TrustedRootCA = $formattedCaHash
             }
         }
@@ -251,11 +247,7 @@ function New-WiFiProfileXml
 
             if ($TrustedRootCA)
             {
-                [string]$formattedCaHash = [string[]](& {for ($i = 0; $i -lt $TrustedRootCA.Length; $i += 2)
-                        {
-                            $TrustedRootCA[$i] + $TrustedRootCA[$i + 1]
-                        }}) -join ' '
-
+                [string]$formattedCaHash = $TrustedRootCA -replace '..', '$& '
                 $node = $profileXml.WLANProfile.MSM.security.OneX.EAPConfig.EapHostConfig.Config.SelectNodes("//*[local-name()='TrustedRootCA']")
                 $node[0].InnerText = $formattedCaHash
             }
