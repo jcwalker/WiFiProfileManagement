@@ -256,12 +256,14 @@ function Set-TargetResource
     if ($Ensure -eq 'Absent')
     {
         Remove-WiFiProfile -ProfileName $ProfileName
+        Write-Verbose -Message $($LocalizedData.ProfileRemoved -f $ProfileName)
     }
     else
     {
         if ($XmlProfile)
         {
             Set-WiFiProfile -ProfileName $ProfileName -XmlProfile $XmlProfile
+            Write-Verbose -Message $($LocalizedData.ProfileSaved -f $ProfileName)
         }
         else
         {
@@ -289,6 +291,7 @@ function Set-TargetResource
             }
 
             Set-WiFiProfile @paramHash
+            Write-Verbose -Message $($LocalizedData.ProfileSaved -f $ProfileName)
         }
     }
 }
