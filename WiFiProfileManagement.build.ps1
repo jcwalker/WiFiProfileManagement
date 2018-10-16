@@ -1,7 +1,7 @@
 task . Clean, Build, Tests, Stats, DeployToGallery
 task Tests ImportCompipledModule, Pester
 task CreateManifest CopyPSD
-task Build Compile, CreateManifest, CopyFormatXml, UpdatePublicFunctionsToExport, CopyLocalization
+task Build Compile, CreateManifest, CopyFormatXml, UpdatePublicFunctionsToExport, CopyLocalization, CopyDscResources
 task Stats RemoveStats, WriteStats
 
 $script:ModuleName = Split-Path -Path $PSScriptRoot -Leaf
@@ -12,6 +12,7 @@ $script:PsmPath = Join-Path -Path $PSScriptRoot -ChildPath "Release\$($script:Mo
 $script:PsdPath = Join-Path -Path $PSScriptRoot -ChildPath "Release\$($script:ModuleName)\$($script:ModuleName).psd1"
 $script:ps1XmlPath  = Join-Path -Path $PSScriptRoot -ChildPath "Release\$($script:ModuleName)\$($script:ModuleName).Format.ps1xml"
 $script:LocalizationPath = Join-Path -Path $PSScriptRoot -ChildPath "Release\$($script:ModuleName)\en-US"
+$script:DscResourcesPath = Join-Path -Path $PSScriptRoot -ChildPath "Release\$($script:ModuleName)\DSCResources"
 $script:PublicFolder = 'Public'
 
 task Clean {
@@ -86,6 +87,18 @@ task CopyLocalization {
     $copy = @{
         Path        = "en-US"
         Destination = $script:LocalizationPath
+        Force       = $true
+        Verbose     = $true
+        Container   = $true
+        Recurse     = $true
+    }
+    Copy-Item @copy
+}
+
+task CopyDscResources {
+    $copy = @{
+        Path        = "DSCResources"
+        Destination = $script:DscResourcesPath
         Force       = $true
         Verbose     = $true
         Container   = $true
