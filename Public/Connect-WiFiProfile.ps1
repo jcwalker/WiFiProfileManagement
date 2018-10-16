@@ -2,7 +2,7 @@
     .SYNOPSIS
         Attempts to connect to a specific network.
     .PARAMETER ProfileName
-        The name of the profile to be deleted. Profile names are case-sensitive.
+        The name of the profile to be connected. Profile names are case-sensitive.
     .PARAMETER ConnectionMode
         Specifies the mode of the connection. Valid values are Profile,TemporaryProfile,DiscoveryProfile,DiscoveryUnsecure, and Auto.
     .PARAMETER Dot11BssType
