@@ -1,0 +1,17 @@
+
+[ClassVersion("1.0.0.0"), FriendlyName("WiFiProfile")]
+class WiFiProfile : OMI_BaseResource
+{
+    [Write, ValueMap{"Present","Absent"}, Values{"Present","Absent"}] String Ensure;
+    [Key] String ProfileName;
+    [Write, ValueMap{"auto", "manual"}, Values{"auto", "manual"}] String ConnectionMode;
+    [Write, ValueMap{"open", "shared", "WPA", "WPAPSK", "WPA2", "WPA2PSK"}, Values{"open", "shared", "WPA", "WPAPSK", "WPA2", "WPA2PSK"}] String Authentication;
+    [Write, ValueMap{"none", "WEP", "WPA", "TKIP", "AES"}, Values{"none", "WEP", "WPA", "TKIP", "AES"}] String Encryption;
+    [Write] Boolean ConnectHiddenSSID;
+    [Write, EmbeddedInstance("MSFT_Credential")] String Credential;
+    [Write, ValueMap{"PEAP", "TLS"}, Values{"PEAP", "TLS"}] String EAPType;
+    [Write] String ServerNames;
+    [Write] String TrustedRootCA;
+    [Write] String XmlProfile;
+    [Read] String PassPhrase;
+};
