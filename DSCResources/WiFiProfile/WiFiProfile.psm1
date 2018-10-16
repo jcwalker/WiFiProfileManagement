@@ -37,7 +37,7 @@ function Get-TargetResource
         ServerNames       = $null
         TrustedRootCA     = $null
         XmlProfile        = $null
-        PassPhrase        = $null
+        PassPhrase        = [string]::Empty
     }
 
     $currentProfile = Get-WiFiProfile -ProfileName $ProfileName -ClearKey -ErrorAction SilentlyContinue
@@ -156,6 +156,7 @@ function Test-TargetResource
     }
     else
     {
+        $PassPhrase = [string]::Empty
         if ($Credential)
         {
             # Get plain passphrase
@@ -163,24 +164,28 @@ function Test-TargetResource
         }
 
         # Test whether all properties match
-        ('ConnectionMode', 'Authentication', 'Encryption', 'PassPhrase', 'ConnectHiddenSSID', 'EAPType').ForEach( {
-                if (-not ($currentState[$_] -ceq $($_)))
-                {
-                    Write-Verbose -Message $($LocalizedData.ProfilePropertyIsNotMatch -f $_)
-                    return $false
-                }
-            })
+        $testProperties = ('ConnectionMode', 'Authentication', 'Encryption', 'PassPhrase', 'ConnectHiddenSSID', 'EAPType')
+        foreach ($property in $testProperties)
+        {
+            if (-not ($currentState[$property] -ceq (Get-Variable -Name $property -ValueOnly)))
+            {
+                Write-Verbose -Message $($LocalizedData.ProfilePropertyIsNotMatch -f $property)
+                return $false
+            }
+        }
         
         # Test only when 802.1X is specified
         if ($EAPType)
         {
-            ('ServerNames', 'TrustedRootCA').ForEach( {
-                    if (-not ($currentState[$_] -ceq $($_)))
-                    {
-                        Write-Verbose -Message $($LocalizedData.ProfilePropertyIsNotMatch -f $_)
-                        return $false
-                    }
-                })
+            $testProperties = ('ServerNames', 'TrustedRootCA')
+            foreach ($property in $testProperties)
+            {
+                if (-not ($currentState[$property] -ceq (Get-Variable -Name $property -ValueOnly)))
+                {
+                    Write-Verbose -Message $($LocalizedData.ProfilePropertyIsNotMatch -f $property)
+                    return $false
+                }
+            }
         }
     }
 
