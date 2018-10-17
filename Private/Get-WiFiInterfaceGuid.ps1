@@ -32,5 +32,5 @@ function Get-WiFiInterfaceGuid
         Write-Error $($script:localizedData.ErrorWiFiInterfaceNotFound)
     }
 
-    return $interfaceGuid
+    return [System.Guid]$interfaceGuid
 }
