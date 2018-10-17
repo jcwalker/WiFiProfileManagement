@@ -59,22 +59,6 @@ Drop the root folder in your PSModulePath, remove the branch name (ex. -dev )fro
 * **Dot11BssType**:  A value that indicates the BSS type of the network. If a profile is provided, this BSS type must be the same as the one in the profile.
 * **WiFiAdapterName**: Specifies the name of the wireless network adapter on the machine. This is used to obtain the Guid of the interface. The default value is 'Wi-Fi'
 
-## DSC Resources
-* **WiFiProfile** PowerShell DSC resource for manage WiFi profile.
-
-### WiFiProfile
-* **Ensure**: Ensures that the profile is Present or Absent.
-* **ProfileName**: The name of the profile. This is a Key property.
-* **ConnectionMode**: Indicates whether connection to the wireless LAN should be automatic ("auto") or initiated ("manual") by user. The default is "auto".
-* **Authentication**: Specifies the authentication method to be used to connect to the wireless LAN. ('open', 'shared', 'WPA', 'WPAPSK', 'WPA2', 'WPA2PSK')
-* **Encryption**: Sets the data encryption to use to connect to the wireless LAN. ('none', 'WEP', 'TKIP', 'AES')
-* **Credential**: The network key or passpharse of the wireless profile in the form of a PSCredential.
-* **ConnectHiddenSSID**: Specifies whether the profile can connect to networks which does not broadcast SSID. The default is false.
-* **EAPType**: (Only 802.1X) Specifies the type of 802.1X EAP. You can select "PEAP"(aka MSCHAPv2) or "TLS".
-* **ServerNames**: (Only 802.1X) Specifies the server that will be connect to validate certification.
-* **TrustedRootCA**: (Only 802.1X) Specifies the certificate thumbprint of the Trusted Root CA.
-* **XmlProfile**: The XML representation of the profile.
-
 ## Examples
 
 ### Get the WiFi profile information on wireless profile TestWifi
@@ -182,7 +166,6 @@ PS C:\>Remove-WiFiProfile -ProfileName FreeWifi
 ## Versions
 
 ### Unreleased
-*   Added DSC resource 'WiFiProfile'
 *   Added support for create IEEE 802.1X EAP network profile.
 *   Updated documents.
 *   Misc fixes.
