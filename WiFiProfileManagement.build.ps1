@@ -126,8 +126,6 @@ task WriteStats {
         {
             Get-Content -Path $files | 
                 Measure-Object -Word -Line -Character | 
-                Measure-Object -Word -Line -Character | 
-                Measure-Object -Word -Line -Character | 
                 Select-Object -Property @{N = "FolderName"; E = {$folder.Name}}, Words, Lines, Characters
         }
     }
