@@ -129,7 +129,7 @@ function Get-WiFiProfileInfo
             {
                 'PEAP'
                 { 
-                    $trustedRootCa = $wlanProfile.WLANProfile.MSM.security.OneX.EAPConfig.EapHostConfig.Config.Eap.EapType.ServerValidation.TrustedRootCA -replace ' ', [string]::Empty
+                    $trustedRootCa = ([string]($wlanProfile.WLANProfile.MSM.security.OneX.EAPConfig.EapHostConfig.Config.Eap.EapType.ServerValidation.TrustedRootCA -replace ' ', [string]::Empty)).ToLower()
                 }
 
                 'TLS'
