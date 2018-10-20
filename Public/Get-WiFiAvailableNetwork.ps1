@@ -66,5 +66,4 @@ function Get-WiFiAvailableNetwork
             Remove-WiFiHandle -ClientHandle $clientHandle
         }
     }
-    
 }

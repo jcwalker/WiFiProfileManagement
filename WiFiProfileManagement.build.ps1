@@ -112,11 +112,11 @@ task Pester {
 }
 
 task RemoveStats -if (Test-Path -Path "$($script:OutPutFolder)\stats.json") {
-    Remove-Item -Force -Verbose -Path "$($script:OutPutFolder)\stats.json" 
+    Remove-Item -Force -Verbose -Path "$($script:OutPutFolder)\stats.json"
 }
 
 task WriteStats {
-    $folders = Get-ChildItem -Directory | 
+    $folders = Get-ChildItem -Directory |
         Where-Object {$PSItem.Name -ne 'Output'}
     
     $stats = foreach ($folder in $folders)
@@ -124,8 +124,8 @@ task WriteStats {
         $files = Get-ChildItem "$($folder.FullName)\*" -File
         if ($files)
         {
-            Get-Content -Path $files | 
-                Measure-Object -Word -Line -Character | 
+            Get-Content -Path $files |
+                Measure-Object -Word -Line -Character |
                 Select-Object -Property @{N = "FolderName"; E = {$folder.Name}}, Words, Lines, Characters
         }
     }

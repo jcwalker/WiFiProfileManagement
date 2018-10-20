@@ -171,7 +171,7 @@ function New-WiFiProfileXml
 {
     [OutputType([System.String])]
     [CmdletBinding()]
-    param 
+    param
     (
         [Parameter(Mandatory = $true, Position = 0)]
         [System.String]
@@ -211,7 +211,7 @@ function New-WiFiProfileXml
         [System.String]
         $TrustedRootCA
     )
-    
+
     try
     {
         if ($Password)

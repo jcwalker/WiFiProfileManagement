@@ -103,7 +103,7 @@ PS C:\>Remove-WiFiProfile -ProfileName FreeWifi
         <WLANProfile xmlns="http://www.microsoft.com/networking/WLAN/profile/v1">
             <name>MyNetwork</name>
             <SSIDConfig>
-                <SSID>            
+                <SSID>
                     <name>MyNetwork</name>
                 </SSID>
             </SSIDConfig>
@@ -166,9 +166,9 @@ PS C:\>Remove-WiFiProfile -ProfileName FreeWifi
 ## Versions
 
 ### Unreleased
+
+### 0.5.0.0
 *   Added support for create IEEE 802.1X EAP network profile.
-*   Updated documents.
-*   Misc fixes.
 
 ### 0.4.0.1
 *   Added Connect-WiFiProfile.  Add new scaffolding.
