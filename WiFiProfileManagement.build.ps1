@@ -1,5 +1,5 @@
 task . Clean, Build, Tests, Stats, DeployToGallery
-task Tests ImportCompipledModule, Pester
+task Tests ImportCompiledModule, Pester
 task CreateManifest CopyPSD
 task Build Compile, CreateManifest, CopyFormatXml, UpdatePublicFunctionsToExport, CopyLocalization
 task Stats RemoveStats, WriteStats
@@ -7,10 +7,10 @@ task Stats RemoveStats, WriteStats
 $script:ModuleName = Split-Path -Path $PSScriptRoot -Leaf
 $script:ModuleRoot = $PSScriptRoot
 $script:OutPutFolder = "$PSScriptRoot\Release"
-$script:ImportFolders = @('PreReqs','Public','Private','Classes')
+$script:ImportFolders = @('PreReqs', 'Public', 'Private', 'Classes')
 $script:PsmPath = Join-Path -Path $PSScriptRoot -ChildPath "Release\$($script:ModuleName)\$($script:ModuleName).psm1"
 $script:PsdPath = Join-Path -Path $PSScriptRoot -ChildPath "Release\$($script:ModuleName)\$($script:ModuleName).psd1"
-$script:ps1XmlPath  = Join-Path -Path $PSScriptRoot -ChildPath "Release\$($script:ModuleName)\$($script:ModuleName).Format.ps1xml"
+$script:ps1XmlPath = Join-Path -Path $PSScriptRoot -ChildPath "Release\$($script:ModuleName)\$($script:ModuleName).Format.ps1xml"
 $script:LocalizationPath = Join-Path -Path $PSScriptRoot -ChildPath "Release\$($script:ModuleName)\en-US"
 $script:PublicFolder = 'Public'
 
@@ -100,7 +100,7 @@ task UpdatePublicFunctionsToExport -if (Test-Path -Path $script:PublicFolder) {
     Set-ModuleFunctions -Name $pathToRelease -FunctionsToExport $publicFunctions
 }
 
-task ImportCompipledModule -if (Test-Path -Path $script:PsmPath) {
+task ImportCompiledModule -if (Test-Path -Path $script:PsmPath) {
     Get-Module -Name $script:ModuleName | Remove-Module -Force
     Import-Module -Name $script:PsdPath -Force
 }
@@ -122,11 +122,11 @@ task WriteStats {
     $stats = foreach ($folder in $folders)
     {
         $files = Get-ChildItem "$($folder.FullName)\*" -File
-        if($files)
+        if ($files)
         {
             Get-Content -Path $files | 
-            Measure-Object -Word -Line -Character | 
-            Select-Object -Property @{N = "FolderName"; E = {$folder.Name}}, Words, Lines, Characters
+                Measure-Object -Word -Line -Character | 
+                Select-Object -Property @{N = "FolderName"; E = {$folder.Name}}, Words, Lines, Characters
         }
     }
     $stats | ConvertTo-Json > "$script:OutPutFolder\stats.json"
