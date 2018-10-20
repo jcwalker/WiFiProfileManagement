@@ -27,23 +27,36 @@ function Remove-WiFiProfile
 
     begin
     {
-        $interfaceGUID = Get-WiFiInterfaceGuid
-        $clientHandle = New-WiFiHandle
+        $interfaceGUID = Get-WiFiInterfaceGuid -ErrorAction Stop
     }
     process
     {
         try
         {
+            $clientHandle = New-WiFiHandle
+
             foreach ($wiFiProfile in $ProfileName)
             {
                 if ($PSCmdlet.ShouldProcess("$($script:localizedData.ShouldProcessDelete -f $WiFiProfile)"))
                 {
-                    $deleteProfileResult = [WiFi.ProfileManagement]::WlanDeleteProfile($clientHandle, $interfaceGUID, $wiFiProfile, [IntPtr]::zero)
+                    $deleteProfileResult = [WiFi.ProfileManagement]::WlanDeleteProfile(
+                        $clientHandle,
+                        $interfaceGUID,
+                        $wiFiProfile,
+                        [IntPtr]::Zero
+                    )
+
+                    $deleteProfileResultMessage = Format-Win32Exception -ReturnCode $deleteProfileResult
 
                     if ($deleteProfileResult -ne 0)
                     {
-                        Write-Error -Message ($script:localizedData.ErrorDeletingProfile -f $deleteProfileResult)
+                        Write-Error -Message ($script:localizedData.ErrorDeletingProfile -f $deleteProfileResultMessage)
                     }
+                    else
+                    {
+                        Write-Verbose -Message $deleteProfileResultMessage
+                    }
+
                 }
             }
         }
@@ -53,7 +66,10 @@ function Remove-WiFiProfile
         }
         finally
         {
-            Remove-WiFiHandle -ClientHandle $clientHandle
+            if ($clientHandle)
+            {
+                Remove-WiFiHandle -ClientHandle $clientHandle
+            }
         }
     }
 }

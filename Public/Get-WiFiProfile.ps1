@@ -58,7 +58,7 @@ function Get-WiFiProfile
     {
         [String]$pstrProfileXml = $null
         $profileListPointer = 0
-        $interfaceGuid = Get-WiFiInterfaceGuid -WiFiAdapterName $WiFiAdapterName
+        $interfaceGuid = Get-WiFiInterfaceGuid -WiFiAdapterName $WiFiAdapterName -ErrorAction Stop
 
         $clientHandle = New-WiFiHandle
 
@@ -89,6 +89,9 @@ function Get-WiFiProfile
     }
     finally
     {
-        Remove-WiFiHandle -ClientHandle $clientHandle
+        if ($clientHandle)
+        {
+            Remove-WiFiHandle -ClientHandle $clientHandle
+        }
     }
 }

@@ -2,7 +2,7 @@
     .SYNOPSIS
         Attempts to connect to a specific network.
     .PARAMETER ProfileName
-        The name of the profile to be deleted. Profile names are case-sensitive.
+        The name of the profile to be connected. Profile names are case-sensitive.
     .PARAMETER ConnectionMode
         Specifies the mode of the connection. Valid values are Profile,TemporaryProfile,DiscoveryProfile,DiscoveryUnsecure, and Auto.
     .PARAMETER Dot11BssType
@@ -11,7 +11,7 @@
         Specifies the name of the wireless network adapter on the machine. This is used to obtain the Guid of the interface.
         The default value is 'Wi-Fi'
     .EXAMPLE
-        PS C:\>Connect-WifIProfile -ProfileName FreeWiFi
+        PS C:\>Connect-WiFiProfile -ProfileName FreeWiFi
 
         This example connects to the FreeWiFi profile which is already saved on the local machine.
     .EXAMPLE
@@ -21,13 +21,13 @@
         PS C:\> New-WiFiProfile -ProfileName MyNetwork -ConnectionMode auto -Authentication WPA2PSK -Encryption AES -Password $password
 
         The operation was successful.
-        PS C:\> Connect-WifIProfile -ProfileName MyNetwork
+        PS C:\> Connect-WiFiProfile -ProfileName MyNetwork
 
-        This example demonstrates how to create a Wifi profile and then connect to it.
+        This example demonstrates how to create a WiFi profile and then connect to it.
     .NOTES
         https://msdn.microsoft.com/en-us/library/windows/desktop/ms706613(v=vs.85).aspx
 #>
-function Connect-WifIProfile
+function Connect-WiFiProfile
 {
     [OutputType([void])]
     [CmdletBinding()]
@@ -54,13 +54,14 @@ function Connect-WifIProfile
 
     begin
     {
-        $clientHandle = New-WiFiHandle
-        $interfaceGuid = Get-WiFiInterfaceGuid -WiFiAdapterName $WiFiAdapterName
+        $interfaceGuid = Get-WiFiInterfaceGuid -WiFiAdapterName $WiFiAdapterName -ErrorAction Stop
     }
     process
     {
         try
         {
+            $clientHandle = New-WiFiHandle
+
             $connectionParameterList = New-WiFiConnectionParameter -ProfileName $ProfileName -ConnectionMode $ConnectionMode -Dot11BssType $Dot11BssType
 
             Invoke-WlanConnect -ClientHandle $clientHandle -InterfaceGuid $interfaceGuid -ConnectionParameterList $connectionParameterList
@@ -71,7 +72,10 @@ function Connect-WifIProfile
         }
         finally
         {
-            Remove-WiFiHandle -ClientHandle $clientHandle
+            if ($clientHandle)
+            {
+                Remove-WiFiHandle -ClientHandle $clientHandle
+            }
         }
     }
 }
