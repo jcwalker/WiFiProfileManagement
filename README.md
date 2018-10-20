@@ -32,7 +32,7 @@ Drop the root folder in your PSModulePath, remove the branch name (ex. -dev )fro
 * **EAPType**: (Only 802.1X) Specifies the type of 802.1X EAP. You can select "PEAP"(aka MSCHAPv2) or "TLS".
 * **ServerNames**: (Only 802.1X) Specifies the server that will be connect to validate certification.
 * **TrustedRootCA**: (Only 802.1X) Specifies the certificate thumbprint of the Trusted Root CA.
-* **XmlProfile**: The XML representation of the profile. 
+* **XmlProfile**: The XML representation of the profile.
 
 ### New-WiFiProfile
 * **ProfileName**: The name of the new WiFi profile.
@@ -44,7 +44,7 @@ Drop the root folder in your PSModulePath, remove the branch name (ex. -dev )fro
 * **EAPType**: (Only 802.1X) Specifies the type of 802.1X EAP. You can select "PEAP"(aka MSCHAPv2) or "TLS".
 * **ServerNames**: (Only 802.1X) Specifies the server that will be connect to validate certification.
 * **TrustedRootCA**: (Only 802.1X) Specifies the certificate thumbprint of the Trusted Root CA.
-* **XmlProfile**: The XML representation of the profile. 
+* **XmlProfile**: The XML representation of the profile.
 
 ### Remove-WiFiProfile
 * **ProfileName**: The name of the profile to be deleted.
