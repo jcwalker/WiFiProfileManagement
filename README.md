@@ -34,30 +34,6 @@ Drop the root folder in your PSModulePath, remove the branch name (ex. -dev )fro
 * **Password**: The network key or passpharse of the wireless profile in the form of a secure string.
 * **XmlProfile**: The XML representation of the profile. 
 
-## Versions
-
-### Unreleased
-
-### 0.1.0.0
-*    Initial released with the following functions
-     * Get-WiFiProfile
-     * Remove-WiFiProfile
-
-### 0.1.1.0
-*    Added formating
-
-### 0.2.1.0
-*    Added Set-WiFiProfile
-
-### 0.3.0.0
-*    Added New-WiFiProfile
-
-### 0.4.0.0
-*    Added Get-WiFiAvailableNetwork.  Moved code that enables Windows 7 compatibility to a function.
-
-###0.4.0.1
-*   Added Connect-WiFiProfile.  Add new scaffolding.
-
 ## Examples
 
 ### Get the WiFi profile information on wireless profile TestWifi
@@ -67,8 +43,8 @@ PS C:\>Get-WiFiProfile -ProfileName TestWiFi
         ProfileName    : TestWiFi
         ConnectionMode : auto
         Authentication : WPA2PSK
-        Encryption      : AES
-        Password       : 
+        Encryption     : AES
+        Password       :
 ```
 
 ### Obtaining the password for wireless profile TestWifi
@@ -78,7 +54,7 @@ PS C:\>Get-WiFiProfile -ProfileName TestWiFi
         ProfileName    : TestWiFi
         ConnectionMode : auto
         Authentication : WPA2PSK
-        Encryption      : AES
+        Encryption     : AES
         Password       : password1
 ```
 
@@ -102,7 +78,7 @@ PS C:\>Remove-WiFiProfile -ProfileName FreeWifi
         <WLANProfile xmlns="http://www.microsoft.com/networking/WLAN/profile/v1">
             <name>MyNetwork</name>
             <SSIDConfig>
-                <SSID>            
+                <SSID>
                     <name>MyNetwork</name>
                 </SSID>
             </SSIDConfig>
