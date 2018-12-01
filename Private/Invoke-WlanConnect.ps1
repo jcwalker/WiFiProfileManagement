@@ -4,7 +4,7 @@
     .PARAMETER InterfaceGuid
         Specifies the Guid of the wireless network card. This is required by the native WiFi functions.
     .PARAMETER ClientHandle
-        Specifies the handle used by the natvie WiFi functions.
+        Specifies the handle used by the native WiFi functions.
     .PARAMETER ConnectionParameterList
         A WLAN_CONNECTION_PARAMETERS structure that specifies the parameters used when using the WlanConnect function.
 #>

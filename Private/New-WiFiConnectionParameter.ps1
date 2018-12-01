@@ -1,6 +1,6 @@
 <#
     .SYNOPSIS
-        Creates a WLAN_CONNECTION_PARAMETERS structure that contains the requried parameters when using the WlanConnect function
+        Creates a WLAN_CONNECTION_PARAMETERS structure that contains the required parameters when using the WlanConnect function
     .PARAMETER ProfileName
         The name of the profile to connect to. Profile names are case-sensitive.
     .PARAMETER ConnectionMode
@@ -26,7 +26,7 @@ function New-WiFiConnectionParameter
         $ConnectionMode = 'Profile',
 
         [Parameter()]
-        [ValidateSet('Any','Independent','Infrastructure')]
+        [ValidateSet('Any', 'Independent', 'Infrastructure')]
         [WiFi.ProfileManagement+DOT11_BSS_TYPE]
         $Dot11BssType = 'Any',
 

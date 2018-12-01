@@ -25,7 +25,7 @@ function Get-WiFiAvailableNetwork
         $WiFiAdapterName = 'Wi-Fi'
     )
 
-    $interfaceGUID = Get-WiFiInterfaceGuid -WiFiAdapterName $WiFiAdapterName
+    $interfaceGUID = Get-WiFiInterfaceGuid -WiFiAdapterName $WiFiAdapterName -ErrorAction Stop
     $clientHandle = New-WiFiHandle
     $networkPointer = 0
     $flag = 0
@@ -60,7 +60,10 @@ function Get-WiFiAvailableNetwork
     finally
     {
         Invoke-WlanFreeMemory -Pointer $networkPointer
-        Remove-WiFiHandle -ClientHandle $clientHandle
+
+        if ($clientHandle)
+        {
+            Remove-WiFiHandle -ClientHandle $clientHandle
+        }
     }
-    
 }

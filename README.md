@@ -11,26 +11,34 @@ Drop the root folder in your PSModulePath, remove the branch name (ex. -dev )fro
 
 ## Functions
 * **Get-WiFiProfile** Retrieves the information of a WiFi profile.
+* **Set-WiFiProfile** Overwrites a existent WiFi profile.
+* **New-WiFiProfile** Creates a new WiFi profile.
 * **Remove-WiFiProfile** Deletes a WiFi profile.
+* **Get-WiFiAvailableNetwork** Retrieves the list of available networks on a wireless LAN interface.
+* **Connect-WiFiProfile** Attempts to connect to a specific network.
 
-## Get-WiFiProfile
-* **ProfileName**: The name of the WiFi profile.
+### Get-WiFiProfile
+* **ProfileName**: The name of the WiFi profile. If not specified, The function will return all profiles.
 * **WiFiAdapterName**: Specifies the name of the wireless network adapter on the machine. This is used to obtain the Guid of the interface. The default value is 'Wi-Fi'
 * **ClearKey**: Specifies if the password of the profile is to be returned.
 
-## Set-WiFiProfile
+### Set-WiFiProfile
 * **ProfileName**: The name of the WiFi profile to modify.
-* **ConnectionMode**: Indicates whether connection to the wireless LAN should be automatic ("auto") or initiated ("manual") by user.
-* **Authentication**: Specifies the authentication method to be used to connect to the wireless LAN.
-* **Encryption**: Sets the data encryption to use to connect to the wireless LAN.
+* **ConnectionMode**: Indicates whether connection to the wireless LAN should be automatic ("auto") or initiated ("manual") by user. The default is "auto".
+* **Authentication**: Specifies the authentication method to be used to connect to the wireless LAN. ('open', 'shared', 'WPA', 'WPAPSK', 'WPA2', 'WPA2PSK')
+* **Encryption**: Sets the data encryption to use to connect to the wireless LAN. ('none', 'WEP', 'TKIP', 'AES')
 * **Password**: The network key or passpharse of the wireless profile in the form of a secure string.
-* **XmlProfile**: The XML representation of the profile. 
+* **ConnectHiddenSSID**: Specifies whether the profile can connect to networks which does not broadcast SSID. The default is false.
+* **EAPType**: (Only 802.1X) Specifies the type of 802.1X EAP. You can select "PEAP"(aka MSCHAPv2) or "TLS".
+* **ServerNames**: (Only 802.1X) Specifies the server that will be connect to validate certification.
+* **TrustedRootCA**: (Only 802.1X) Specifies the certificate thumbprint of the Trusted Root CA.
+* **XmlProfile**: The XML representation of the profile.
 
-## New-WiFiProfile
+### New-WiFiProfile
 * **ProfileName**: The name of the new WiFi profile.
-* **ConnectionMode**: Indicates whether connection to the wireless LAN should be automatic ("auto") or initiated ("manual") by user.
-* **Authentication**: Specifies the authentication method to be used to connect to the wireless LAN.
-* **Encryption**: Sets the data encryption to use to connect to the wireless LAN.
+* **ConnectionMode**: Indicates whether connection to the wireless LAN should be automatic ("auto") or initiated ("manual") by user. The default is "auto".
+* **Authentication**: Specifies the authentication method to be used to connect to the wireless LAN. ('open', 'shared', 'WPA', 'WPAPSK', 'WPA2', 'WPA2PSK')
+* **Encryption**: Sets the data encryption to use to connect to the wireless LAN. ('none', 'WEP', 'TKIP', 'AES')
 * **Password**: The network key or passpharse of the wireless profile in the form of a secure string.
 * **XmlProfile**: The XML representation of the profile. 
 
@@ -112,6 +120,11 @@ PS C:\>Remove-WiFiProfile -ProfileName FreeWifi
         PS C:\>New-WiFiProfile -ProfileName MyNetwork -ConnectionMode auto -Authentication WPA2PSK -Encryption AES -Password $password
 ```
 
+### Creating a wireless profile (Use 802.1X)
+```PowerShell
+        PS C:\>New-WiFiProfile -ProfileName OneXNetwork -ConnectionMode auto -Authentication WPA2 -Encryption AES -EAPType PEAP -TrustedRootCA '041101cca5b336a9c6e50d173489f5929e1b4b00'
+```
+
 ### List available WiFi networks
 ```PowerShell
         PS C:\>Get-WiFiAvailableNetwork
@@ -130,5 +143,32 @@ PS C:\>Remove-WiFiProfile -ProfileName FreeWifi
         PS C:\> New-WiFiProfile -ProfileName MyNetwork -ConnectionMode auto -Authentication WPA2PSK -Encryption AES -Password $password
 
         The operation was successful.
-        PS C:\> Connect-WifIProfile -ProfileName MyNetwork
+        PS C:\> Connect-WiFiProfile -ProfileName MyNetwork
 ```
+
+## Versions
+
+### Unreleased
+
+### 0.5.0.0
+*   Added support for create IEEE 802.1X EAP network profile.
+
+### 0.4.0.1
+*   Added Connect-WiFiProfile.  Add new scaffolding.
+
+### 0.4.0.0
+*    Added Get-WiFiAvailableNetwork.  Moved code that enables Windows 7 compatibility to a function.
+
+### 0.3.0.0
+*    Added New-WiFiProfile
+
+### 0.2.1.0
+*    Added Set-WiFiProfile
+
+### 0.1.1.0
+*    Added formating
+
+### 0.1.0.0
+*    Initial released with the following functions
+     * Get-WiFiProfile
+     * Remove-WiFiProfile

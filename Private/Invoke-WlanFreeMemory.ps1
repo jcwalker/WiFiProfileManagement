@@ -1,6 +1,6 @@
 <#
     .SYNOPSIS
-        Frees memory used by Native WiFi funcions
+        Frees memory used by Native WiFi functions
     .PARAMETER Pointer
         Pointer to the memory to be freed.
 #>

@@ -2,9 +2,9 @@
     .SYNOPSIS
         Creates the content of a specified wireless profile.
     .DESCRIPTION
-        Creates the content of a wireless profile by calling the WlanSetProfile native function but with the overide parameter set to false. 
+        Creates the content of a wireless profile by calling the WlanSetProfile native function but with the override parameter set to false. 
     .PARAMETER ProfileName
-        The name of the wireless profile to be updated.  Profile names are case sensitive.
+        The name of the wireless profile to be created. Profile names are case sensitive.
     .PARAMETER ConnectionMode
         Indicates whether connection to the wireless LAN should be automatic ("auto") or initiated ("manual") by user.
     .PARAMETER Authentication
@@ -12,7 +12,15 @@
     .PARAMETER Encryption
         Sets the data encryption to use to connect to the wireless LAN.
     .PARAMETER Password
-        The network key or passpharse of the wireless profile in the form of a secure string.
+        The network key or passphrase of the wireless profile in the form of a secure string.
+    .PARAMETER ConnectHiddenSSID
+        Specifies whether the profile can connect to networks which does not broadcast SSID. The default is false.
+    .PARAMETER EAPType
+        (Only 802.1X) Specifies the type of 802.1X EAP. You can select "PEAP"(aka MSCHAPv2) or "TLS".
+    .PARAMETER ServerNames
+        (Only 802.1X) Specifies the server that will be connect to validate certification.
+    .PARAMETER TrustedRootCA
+        (Only 802.1X) Specifies the certificate thumbprint of the Trusted Root CA.
     .PARAMETER XmlProfile
         The XML representation of the profile.
     .EXAMPLE
@@ -22,6 +30,10 @@
         PS C:\>New-WiFiProfile -ProfileName MyNetwork -ConnectionMode auto -Authentication WPA2PSK -Encryption AES -Password $password 
 
         This examples shows how to create a wireless profile by using the individual parameters.
+    .EXAMPLE
+        PS C:\>New-WiFiProfile -ProfileName OneXNetwork -Authentication WPA2 -Encryption AES -EAPType PEAP -TrustedRootCA '041101cca5b336a9c6e50d173489f5929e1b4b00'
+
+        This examples shows how to create a 802.1X wireless profile by using the individual parameters.
     .EXAMPLE
         PS C:\>$templateProfileXML = @"
         <?xml version="1.0"?>
@@ -63,42 +75,71 @@ function New-WiFiProfile
     [CmdletBinding()]
     param
     (
-        [Parameter(Mandatory=$true,Position=0,ParameterSetName='UsingArguments')]
+        [Parameter(Mandatory = $true, Position = 0, ParameterSetName = 'UsingArguments')]
+        [Parameter(Mandatory = $true, Position = 0, ParameterSetName = 'UsingArgumentsWithEAP')]
+        [Alias('SSID', 'Name')]
         [System.String]
         $ProfileName,
 
-        [Parameter(ParameterSetName='UsingArguments')]
-        [ValidateSet('manual','auto')]
+        [Parameter(ParameterSetName = 'UsingArguments')]
+        [Parameter(ParameterSetName = 'UsingArgumentsWithEAP')]
+        [ValidateSet('manual', 'auto')]
         [System.String]
         $ConnectionMode = 'auto',
 
-        [Parameter(ParameterSetName='UsingArguments')]
+        [Parameter(ParameterSetName = 'UsingArguments')]
+        [Parameter(ParameterSetName = 'UsingArgumentsWithEAP')]
+        [ValidateSet('open', 'shared', 'WPA', 'WPAPSK', 'WPA2', 'WPA2PSK')]
         [System.String]
         $Authentication = 'WPA2PSK',
 
-        [Parameter(ParameterSetName='UsingArguments')]
+        [Parameter(ParameterSetName = 'UsingArguments')]
+        [Parameter(ParameterSetName = 'UsingArgumentsWithEAP')]
+        [ValidateSet('none', 'WEP', 'TKIP', 'AES')]
         [System.String]
         $Encryption = 'AES',
 
-        [Parameter(ParameterSetName='UsingArguments')]
+        [Parameter(ParameterSetName = 'UsingArguments')]
         [System.Security.SecureString]
         $Password,
+
+        [Parameter(ParameterSetName = 'UsingArguments')]
+        [Parameter(ParameterSetName = 'UsingArgumentsWithEAP')]
+        [System.Boolean]
+        $ConnectHiddenSSID = $false,
+
+        [Parameter(ParameterSetName = 'UsingArgumentsWithEAP')]
+        [ValidateSet('PEAP', 'TLS')]
+        [System.String]
+        $EAPType,
+
+        [Parameter(ParameterSetName = 'UsingArgumentsWithEAP')]
+        [AllowEmptyString()]
+        [System.String]
+        $ServerNames = '',
+
+        [Parameter(ParameterSetName = 'UsingArgumentsWithEAP')]
+        [System.String]
+        $TrustedRootCA,
 
         [Parameter()]
         [System.String]
         $WiFiAdapterName = 'Wi-Fi',
 
-        [Parameter(Mandatory=$true,ParameterSetName='UsingXml')]
+        [Parameter(Mandatory = $true, ParameterSetName = 'UsingXml')]
         [System.String]
-        $XmlProfile
+        $XmlProfile,
+
+        [Parameter(DontShow = $true)]
+        [System.Boolean]
+        $Overwrite = $false
     )
 
     try
     {
+        $interfaceGuid = Get-WiFiInterfaceGuid -WiFiAdapterName $WiFiAdapterName -ErrorAction Stop
         $clientHandle = New-WiFiHandle
-        $interfaceGuid = Get-WiFiInterfaceGuid -WiFiAdapterName $WiFiAdapterName
         $flags = 0
-        $overwrite = $false
         $reasonCode = [IntPtr]::Zero
 
         if ($XmlProfile)
@@ -108,10 +149,14 @@ function New-WiFiProfile
         else
         {
             $newProfileParameters = @{
-                ProfileName    = $ProfileName
-                ConnectionMode = $ConnectionMode
-                Authentication = $Authentication
-                Password       = $Password
+                ProfileName       = $ProfileName
+                ConnectionMode    = $ConnectionMode
+                Authentication    = $Authentication
+                Password          = $Password
+                ConnectHiddenSSID = $ConnectHiddenSSID
+                EAPType           = $EAPType
+                ServerNames       = $ServerNames
+                TrustedRootCA     = $TrustedRootCA
             }
 
             $profileXML = New-WiFiProfileXml @newProfileParameters
@@ -119,18 +164,28 @@ function New-WiFiProfile
 
         $profilePointer = [System.Runtime.InteropServices.Marshal]::StringToHGlobalUni($profileXML)
 
-        [void][WiFi.ProfileManagement]::WlanSetProfile(
+        $returnCode = [WiFi.ProfileManagement]::WlanSetProfile(
             $clientHandle,
             [ref]$interfaceGuid,
             $flags,
             $profilePointer,
             [IntPtr]::Zero,
-            $overwrite,
+            $Overwrite,
             [IntPtr]::Zero,
             [ref]$reasonCode
         )
 
+        $returnCodeMessage = Format-Win32Exception -ReturnCode $returnCode
         $reasonCodeMessage = Format-WiFiReasonCode -ReasonCode $reasonCode
+
+        if ($returnCode -eq 0)
+        {
+            Write-Verbose -Message $returnCodeMessage
+        }
+        else
+        {
+            throw $returnCodeMessage
+        }
 
         Write-Verbose -Message $reasonCodeMessage
     }
@@ -140,6 +195,9 @@ function New-WiFiProfile
     }
     finally
     {
-        Remove-WiFiHandle -ClientHandle $clientHandle
+        if ($clientHandle)
+        {
+            Remove-WiFiHandle -ClientHandle $clientHandle
+        }
     }
 }
