@@ -47,7 +47,7 @@ function Get-WiFiProfile
 
         [Parameter()]
         [System.String]
-        $WiFiAdapterName = 'Wi-Fi',
+        $WiFiAdapterName,
 
         [Parameter()]
         [Switch]
@@ -58,7 +58,15 @@ function Get-WiFiProfile
     {
         [String]$pstrProfileXml = $null
         $profileListPointer = 0
-        $interfaceGuid = Get-WiFiInterfaceGuid -WiFiAdapterName $WiFiAdapterName -ErrorAction Stop
+
+        if (!$WiFiAdapterName)
+        {
+            $interfaceGuids = (Get-WiFiInterface).Guid
+        }
+        else
+        { 
+            $interfaceGuids = Get-WiFiInterfaceGuid -WiFiAdapterName $WiFiAdapterName
+        }
 
         $clientHandle = New-WiFiHandle
 
@@ -73,14 +81,20 @@ function Get-WiFiProfile
 
         if (!$ProfileName)
         {
-            [void][WiFi.ProfileManagement]::WlanGetProfileList($clientHandle, $interfaceGUID, [IntPtr]::zero, [ref]$profileListPointer)
-            $wiFiProfileList = [WiFi.ProfileManagement+WLAN_PROFILE_INFO_LIST]::new($profileListPointer)
-            $ProfileName = ($wiFiProfileList.ProfileInfo).strProfileName
+            foreach ($interfaceGUID in $interfaceGuids)
+            {
+                [void][WiFi.ProfileManagement]::WlanGetProfileList($clientHandle, $interfaceGUID, [IntPtr]::zero, [ref]$profileListPointer)
+                $wiFiProfileList = [WiFi.ProfileManagement+WLAN_PROFILE_INFO_LIST]::new($profileListPointer)
+                $ProfileName = ($wiFiProfileList.ProfileInfo).strProfileName
+            }
         }
 
         foreach ($wiFiProfile in $ProfileName)
         {
-            Get-WiFiProfileInfo -ProfileName $wiFiProfile -InterfaceGuid $interfaceGUID -ClientHandle $clientHandle -WlanProfileFlags $wlanProfileFlags
+            foreach ($interfaceGUID in $interfaceGuids)
+            {
+                Get-WiFiProfileInfo -ProfileName $wiFiProfile -InterfaceGuid $interfaceGUID -ClientHandle $clientHandle -WlanProfileFlags $wlanProfileFlags
+            }
         }
     }
     catch

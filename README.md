@@ -40,24 +40,7 @@ Drop the root folder in your PSModulePath, remove the branch name (ex. -dev )fro
 * **Authentication**: Specifies the authentication method to be used to connect to the wireless LAN. ('open', 'shared', 'WPA', 'WPAPSK', 'WPA2', 'WPA2PSK')
 * **Encryption**: Sets the data encryption to use to connect to the wireless LAN. ('none', 'WEP', 'TKIP', 'AES')
 * **Password**: The network key or passpharse of the wireless profile in the form of a secure string.
-* **ConnectHiddenSSID**: Specifies whether the profile can connect to networks which does not broadcast SSID. The default is false.
-* **EAPType**: (Only 802.1X) Specifies the type of 802.1X EAP. You can select "PEAP"(aka MSCHAPv2) or "TLS".
-* **ServerNames**: (Only 802.1X) Specifies the server that will be connect to validate certification.
-* **TrustedRootCA**: (Only 802.1X) Specifies the certificate thumbprint of the Trusted Root CA.
-* **XmlProfile**: The XML representation of the profile.
-
-### Remove-WiFiProfile
-* **ProfileName**: The name of the profile to be deleted.
-* **WiFiAdapterName**: Specifies the name of the wireless network adapter on the machine. This is used to obtain the Guid of the interface. The default value is 'Wi-Fi'
-
-### Get-WiFiAvailableNetwork
-* **WiFiAdapterName**: Specifies the name of the wireless network adapter on the machine. This is used to obtain the Guid of the interface. The default value is 'Wi-Fi'
-
-### Connect-WiFiProfile
-* **ProfileName**: The name of the profile to be connected.
-* **ConnectionMode**: Specifies the mode of the connection. Valid values are Profile,TemporaryProfile,DiscoveryProfile,DiscoveryUnsecure, and Auto.
-* **Dot11BssType**:  A value that indicates the BSS type of the network. If a profile is provided, this BSS type must be the same as the one in the profile.
-* **WiFiAdapterName**: Specifies the name of the wireless network adapter on the machine. This is used to obtain the Guid of the interface. The default value is 'Wi-Fi'
+* **XmlProfile**: The XML representation of the profile. 
 
 ## Examples
 
@@ -69,7 +52,7 @@ PS C:\>Get-WiFiProfile -ProfileName TestWiFi
         ConnectionMode : auto
         Authentication : WPA2PSK
         Encryption     : AES
-        Password       : 
+        Password       :
 ```
 
 ### Obtaining the password for wireless profile TestWifi
