@@ -217,12 +217,12 @@ function New-WiFiProfileXml
         if ($Password)
         {
             $secureStringToBstr = [System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($Password)
-            $plainPassword = [System.Runtime.InteropServices.Marshal]::PtrToStringAuto($secureStringToBstr) 
+            $plainPassword = [System.Runtime.InteropServices.Marshal]::PtrToStringAuto($secureStringToBstr)
         }
 
         if ($EAPType -eq 'PEAP')
         {
-            $profileXml = [xml]($script:WiFiProfileXmlEapPeap -f $ProfileName, ([string]$ConnectHiddenSSID).ToLower(), $ConnectionMode, $Authentication, $Encryption)
+            $profileXml = [xml] ($script:WiFiProfileXmlEapPeap -f $ProfileName, ([string] $ConnectHiddenSSID).ToLower(), $ConnectionMode, $Authentication, $Encryption)
 
             if ($ServerNames)
             {
@@ -237,7 +237,7 @@ function New-WiFiProfileXml
         }
         elseif ($EAPType -eq 'TLS')
         {
-            $profileXml = [xml]($script:WiFiProfileXmlEapTls -f $ProfileName, ([string]$ConnectHiddenSSID).ToLower(), $ConnectionMode, $Authentication, $Encryption)
+            $profileXml = [xml] ($script:WiFiProfileXmlEapTls -f $ProfileName, ([string] $ConnectHiddenSSID).ToLower(), $ConnectionMode, $Authentication, $Encryption)
 
             if ($ServerNames)
             {
@@ -254,7 +254,7 @@ function New-WiFiProfileXml
         }
         else
         {
-            $profileXml = [xml]($script:WiFiProfileXmlPersonal -f $ProfileName, ([string]$ConnectHiddenSSID).ToLower(), $ConnectionMode, $Authentication, $Encryption, $plainPassword)
+            $profileXml = [xml] ($script:WiFiProfileXmlPersonal -f $ProfileName, ([string] $ConnectHiddenSSID).ToLower(), $ConnectionMode, $Authentication, $Encryption, $plainPassword)
             if (-not $plainPassword)
             {
                 $null = $profileXml.WLANProfile.MSM.security.RemoveChild($profileXml.WLANProfile.MSM.security.sharedKey)
@@ -265,6 +265,6 @@ function New-WiFiProfileXml
     }
     catch
     {
-        throw $_
+        throw $PSItem
     }
 }

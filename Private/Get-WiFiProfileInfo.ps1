@@ -34,7 +34,7 @@ function Get-WiFiProfileInfo
     
     begin
     {
-        [String]$pstrProfileXml = $null
+        [String] $pstrProfileXml = $null
         $wlanAccess = 0
         $WlanProfileFlagsInput = $WlanProfileFlags
     }
@@ -45,9 +45,9 @@ function Get-WiFiProfileInfo
             $InterfaceGuid,
             $ProfileName,
             [IntPtr]::Zero,
-            [ref]$pstrProfileXml,
-            [ref]$WlanProfileFlags,
-            [ref]$wlanAccess
+            [ref] $pstrProfileXml,
+            [ref] $WlanProfileFlags,
+            [ref] $wlanAccess
         )
 
         if ($result -ne 0)
@@ -56,7 +56,7 @@ function Get-WiFiProfileInfo
             throw $($script:localizedData.ErrorGettingProfile -f $errorMessage)
         }
 
-        $wlanProfile = [xml]$pstrProfileXml
+        $wlanProfile = [xml] $pstrProfileXml
 
         #Parse password
         if ($WlanProfileFlagsInput -eq 13)
@@ -69,7 +69,7 @@ function Get-WiFiProfileInfo
         }
 
         # Parse nonBroadcast flag
-        if ([bool]::TryParse($wlanProfile.WLANProfile.SSIDConfig.nonBroadcast, [ref]$null))
+        if ([bool]::TryParse($wlanProfile.WLANProfile.SSIDConfig.nonBroadcast, [ref] $null))
         {
             $connectHiddenSSID = [bool]::Parse($wlanProfile.WLANProfile.SSIDConfig.nonBroadcast)
         }
@@ -129,13 +129,13 @@ function Get-WiFiProfileInfo
             {
                 'PEAP'
                 { 
-                    $trustedRootCa = ([string]($wlanProfile.WLANProfile.MSM.security.OneX.EAPConfig.EapHostConfig.Config.Eap.EapType.ServerValidation.TrustedRootCA -replace ' ', [string]::Empty)).ToLower()
+                    $trustedRootCa = ([string] ($wlanProfile.WLANProfile.MSM.security.OneX.EAPConfig.EapHostConfig.Config.Eap.EapType.ServerValidation.TrustedRootCA -replace ' ', [string]::Empty)).ToLower()
                 }
 
                 'TLS'
                 {
                     $node = $wlanProfile.WLANProfile.MSM.security.OneX.EAPConfig.EapHostConfig.Config.SelectNodes("//*[local-name()='TrustedRootCA']")
-                    $trustedRootCa = ([string]($node[0].InnerText -replace ' ', [string]::Empty)).ToLower()
+                    $trustedRootCa = ([string] ($node[0].InnerText -replace ' ', [string]::Empty)).ToLower()
                 }
             }
         }

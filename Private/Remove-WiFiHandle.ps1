@@ -11,7 +11,8 @@ function Remove-WiFiHandle
     param
     (
         [Parameter()]
-        [System.IntPtr]$ClientHandle
+        [System.IntPtr]
+        $ClientHandle
     )
 
     $result = [WiFi.ProfileManagement]::WlanCloseHandle($ClientHandle, [IntPtr]::zero)

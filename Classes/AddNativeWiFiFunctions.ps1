@@ -71,8 +71,8 @@ public static extern uint WlanReasonCodeToString(
 public static extern uint WlanGetAvailableNetworkList(
     [In] IntPtr hClientHandle,
     [In, MarshalAs(UnmanagedType.LPStruct)] Guid interfaceGuid,
-    [In] uint dwFlags, 
-    [In] IntPtr pReserved, 
+    [In] uint dwFlags,
+    [In] IntPtr pReserved,
     [Out] out IntPtr ppAvailableNetworkList
 );
 
@@ -139,7 +139,7 @@ public struct WLAN_PROFILE_INFO
     public WlanProfileFlags ProfileFLags;
 }
 
-[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)] 
+[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
 public struct WLAN_AVAILABLE_NETWORK_LIST
 {
     public uint dwNumberOfItems;
@@ -158,7 +158,7 @@ public struct WLAN_AVAILABLE_NETWORK_LIST
     }
 }
 
-[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]      
+[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
 public struct WLAN_AVAILABLE_NETWORK
 {
     [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
@@ -267,7 +267,7 @@ public enum WLAN_CONNECTION_MODE
     wlan_connection_mode_discovery_unsecure,
     wlan_connection_mode_auto,
     wlan_connection_mode_invalid,
-};
+}
 
 [Flags]
 public enum WlanConnectionFlag
@@ -349,6 +349,15 @@ public enum WLAN_INTERFACE_STATE {
     discovering            = 6,
     authenticating         = 7
 }
+
+[DllImport("Wlanapi.dll",SetLastError=true)]
+public static extern uint WlanScan(
+    IntPtr hClientHandle,
+    ref Guid pInterfaceGuid,
+    IntPtr pDot11Ssid,
+    IntPtr pIeData,
+    IntPtr pReserved
+);
 
 '@
 

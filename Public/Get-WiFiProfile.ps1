@@ -31,7 +31,7 @@
         This examples shows the use of the ClearKey switch to return the WiFi profile password.
 
     .EXAMPLE
-        PS C:\>Get-WiFiProfile | where {$_.ConnectionMode -eq 'auto' -and $_.Authentication -eq 'open'}
+        PS C:\>Get-WiFiProfile | where {$PSItem.ConnectionMode -eq 'auto' -and $PSItem.Authentication -eq 'open'}
 
         This example shows how to find WiFi profiles with insecure connection settings.
 #>
@@ -56,7 +56,6 @@ function Get-WiFiProfile
 
     try
     {
-        [String]$pstrProfileXml = $null
         $profileListPointer = 0
 
         if (!$WiFiAdapterName)
@@ -83,7 +82,12 @@ function Get-WiFiProfile
         {
             foreach ($interfaceGUID in $interfaceGuids)
             {
-                [void][WiFi.ProfileManagement]::WlanGetProfileList($clientHandle, $interfaceGUID, [IntPtr]::zero, [ref]$profileListPointer)
+                [void] [WiFi.ProfileManagement]::WlanGetProfileList(
+                    $clientHandle,
+                    $interfaceGUID,
+                    [IntPtr]::zero,
+                    [ref] $profileListPointer
+                )
                 $wiFiProfileList = [WiFi.ProfileManagement+WLAN_PROFILE_INFO_LIST]::new($profileListPointer)
                 $ProfileName = ($wiFiProfileList.ProfileInfo).strProfileName
             }
@@ -99,7 +103,7 @@ function Get-WiFiProfile
     }
     catch
     {
-        Write-Error $_
+        Write-Error $PSItem
     }
     finally
     {
