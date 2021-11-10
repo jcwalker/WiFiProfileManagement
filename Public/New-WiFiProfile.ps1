@@ -152,6 +152,7 @@ function New-WiFiProfile
                 ProfileName       = $ProfileName
                 ConnectionMode    = $ConnectionMode
                 Authentication    = $Authentication
+                Encryption        = $Encryption
                 Password          = $Password
                 ConnectHiddenSSID = $ConnectHiddenSSID
                 EAPType           = $EAPType
