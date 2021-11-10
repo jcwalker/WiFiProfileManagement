@@ -95,7 +95,7 @@ function New-WiFiProfile
 
         [Parameter(ParameterSetName = 'UsingArguments')]
         [Parameter(ParameterSetName = 'UsingArgumentsWithEAP')]
-        [ValidateSet('none', 'WEP', 'TKIP', 'AES')]
+        [ValidateSet('none', 'WEP', 'TKIP', 'AES', 'GCMP256')]
         [System.String]
         $Encryption = 'AES',
 
