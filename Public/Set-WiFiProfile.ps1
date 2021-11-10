@@ -68,7 +68,7 @@
 #>
 function Set-WiFiProfile
 {
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = 'UsingArguments')]
     param
     (
         [Parameter(Mandatory = $true, Position = 0, ParameterSetName = 'UsingArguments')]
