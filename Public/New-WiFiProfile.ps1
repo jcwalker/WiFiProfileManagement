@@ -89,7 +89,7 @@ function New-WiFiProfile
 
         [Parameter(ParameterSetName = 'UsingArguments')]
         [Parameter(ParameterSetName = 'UsingArgumentsWithEAP')]
-        [ValidateSet('open', 'shared', 'WPA', 'WPAPSK', 'WPA2', 'WPA2PSK')]
+        [ValidateSet('open', 'shared', 'WPA', 'WPAPSK', 'WPA2', 'WPA2PSK', 'WPA3SAE', 'WPA3ENT192', 'OWE')]
         [System.String]
         $Authentication = 'WPA2PSK',
 

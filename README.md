@@ -25,7 +25,7 @@ Drop the root folder in your PSModulePath, remove the branch name (ex. -dev )fro
 ### Set-WiFiProfile
 * **ProfileName**: The name of the WiFi profile to modify.
 * **ConnectionMode**: Indicates whether connection to the wireless LAN should be automatic ("auto") or initiated ("manual") by user. The default is "auto".
-* **Authentication**: Specifies the authentication method to be used to connect to the wireless LAN. ('open', 'shared', 'WPA', 'WPAPSK', 'WPA2', 'WPA2PSK')
+* **Authentication**: Specifies the authentication method to be used to connect to the wireless LAN. ('open', 'shared', 'WPA', 'WPAPSK', 'WPA2', 'WPA2PSK', 'WPA3SAE', 'WPA3ENT192', 'OWE')
 * **Encryption**: Sets the data encryption to use to connect to the wireless LAN. ('none', 'WEP', 'TKIP', 'AES')
 * **Password**: The network key or passpharse of the wireless profile in the form of a secure string.
 * **ConnectHiddenSSID**: Specifies whether the profile can connect to networks which does not broadcast SSID. The default is false.
@@ -37,7 +37,7 @@ Drop the root folder in your PSModulePath, remove the branch name (ex. -dev )fro
 ### New-WiFiProfile
 * **ProfileName**: The name of the new WiFi profile.
 * **ConnectionMode**: Indicates whether connection to the wireless LAN should be automatic ("auto") or initiated ("manual") by user. The default is "auto".
-* **Authentication**: Specifies the authentication method to be used to connect to the wireless LAN. ('open', 'shared', 'WPA', 'WPAPSK', 'WPA2', 'WPA2PSK')
+* **Authentication**: Specifies the authentication method to be used to connect to the wireless LAN. ('open', 'shared', 'WPA', 'WPAPSK', 'WPA2', 'WPA2PSK', 'WPA3SAE', 'WPA3ENT192', 'OWE')
 * **Encryption**: Sets the data encryption to use to connect to the wireless LAN. ('none', 'WEP', 'TKIP', 'AES')
 * **Password**: The network key or passpharse of the wireless profile in the form of a secure string.
 * **XmlProfile**: The XML representation of the profile. 
@@ -149,6 +149,7 @@ PS C:\>Remove-WiFiProfile -ProfileName FreeWifi
 ## Versions
 
 ### Unreleased
+*   Added support for WPA3-Personal (WPA3SAE), WPA3-Enterprise (WPA3ENT192) and Wi-Fi Enhanced Open (OWE).
 
 ### 0.5.0.0
 *   Added support for create IEEE 802.1X EAP network profile.
