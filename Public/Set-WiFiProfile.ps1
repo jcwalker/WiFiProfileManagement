@@ -68,7 +68,7 @@
 #>
 function Set-WiFiProfile
 {
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = 'UsingArguments')]
     param
     (
         [Parameter(Mandatory = $true, Position = 0, ParameterSetName = 'UsingArguments')]
@@ -85,13 +85,13 @@ function Set-WiFiProfile
 
         [Parameter(ParameterSetName = 'UsingArguments')]
         [Parameter(ParameterSetName = 'UsingArgumentsWithEAP')]
-        [ValidateSet('open', 'shared', 'WPA', 'WPAPSK', 'WPA2', 'WPA2PSK')]
+        [ValidateSet('open', 'shared', 'WPA', 'WPAPSK', 'WPA2', 'WPA2PSK', 'WPA3SAE', 'WPA3ENT192', 'OWE')]
         [System.String]
         $Authentication = 'WPA2PSK',
 
         [Parameter(ParameterSetName = 'UsingArguments')]
         [Parameter(ParameterSetName = 'UsingArgumentsWithEAP')]
-        [ValidateSet('none', 'WEP', 'TKIP', 'AES')]
+        [ValidateSet('none', 'WEP', 'TKIP', 'AES', 'GCMP256')]
         [System.String]
         $Encryption = 'AES',
 
