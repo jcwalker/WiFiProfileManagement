@@ -386,8 +386,8 @@ public enum  WLAN_NOTIFICATION_CODE_ACM {
     wlan_notification_acm_screen_power_change,
     wlan_notification_acm_profile_blocked,
     wlan_notification_acm_scan_list_refresh
- }
- 
+}
+
 public enum WLAN_NOTIFICATION_CODE_MSM {
     wlan_notification_msm_associating = 1,
     wlan_notification_msm_associated,
