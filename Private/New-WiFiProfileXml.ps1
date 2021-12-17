@@ -260,7 +260,7 @@ function New-WiFiProfileXml
                 $null = $profileXml.WLANProfile.MSM.security.RemoveChild($profileXml.WLANProfile.MSM.security.sharedKey)
             }
 
-            if($Authentication -eq 'WPA3SAE'){
+            if ($Authentication -eq 'WPA3SAE'){
               # Set transition mode as true for WPA3-SAE
               $nsmg = [System.Xml.XmlNamespaceManager]::new($profileXml.NameTable)
               $nsmg.AddNamespace('WLANProfile', $profileXml.DocumentElement.GetAttribute('xmlns'))
