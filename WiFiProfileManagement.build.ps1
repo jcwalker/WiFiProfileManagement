@@ -1,3 +1,5 @@
+#Requires -Modules InvokeBuild, BuildHelpers, PSDeploy
+
 task . Clean, Build, Tests, Stats, DeployToGallery
 task Tests ImportCompiledModule, Pester
 task CreateManifest CopyPSD
