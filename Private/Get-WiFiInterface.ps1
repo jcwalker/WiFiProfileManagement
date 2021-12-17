@@ -13,17 +13,17 @@ function Get-WiFiInterface
 
     try
     {
-        [WiFi.ProfileManagement]::WlanEnumInterfaces($clientHandle, [IntPtr]::zero, [ref]$interfaceListPtr) | Out-Null
+        [void] [WiFi.ProfileManagement]::WlanEnumInterfaces($clientHandle, [IntPtr]::zero, [ref] $interfaceListPtr)
         $wiFiInterfaceList = [WiFi.ProfileManagement+WLAN_INTERFACE_INFO_LIST]::new($interfaceListPtr)
 
         foreach ($wlanInterfaceInfo in $wiFiInterfaceList.wlanInterfaceInfo)
         {
-            [WiFi.ProfileManagement+WLAN_INTERFACE_INFO]$wlanInterfaceInfo
+            [WiFi.ProfileManagement+WLAN_INTERFACE_INFO] $wlanInterfaceInfo
         }
     }
     catch
     {
-        Write-Error $_
+        Write-Error $PSItem
     }
     finally
     {

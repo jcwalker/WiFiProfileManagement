@@ -167,7 +167,7 @@ function New-WiFiProfile
 
         $returnCode = [WiFi.ProfileManagement]::WlanSetProfile(
             $clientHandle,
-            [ref]$interfaceGuid,
+            [ref] $interfaceGuid,
             $flags,
             $profilePointer,
             [IntPtr]::Zero,
@@ -192,7 +192,7 @@ function New-WiFiProfile
     }
     catch
     {
-        Write-Error $_
+        Write-Error $PSItem
     }
     finally
     {

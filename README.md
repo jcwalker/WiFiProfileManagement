@@ -149,6 +149,8 @@ PS C:\>Remove-WiFiProfile -ProfileName FreeWifi
 ## Versions
 
 ### Unreleased
+*   Added private function Get-WiFiInterface.
+*   Added Search-WifiNetwork.
 *   Added support for WPA3-Personal (WPA3SAE), WPA3-Enterprise (WPA3ENT192) and Wi-Fi Enhanced Open (OWE).
 
 ### 0.5.0.0

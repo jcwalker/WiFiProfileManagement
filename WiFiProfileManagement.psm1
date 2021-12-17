@@ -11,8 +11,8 @@ foreach($folder in @('private', 'public', 'classes'))
         $files = Get-ChildItem -Path $root -Filter *.ps1
 
         # dot source each file
-        $files | where-Object { $_.name -NotLike '*.Tests.ps1'} | 
-            ForEach-Object{Write-Verbose $_.name; . $_.FullName}
+        $files | where-Object { $PSItem.name -NotLike '*.Tests.ps1'} | 
+            ForEach-Object{Write-Verbose $PSItem.name; . $PSItem.FullName}
     }
 }
 

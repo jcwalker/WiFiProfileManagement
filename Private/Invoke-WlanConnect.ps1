@@ -29,8 +29,8 @@ function Invoke-WlanConnect
 
     $result = [WiFi.ProfileManagement]::WlanConnect(
         $ClientHandle,
-        [ref]$InterfaceGuid,
-        [ref]$ConnectionParameterList,
+        [ref] $InterfaceGuid,
+        [ref] $ConnectionParameterList,
         [IntPtr]::Zero
     )
 

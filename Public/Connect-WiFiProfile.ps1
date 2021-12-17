@@ -68,7 +68,7 @@ function Connect-WiFiProfile
         }
         catch
         {
-            Write-Error $_
+            Write-Error $PSItem
         }
         finally
         {

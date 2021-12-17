@@ -55,7 +55,7 @@ function New-WiFiConnectionParameter
     }
     catch
     {
-        throw $_
+        throw $PSItem
     }
 
     return $connectionParameters

@@ -37,7 +37,7 @@ function Get-WiFiAvailableNetwork
             $interfaceGUID,
             $flag,
             [IntPtr]::zero,
-            [ref]$networkPointer
+            [ref] $networkPointer
         )
 
         if ( $result -ne 0 )
@@ -50,12 +50,12 @@ function Get-WiFiAvailableNetwork
 
         foreach ($network in $availableNetworks.wlanAvailableNetwork)
         {
-            [WiFi.ProfileManagement+WLAN_AVAILABLE_NETWORK]$network
+            [WiFi.ProfileManagement+WLAN_AVAILABLE_NETWORK] $network
         }
     }
     catch
     {
-        Write-Error $_
+        Write-Error $PSItem
     }
     finally
     {

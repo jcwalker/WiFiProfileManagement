@@ -217,12 +217,12 @@ function New-WiFiProfileXml
         if ($Password)
         {
             $secureStringToBstr = [System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($Password)
-            $plainPassword = [System.Runtime.InteropServices.Marshal]::PtrToStringAuto($secureStringToBstr) 
+            $plainPassword = [System.Runtime.InteropServices.Marshal]::PtrToStringAuto($secureStringToBstr)
         }
 
         if ($EAPType -eq 'PEAP')
         {
-            $profileXml = [xml]($script:WiFiProfileXmlEapPeap -f $ProfileName, ([string]$ConnectHiddenSSID).ToLower(), $ConnectionMode, $Authentication, $Encryption)
+            $profileXml = [xml] ($script:WiFiProfileXmlEapPeap -f $ProfileName, ([string] $ConnectHiddenSSID).ToLower(), $ConnectionMode, $Authentication, $Encryption)
 
             if ($ServerNames)
             {
@@ -237,7 +237,7 @@ function New-WiFiProfileXml
         }
         elseif ($EAPType -eq 'TLS')
         {
-            $profileXml = [xml]($script:WiFiProfileXmlEapTls -f $ProfileName, ([string]$ConnectHiddenSSID).ToLower(), $ConnectionMode, $Authentication, $Encryption)
+            $profileXml = [xml] ($script:WiFiProfileXmlEapTls -f $ProfileName, ([string] $ConnectHiddenSSID).ToLower(), $ConnectionMode, $Authentication, $Encryption)
 
             if ($ServerNames)
             {
@@ -254,13 +254,13 @@ function New-WiFiProfileXml
         }
         else
         {
-            $profileXml = [xml]($script:WiFiProfileXmlPersonal -f $ProfileName, ([string]$ConnectHiddenSSID).ToLower(), $ConnectionMode, $Authentication, $Encryption, $plainPassword)
+            $profileXml = [xml] ($script:WiFiProfileXmlPersonal -f $ProfileName, ([string] $ConnectHiddenSSID).ToLower(), $ConnectionMode, $Authentication, $Encryption, $plainPassword)
             if (-not $plainPassword)
             {
                 $null = $profileXml.WLANProfile.MSM.security.RemoveChild($profileXml.WLANProfile.MSM.security.sharedKey)
             }
 
-            if($Authentication -eq 'WPA3SAE'){
+            if ($Authentication -eq 'WPA3SAE'){
               # Set transition mode as true for WPA3-SAE
               $nsmg = [System.Xml.XmlNamespaceManager]::new($profileXml.NameTable)
               $nsmg.AddNamespace('WLANProfile', $profileXml.DocumentElement.GetAttribute('xmlns'))
@@ -275,6 +275,6 @@ function New-WiFiProfileXml
     }
     catch
     {
-        throw $_
+        throw $PSItem
     }
 }

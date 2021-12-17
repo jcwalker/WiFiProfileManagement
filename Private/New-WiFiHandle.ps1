@@ -16,7 +16,7 @@ function New-WiFiHandle
         $maxClient,
         [IntPtr]::Zero,
         $negotiatedVersion,
-        [ref]$clientHandle
+        [ref] $clientHandle
     )
     
     if ($result -eq 0)
