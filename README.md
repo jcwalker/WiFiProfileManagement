@@ -149,6 +149,8 @@ PS C:\>Remove-WiFiProfile -ProfileName FreeWifi
 ## Versions
 
 ### Unreleased
+*   Added private function Get-WiFiInterface.
+*   Added Search-WifiNetwork.
 
 ### 0.5.0.0
 *   Added support for create IEEE 802.1X EAP network profile.

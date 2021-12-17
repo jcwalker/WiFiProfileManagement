@@ -1,7 +1,8 @@
 ## Versions
 
 ## Unreleased
-* Added private function Get-WiFiInterface contributed by @jimcroft
+*   Added private function Get-WiFiInterface contributed by @jimcroft
+*   Added Search-WifiNetwork.
 
 ## 0.4.0.1
 *   Added Connect-WiFiProfile.  Add new scaffolding.
