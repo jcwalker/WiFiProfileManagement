@@ -185,7 +185,7 @@ public struct WLAN_AVAILABLE_NETWORK
 public struct DOT11_SSID
 {
     public uint uSSIDLength;
-        
+
     [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]
     public string ucSSID;
 }
