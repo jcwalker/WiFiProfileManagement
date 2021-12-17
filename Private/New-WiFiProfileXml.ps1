@@ -259,6 +259,16 @@ function New-WiFiProfileXml
             {
                 $null = $profileXml.WLANProfile.MSM.security.RemoveChild($profileXml.WLANProfile.MSM.security.sharedKey)
             }
+
+            if ($Authentication -eq 'WPA3SAE'){
+              # Set transition mode as true for WPA3-SAE
+              $nsmg = [System.Xml.XmlNamespaceManager]::new($profileXml.NameTable)
+              $nsmg.AddNamespace('WLANProfile', $profileXml.DocumentElement.GetAttribute('xmlns'))
+              $refNode = $profileXml.SelectSingleNode('//WLANProfile:authEncryption', $nsmg)
+              $xmlnode = $profileXml.CreateElement('transitionMode', 'http://www.microsoft.com/networking/WLAN/profile/v4')
+              $xmlnode.InnerText = 'true'
+              $null = $refNode.AppendChild($xmlnode)
+            }
         }
 
         $profileXml.OuterXml
