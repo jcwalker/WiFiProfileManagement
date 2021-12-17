@@ -16,6 +16,7 @@ Drop the root folder in your PSModulePath, remove the branch name (ex. -dev )fro
 * **Remove-WiFiProfile** Deletes a WiFi profile.
 * **Get-WiFiAvailableNetwork** Retrieves the list of available networks on a wireless LAN interface.
 * **Connect-WiFiProfile** Attempts to connect to a specific network.
+* **Search-WiFiNetwork** Requests a scan for available wifi networks.
 
 ### Get-WiFiProfile
 * **ProfileName**: The name of the WiFi profile. If not specified, The function will return all profiles.
@@ -40,7 +41,24 @@ Drop the root folder in your PSModulePath, remove the branch name (ex. -dev )fro
 * **Authentication**: Specifies the authentication method to be used to connect to the wireless LAN. ('open', 'shared', 'WPA', 'WPAPSK', 'WPA2', 'WPA2PSK', 'WPA3SAE', 'WPA3ENT192', 'OWE')
 * **Encryption**: Sets the data encryption to use to connect to the wireless LAN. ('none', 'WEP', 'TKIP', 'AES', 'GCMP256')
 * **Password**: The network key or passpharse of the wireless profile in the form of a secure string.
-* **XmlProfile**: The XML representation of the profile. 
+* **XmlProfile**: The XML representation of the profile.
+
+### Remove-WiFiProfile
+* **ProfileName**: The name of the profile to be deleted. Profile names are case-sensitive.
+* **WiFiAdapterName**: Specifies the name of the wireless network adapter on the machine. This is used to obtain the Guid of the interface. The default value is 'Wi-Fi'
+
+### Get-WiFiAvailableNetwork
+* **WiFiAdapterName**: Specifies the name of the wireless network adapter on the machine. This is used to obtain the Guid of the interface. The default value is 'Wi-Fi'
+
+### Connect-WiFiProfile
+* **ProfileName**: The name of the profile to be connected. Profile names are case-sensitive.
+* **ConnectionMode**: Specifies the mode of the connection. Valid values are Profile,TemporaryProfile,DiscoveryProfile,DiscoveryUnsecure, and Auto.
+* **Dot11BssType**: A value that indicates the BSS type of the network. If a profile is provided, this BSS type must be the same as the one in the profile.
+* **WiFiAdapterName**: Specifies the name of the wireless network adapter on the machine. This is used to obtain the Guid of the interface. The default value is 'Wi-Fi'
+
+### Search-WiFiNetwork
+* **WiFiAdapterName**: Specifies the name of the wireless network adapter on the machine. This is used to obtain the Guid of the interface. The default value is 'Wi-Fi'
+
 
 ## Examples
 
@@ -149,6 +167,7 @@ PS C:\>Remove-WiFiProfile -ProfileName FreeWifi
 ## Versions
 
 ### Unreleased
+### 1.0.0
 *   Added private function Get-WiFiInterface.
 *   Added Search-WifiNetwork.
 *   Added support for WPA3-Personal (WPA3SAE), WPA3-Enterprise (WPA3ENT192) and Wi-Fi Enhanced Open (OWE).

@@ -1,6 +1,6 @@
 ## Versions
 
-## Unreleased
+## 1.0.0
 *   Added private function Get-WiFiInterface contributed by @jimcroft
 *   Added Search-WifiNetwork.
 
