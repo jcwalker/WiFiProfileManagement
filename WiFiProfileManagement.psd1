@@ -20,7 +20,7 @@
     Author            = 'Jason Walker'
 
     # Description of the functionality provided by this module
-    Description       = 'Leverages the native WiFi functions to manage WiFi profiles'
+    Description       = 'Leverages the native WiFi functions to manage WiFi profiles.'
 
     # Format files (.ps1xml) to be loaded when importing this module
     FormatsToProcess  = @('WiFiProfileManagement.Format.ps1xml')
