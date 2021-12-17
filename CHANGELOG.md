@@ -3,6 +3,7 @@
 ## 1.0.0
 *   Added private function Get-WiFiInterface contributed by @jimcroft
 *   Added Search-WifiNetwork.
+*   Add support for WPA3 and Wi-Fi Enhanced Open contributed by @mkht
 
 ## 0.4.0.1
 *   Added Connect-WiFiProfile.  Add new scaffolding.
