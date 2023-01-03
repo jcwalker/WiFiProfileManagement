@@ -28,7 +28,7 @@ function Set-WiFiInterface
         [System.String]
         $WiFiAdapterName = 'Wi-Fi',
 
-        [Parameter()]
+        [Parameter(Mandatory = $true)]
         [ValidateSet('On','Off')]
         [string]
         $State
@@ -77,7 +77,7 @@ function Set-WiFiInterface
     }
     catch
     {
-        Write-Error $PSItem
+        Write-Error -Exception $PSItem
     }
     finally
     {
