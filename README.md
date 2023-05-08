@@ -1,15 +1,18 @@
 [![Build Status](https://ci.appveyor.com/api/projects/status/github/jcwalker/wifiprofilemanagement?branch=master&svg=true)](https://ci.appveyor.com/project/jcwalker/wifiprofilemanagement/branch/master)
 
 # WiFiProfileManagement
+
 Module used for management of wireless profiles.
 
 This module leverages the native WiFi functions.  I wanted to learn more about interoperability and have a PowerShell (not using netsh.exe) way to view passwords of WiFi profiles so I decided to work
 on this in my free time.  Any feedback on how this module can be improved is welcome.
 
-## How to use 
+## How to use
+
 Drop the root folder in your PSModulePath, remove the branch name (ex. -dev )from the folder, and PowerShell should find the module.
 
 ## Functions
+
 * **Get-WiFiProfile** Retrieves the information of a WiFi profile.
 * **Set-WiFiProfile** Overwrites a existent WiFi profile.
 * **New-WiFiProfile** Creates a new WiFi profile.
@@ -17,13 +20,16 @@ Drop the root folder in your PSModulePath, remove the branch name (ex. -dev )fro
 * **Get-WiFiAvailableNetwork** Retrieves the list of available networks on a wireless LAN interface.
 * **Connect-WiFiProfile** Attempts to connect to a specific network.
 * **Search-WiFiNetwork** Requests a scan for available wifi networks.
+* **Set-WiFiInterface** Toggles the software wifi radio state on/off.
 
 ### Get-WiFiProfile
+
 * **ProfileName**: The name of the WiFi profile. If not specified, The function will return all profiles.
 * **WiFiAdapterName**: Specifies the name of the wireless network adapter on the machine. This is used to obtain the Guid of the interface. The default value is 'Wi-Fi'
 * **ClearKey**: Specifies if the password of the profile is to be returned.
 
 ### Set-WiFiProfile
+
 * **ProfileName**: The name of the WiFi profile to modify.
 * **ConnectionMode**: Indicates whether connection to the wireless LAN should be automatic ("auto") or initiated ("manual") by user. The default is "auto".
 * **Authentication**: Specifies the authentication method to be used to connect to the wireless LAN. ('open', 'shared', 'WPA', 'WPAPSK', 'WPA2', 'WPA2PSK', 'WPA3SAE', 'WPA3ENT192', 'OWE')
@@ -36,6 +42,7 @@ Drop the root folder in your PSModulePath, remove the branch name (ex. -dev )fro
 * **XmlProfile**: The XML representation of the profile.
 
 ### New-WiFiProfile
+
 * **ProfileName**: The name of the new WiFi profile.
 * **ConnectionMode**: Indicates whether connection to the wireless LAN should be automatic ("auto") or initiated ("manual") by user. The default is "auto".
 * **Authentication**: Specifies the authentication method to be used to connect to the wireless LAN. ('open', 'shared', 'WPA', 'WPAPSK', 'WPA2', 'WPA2PSK', 'WPA3SAE', 'WPA3ENT192', 'OWE')
@@ -44,25 +51,35 @@ Drop the root folder in your PSModulePath, remove the branch name (ex. -dev )fro
 * **XmlProfile**: The XML representation of the profile.
 
 ### Remove-WiFiProfile
+
 * **ProfileName**: The name of the profile to be deleted. Profile names are case-sensitive.
 * **WiFiAdapterName**: Specifies the name of the wireless network adapter on the machine. This is used to obtain the Guid of the interface. The default value is 'Wi-Fi'
 
 ### Get-WiFiAvailableNetwork
+
 * **WiFiAdapterName**: Specifies the name of the wireless network adapter on the machine. This is used to obtain the Guid of the interface. The default value is 'Wi-Fi'
 
 ### Connect-WiFiProfile
+
 * **ProfileName**: The name of the profile to be connected. Profile names are case-sensitive.
 * **ConnectionMode**: Specifies the mode of the connection. Valid values are Profile,TemporaryProfile,DiscoveryProfile,DiscoveryUnsecure, and Auto.
 * **Dot11BssType**: A value that indicates the BSS type of the network. If a profile is provided, this BSS type must be the same as the one in the profile.
 * **WiFiAdapterName**: Specifies the name of the wireless network adapter on the machine. This is used to obtain the Guid of the interface. The default value is 'Wi-Fi'
 
 ### Search-WiFiNetwork
+
 * **WiFiAdapterName**: Specifies the name of the wireless network adapter on the machine. This is used to obtain the Guid of the interface. The default value is 'Wi-Fi'
 
+
+### Set-WiFiInterface
+
+* **WiFiAdapterName**: Specifies the name of the wireless network adapter on the machine. This is used to obtain the Guid of the interface. The default value is 'Wi-Fi'
+* **State**: Specifies the state of the wifi radio.  Valid values are on/off.
 
 ## Examples
 
 ### Get the WiFi profile information on wireless profile TestWifi
+
 ```PowerShell
 PS C:\>Get-WiFiProfile -ProfileName TestWiFi
 
@@ -74,6 +91,7 @@ PS C:\>Get-WiFiProfile -ProfileName TestWiFi
 ```
 
 ### Obtaining the password for wireless profile TestWifi
+
 ```PowerShell
         PS C:\>Get-WiFiProfile -ProfileName TestWiFi -ClearKey
 
@@ -85,11 +103,13 @@ PS C:\>Get-WiFiProfile -ProfileName TestWiFi
 ```
 
 ### Deleting a WiFi profile
+
 ```PowerShell
 PS C:\>Remove-WiFiProfile -ProfileName FreeWifi
 ```
 
 ### Updating a wireless profile
+
 ```PowerShell
         PS C:\>$password = Read-Host -AsSecureString
         **********
@@ -98,6 +118,7 @@ PS C:\>Remove-WiFiProfile -ProfileName FreeWifi
 ```
 
 ### Updating a wireless profile using the XmlProfile parameter.
+
 ```PowerShell
         PS C:\>$templateProfileXML = @"
         <?xml version="1.0"?>
@@ -131,6 +152,7 @@ PS C:\>Remove-WiFiProfile -ProfileName FreeWifi
 ```
 
 ### Creating a wireless profile
+
 ```PowerShell
         PS C:\>$password = Read-Host -AsSecureString
         **********
@@ -139,11 +161,13 @@ PS C:\>Remove-WiFiProfile -ProfileName FreeWifi
 ```
 
 ### Creating a wireless profile (Use 802.1X)
+
 ```PowerShell
         PS C:\>New-WiFiProfile -ProfileName OneXNetwork -ConnectionMode auto -Authentication WPA2 -Encryption AES -EAPType PEAP -TrustedRootCA '041101cca5b336a9c6e50d173489f5929e1b4b00'
 ```
 
 ### List available WiFi networks
+
 ```PowerShell
         PS C:\>Get-WiFiAvailableNetwork
 
@@ -154,6 +178,7 @@ PS C:\>Remove-WiFiProfile -ProfileName FreeWifi
 ```
 
 ### Connect to a WiFi profile
+
 ```PowerShell
         PS C:\> $password = Read-Host -AsSecureString
         ************
@@ -167,30 +192,43 @@ PS C:\>Remove-WiFiProfile -ProfileName FreeWifi
 ## Versions
 
 ### Unreleased
+
+### 1.1.0
+
+* Added Set-WiFiInterface to allow toggling the wifi adapter on/off.
+
 ### 1.0.0
-*   Added private function Get-WiFiInterface contributed by @jimcroft
-*   Added Search-WifiNetwork.
-*   Add support for WPA3 and Wi-Fi Enhanced Open contributed by @mkht
+
+* Added private function Get-WiFiInterface contributed by @jimcroft
+* Added Search-WifiNetwork.
+* Add support for WPA3 and Wi-Fi Enhanced Open contributed by @mkht
 
 ### 0.5.0.0
-*   Added support for create IEEE 802.1X EAP network profile.
+
+* Added support for create IEEE 802.1X EAP network profile.
 
 ### 0.4.0.1
-*   Added Connect-WiFiProfile.  Add new scaffolding.
+
+* Added Connect-WiFiProfile.  Add new scaffolding.
 
 ### 0.4.0.0
-*    Added Get-WiFiAvailableNetwork.  Moved code that enables Windows 7 compatibility to a function.
+
+* Added Get-WiFiAvailableNetwork.  Moved code that enables Windows 7 compatibility to a function.
 
 ### 0.3.0.0
-*    Added New-WiFiProfile
+
+* Added New-WiFiProfile
 
 ### 0.2.1.0
-*    Added Set-WiFiProfile
+
+* Added Set-WiFiProfile
 
 ### 0.1.1.0
-*    Added formating
+
+* Added formating
 
 ### 0.1.0.0
-*    Initial released with the following functions
-     * Get-WiFiProfile
-     * Remove-WiFiProfile
+
+* Initial released with the following functions
+  * Get-WiFiProfile
+  * Remove-WiFiProfile
