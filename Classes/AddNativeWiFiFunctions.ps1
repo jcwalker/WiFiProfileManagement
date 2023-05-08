@@ -89,10 +89,10 @@ public struct WLAN_CONNECTION_PARAMETERS
 {
     public WLAN_CONNECTION_MODE wlanConnectionMode;
     public string strProfile;
-    public DOT11_SSID[] pDot11Ssid;  
-    public DOT11_BSSID_LIST[] pDesiredBssidList;   
-    public DOT11_BSS_TYPE dot11BssType;  
-    public uint dwFlags; 
+    public DOT11_SSID[] pDot11Ssid;
+    public DOT11_BSSID_LIST[] pDesiredBssidList;
+    public DOT11_BSS_TYPE dot11BssType;
+    public uint dwFlags;
 }
 
 public struct DOT11_BSSID_LIST
@@ -142,9 +142,9 @@ public struct WLAN_PROFILE_INFO
 [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
 public struct WLAN_AVAILABLE_NETWORK_LIST
 {
-    public uint dwNumberOfItems;
-    public uint dwIndex;
-    public WLAN_AVAILABLE_NETWORK[] wlanAvailableNetwork;
+    public uint dwNumberOfItems;
+    public uint dwIndex;
+    public WLAN_AVAILABLE_NETWORK[] wlanAvailableNetwork;
     public WLAN_AVAILABLE_NETWORK_LIST(IntPtr ppAvailableNetworkList)
     {
         dwNumberOfItems = (uint)Marshal.ReadInt64 (ppAvailableNetworkList);
