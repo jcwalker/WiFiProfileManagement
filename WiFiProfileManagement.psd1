@@ -9,13 +9,13 @@
 @{
     # Script module or binary module file associated with this manifest.
     RootModule        = 'WiFiProfileManagement.psm1'
-    
+
     # Version number of this module.
-    ModuleVersion     = '1.0.0.0'
-    
+    ModuleVersion     = '1.1.0.0'
+
     # ID used to uniquely identify this module
     GUID              = '91ed6e00-7f98-4f49-84f5-c3ee1a10e4d0'
-    
+
     # Author of this module
     Author            = 'Jason Walker'
 
@@ -33,18 +33,19 @@
         'New-WiFiProfile',
         'Remove-WiFiProfile',
         'Set-WiFiProfile',
-        'Search-WiFiNetwork'
+        'Search-WiFiNetwork',
+        'Set-WiFiInterface'
     )
 
     # Private data to pass to the module specified in RootModule/ModuleToProcess. This may also contain a PSData hashtable with additional module metadata used by PowerShell.
     PrivateData       = @{
-        PSData = @{    
+        PSData = @{
             # Tags applied to this module. These help with module discovery in online galleries.
             Tags       = @('WiFi')
-    
+
             # A URL to the license for this module.
             LicenseUri = 'https://github.com/jcwalker/WiFiProfileManagement/blob/connectWifiProfile/LICENSE'
-    
+
             # A URL to the main website for this project.
             ProjectUri = 'https://github.com/jcwalker/WiFiProfileManagement'
         }
