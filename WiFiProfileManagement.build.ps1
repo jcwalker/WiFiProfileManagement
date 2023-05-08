@@ -1,4 +1,4 @@
-#Requires -Modules InvokeBuild, BuildHelpers, PSDeploy
+# Requires module: InvokeBuild, BuildHelpers, PSDeploy
 
 task . Clean, Build, Tests, Stats, DeployToGallery
 task Tests ImportCompiledModule, Pester
