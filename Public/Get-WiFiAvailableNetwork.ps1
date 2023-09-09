@@ -34,7 +34,6 @@ function Get-WiFiAvailableNetwork
         $interfaceGuid = Get-WiFiInterfaceGuid -WiFiAdapterName $WiFiAdapterName
     }
 
-    $interfaceGUID = Get-WiFiInterfaceGuid -WiFiAdapterName $WiFiAdapterName -ErrorAction Stop
     $clientHandle = New-WiFiHandle
     $networkPointer = 0
     $flag = 0

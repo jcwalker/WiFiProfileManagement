@@ -184,24 +184,32 @@ public struct WLAN_AVAILABLE_NETWORK
 [StructLayout(LayoutKind.Sequential)]
 public struct DOT11_SSID
 {
-  public uint uSSIDLength;
+    public uint uSSIDLength;
 
-  [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
-  public byte[] ucSSID;
+    [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
+    public byte[] ucSSID;
 
-  public byte[] ToSsidBytes()
-  {
-    return (ucSSID != null)
-      ? ucSSID.Take((int)uSSIDLength).ToArray()
-      : null;
-  }
+    public byte[] ToBytes() => ucSSID?.Take((int)uSSIDLength).ToArray();
 
-  public string ToSsidString()
-  {
-    return (ucSSID != null)
-      ? Encoding.UTF8.GetString(ToSsidBytes())
-      : null;
-  }
+    private static Encoding _encoding =
+        Encoding.GetEncoding(65001, // UTF-8 code page
+            EncoderFallback.ReplacementFallback,
+            DecoderFallback.ExceptionFallback);
+
+    public override string ToString()
+    {
+        if (ucSSID is null)
+            return null;
+
+        try
+        {
+            return _encoding.GetString(ToBytes());
+        }
+        catch (DecoderFallbackException)
+        {
+            return null;
+        }
+    }
 }
 
 public enum DOT11_BSS_TYPE
@@ -513,7 +521,23 @@ public struct WLAN_CONNECTION_ATTRIBUTES
     public WLAN_SECURITY_ATTRIBUTES wlanSecurityAttributes;
 }
 
-[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
+[StructLayout(LayoutKind.Sequential)]
+public struct DOT11_MAC_ADDRESS
+{
+    [MarshalAs(UnmanagedType.ByValArray, SizeConst = 6)]
+    public byte[] ucDot11MacAddress;
+
+    public byte[] ToBytes() => ucDot11MacAddress?.ToArray();
+
+    public override string ToString()
+    {
+        return (ucDot11MacAddress is not null)
+            ? BitConverter.ToString(ucDot11MacAddress).Replace('-', ':')
+            : null;
+    }
+}
+
+[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
 public struct WLAN_ASSOCIATION_ATTRIBUTES
 {
     /// DOT11_SSID->_DOT11_SSID
@@ -523,8 +547,7 @@ public struct WLAN_ASSOCIATION_ATTRIBUTES
     public DOT11_BSS_TYPE dot11BssType;
 
     /// DOT11_MAC_ADDRESS->UCHAR[6]
-    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 6)]
-    public string dot11Bssid;
+    public DOT11_MAC_ADDRESS dot11Bssid;
 
     /// DOT11_PHY_TYPE->_DOT11_PHY_TYPE
     public DOT11_PHY_TYPE dot11PhyType;
