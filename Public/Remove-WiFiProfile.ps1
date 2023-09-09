@@ -14,7 +14,7 @@
 function Remove-WiFiProfile
 {
     [CmdletBinding(SupportsShouldProcess = $true, ConfirmImpact = 'High')]
-    Param 
+    Param
     (
         [Parameter(Position = 0, Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
         [System.String[]]
@@ -22,12 +22,19 @@ function Remove-WiFiProfile
 
         [Parameter(Position = 1)]
         [System.String]
-        $WiFiAdapterName = 'Wi-Fi'
+        $WiFiAdapterName
     )
 
     begin
     {
-        $interfaceGUID = Get-WiFiInterfaceGuid -ErrorAction Stop
+        if (!$WiFiAdapterName)
+        {
+            $interfaceGuid = (Get-WiFiInterface).Guid
+        }
+        else
+        {
+            $interfaceGuid = Get-WiFiInterfaceGuid -WiFiAdapterName $WiFiAdapterName
+        }
     }
     process
     {

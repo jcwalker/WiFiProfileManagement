@@ -49,21 +49,26 @@ function Connect-WiFiProfile
 
         [Parameter()]
         [System.String]
-        $WiFiAdapterName = 'Wi-Fi'
+        $WiFiAdapterName
     )
 
     begin
     {
-        $interfaceGuid = Get-WiFiInterfaceGuid -WiFiAdapterName $WiFiAdapterName -ErrorAction Stop
+        if (!$WiFiAdapterName)
+        {
+            $interfaceGuid = (Get-WiFiInterface).Guid
+        }
+        else
+        {
+            $interfaceGuid = Get-WiFiInterfaceGuid -WiFiAdapterName $WiFiAdapterName
+        }
     }
     process
     {
         try
         {
             $clientHandle = New-WiFiHandle
-
             $connectionParameterList = New-WiFiConnectionParameter -ProfileName $ProfileName -ConnectionMode $ConnectionMode -Dot11BssType $Dot11BssType
-
             Invoke-WlanConnect -ClientHandle $clientHandle -InterfaceGuid $interfaceGuid -ConnectionParameterList $connectionParameterList
         }
         catch

@@ -22,8 +22,17 @@ function Get-WiFiAvailableNetwork
     (
         [Parameter()]
         [System.String]
-        $WiFiAdapterName = 'Wi-Fi'
+        $WiFiAdapterName
     )
+
+    if (!$WiFiAdapterName)
+    {
+        $interfaceGuid = (Get-WiFiInterface).Guid
+    }
+    else
+    {
+        $interfaceGuid = Get-WiFiInterfaceGuid -WiFiAdapterName $WiFiAdapterName
+    }
 
     $interfaceGUID = Get-WiFiInterfaceGuid -WiFiAdapterName $WiFiAdapterName -ErrorAction Stop
     $clientHandle = New-WiFiHandle

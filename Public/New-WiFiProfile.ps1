@@ -2,7 +2,7 @@
     .SYNOPSIS
         Creates the content of a specified wireless profile.
     .DESCRIPTION
-        Creates the content of a wireless profile by calling the WlanSetProfile native function but with the override parameter set to false. 
+        Creates the content of a wireless profile by calling the WlanSetProfile native function but with the override parameter set to false.
     .PARAMETER ProfileName
         The name of the wireless profile to be created. Profile names are case sensitive.
     .PARAMETER ConnectionMode
@@ -27,7 +27,7 @@
         PS C:\>$password = Read-Host -AsSecureString
         **********
 
-        PS C:\>New-WiFiProfile -ProfileName MyNetwork -ConnectionMode auto -Authentication WPA2PSK -Encryption AES -Password $password 
+        PS C:\>New-WiFiProfile -ProfileName MyNetwork -ConnectionMode auto -Authentication WPA2PSK -Encryption AES -Password $password
 
         This examples shows how to create a wireless profile by using the individual parameters.
     .EXAMPLE
@@ -40,7 +40,7 @@
         <WLANProfile xmlns="http://www.microsoft.com/networking/WLAN/profile/v1">
             <name>MyNetwork</name>
             <SSIDConfig>
-                <SSID>            
+                <SSID>
                     <name>MyNetwork</name>
                 </SSID>
             </SSIDConfig>
@@ -124,7 +124,7 @@ function New-WiFiProfile
 
         [Parameter()]
         [System.String]
-        $WiFiAdapterName = 'Wi-Fi',
+        $WiFiAdapterName,
 
         [Parameter(Mandatory = $true, ParameterSetName = 'UsingXml')]
         [System.String]
@@ -137,7 +137,15 @@ function New-WiFiProfile
 
     try
     {
-        $interfaceGuid = Get-WiFiInterfaceGuid -WiFiAdapterName $WiFiAdapterName -ErrorAction Stop
+        if (!$WiFiAdapterName)
+        {
+            $interfaceGuid = (Get-WiFiInterface).Guid
+        }
+        else
+        {
+            $interfaceGuid = Get-WiFiInterfaceGuid -WiFiAdapterName $WiFiAdapterName
+        }
+
         $clientHandle = New-WiFiHandle
         $flags = 0
         $reasonCode = [IntPtr]::Zero

@@ -19,7 +19,7 @@ function Search-WiFiNetwork
     (
         [Parameter()]
         [System.String]
-        $WiFiAdapterName = 'Wi-Fi'
+        $WiFiAdapterName
     )
 
     try
@@ -29,7 +29,7 @@ function Search-WiFiNetwork
             $interfaceGuids = (Get-WiFiInterface).Guid
         }
         else
-        { 
+        {
             $interfaceGuids = Get-WiFiInterfaceGuid -WiFiAdapterName $WiFiAdapterName
         }
 

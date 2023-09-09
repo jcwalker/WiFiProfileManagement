@@ -26,7 +26,7 @@ function Set-WiFiInterface
     (
         [Parameter()]
         [System.String]
-        $WiFiAdapterName = 'Wi-Fi',
+        $WiFiAdapterName,
 
         [Parameter(Mandatory = $true)]
         [ValidateSet('On','Off')]
@@ -56,7 +56,6 @@ function Set-WiFiInterface
         $radioStatePtr = [System.Runtime.InteropServices.Marshal]::AllocHGlobal($radioStateSize)
 
         [System.Runtime.InteropServices.Marshal]::StructureToPtr($radioState, $radioStatePtr, $false)
-
 
         foreach ($interfaceGuid in $interfaceGuids)
         {
