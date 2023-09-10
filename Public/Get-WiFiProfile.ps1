@@ -10,7 +10,7 @@
 
     .PARAMETER ClearKey
         Specifies if the password of the profile is to be returned.
-        
+
     .EXAMPLE
         PS C:\>Get-WiFiProfile -ProfileName TestWiFi
 
@@ -96,9 +96,9 @@ function Get-WiFiProfile
                 $profileInfo = Get-WiFiProfileInfo -ProfileName $wiFiProfile -InterfaceGuid $interface.InterfaceGuid -ClientHandle $clientHandle -WlanProfileFlags $wlanProfileFlags
                 $result += Add-DefaultProperty -InputObject $profileInfo -InterfaceInfo $interface
             }
-
-            $result
         }
+
+        $result
     }
     catch
     {
