@@ -25,49 +25,50 @@ function Get-WiFiAvailableNetwork
         $WiFiAdapterName
     )
 
-    if (!$WiFiAdapterName)
-    {
-        $interfaceGuid = (Get-WiFiInterface).Guid
-    }
-    else
-    {
-        $interfaceGuid = Get-WiFiInterfaceGuid -WiFiAdapterName $WiFiAdapterName
-    }
-
-    $clientHandle = New-WiFiHandle
-    $networkPointer = 0
-    $flag = 0
-
     try
     {
-        $result = [WiFi.ProfileManagement]::WlanGetAvailableNetworkList(
-            $clientHandle,
-            $interfaceGUID,
-            $flag,
-            [IntPtr]::zero,
-            [ref] $networkPointer
-        )
+        $interfaceInfo = Get-InterfaceInfo -WiFiAdapterName $WiFiAdapterName
 
-        if ( $result -ne 0 )
+        $flag = 0
+        $pointerCollection = @()
+        $clientHandle = New-WiFiHandle
+
+        foreach ($interface in $interfaceInfo)
         {
-            $errorMessage = Format-Win32Exception -ReturnCode $result
-            throw $($script:localizedData.ErrorGetAvailableNetworkList -f $errorMessage)
+            $networkPointer = 0
+            $result = [WiFi.ProfileManagement]::WlanGetAvailableNetworkList(
+                $clientHandle,
+                $interface.InterfaceGuid,
+                $flag,
+                [IntPtr]::zero,
+                [ref] $networkPointer
+            )
+
+            if ($result -ne 0)
+            {
+                $errorMessage = Format-Win32Exception -ReturnCode $result
+                throw $($script:localizedData.ErrorGetAvailableNetworkList -f $errorMessage)
+            }
+
+            $availableNetworks = [WiFi.ProfileManagement+WLAN_AVAILABLE_NETWORK_LIST]::new($networkPointer)
+            $pointerCollection += $networkPointer
+
+            foreach ($network in $availableNetworks.wlanAvailableNetwork)
+            {
+                $result = [WiFi.ProfileManagement+WLAN_AVAILABLE_NETWORK] $network
+                $result += Add-DefaultProperty -InputObject $result -InterfaceInfo $interface
+            }
         }
 
-        $availableNetworks = [WiFi.ProfileManagement+WLAN_AVAILABLE_NETWORK_LIST]::new($networkPointer)
-
-        foreach ($network in $availableNetworks.wlanAvailableNetwork)
-        {
-            [WiFi.ProfileManagement+WLAN_AVAILABLE_NETWORK] $network
-        }
+        $result
     }
     catch
     {
-        Write-Error $PSItem
+        $PSItem
     }
     finally
     {
-        Invoke-WlanFreeMemory -Pointer $networkPointer
+        Invoke-WlanFreeMemory -Pointer $pointerCollection
 
         if ($clientHandle)
         {

@@ -137,13 +137,11 @@ function New-WiFiProfile
 
     try
     {
-        if (!$WiFiAdapterName)
+        $interfaceInfo = Get-InterfaceInfo -WiFiAdapterName $WiFiAdapterName
+
+        if ($interfaceInfo.Count -gt 1)
         {
-            $interfaceGuid = (Get-WiFiInterface).Guid
-        }
-        else
-        {
-            $interfaceGuid = Get-WiFiInterfaceGuid -WiFiAdapterName $WiFiAdapterName
+            throw $Script:localizedData.ErrorNeedSingleAdapterName
         }
 
         $clientHandle = New-WiFiHandle
@@ -175,7 +173,7 @@ function New-WiFiProfile
 
         $returnCode = [WiFi.ProfileManagement]::WlanSetProfile(
             $clientHandle,
-            [ref] $interfaceGuid,
+            [ref] $interfaceInfo.InterfaceGuid,
             $flags,
             $profilePointer,
             [IntPtr]::Zero,
@@ -200,7 +198,7 @@ function New-WiFiProfile
     }
     catch
     {
-        Write-Error $PSItem
+        $PSItem
     }
     finally
     {

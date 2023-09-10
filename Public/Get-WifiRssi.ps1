@@ -1,3 +1,20 @@
+<#
+    .SYNOPSIS
+        Retrieves the RSSI (Received signal strength indicator).
+
+    .PARAMETER WiFiAdapterName
+        Specifies the name of the wifi adapter to get the RSSI from.
+
+    .EXAMPLE
+        Get-WiFiRssi
+
+        RSSI
+        ----
+        -61
+
+        This examples retrieves the RSSI from the default wifi network adaptor.
+
+#>
 function Get-WiFiRssi
 {
     [CmdletBinding()]
@@ -10,30 +27,23 @@ function Get-WiFiRssi
 
     try
     {
-        if (!$WiFiAdapterName)
-        {
-            $interfaceGuids = (Get-WiFiInterface).Guid
-        }
-        else
-        {
-            $interfaceGuids = Get-WiFiInterfaceGuid -WiFiAdapterName $WiFiAdapterName
-        }
-
+        $result = @()
+        $pointerCollection = @()
+        $interfaceInfo = Get-InterfaceInfo -WiFiAdapterName $WiFiAdapterName
         $clientHandle = New-WiFiHandle
 
         $outData =  [System.UInt32]::new() # [long]0 #[System.IntPtr]::zero
         $dataSize = [System.Runtime.InteropServices.Marshal]::SizeOf($outData)
-        #$dataSize = [System.UInt32]::new()
 
-        foreach ($interfaceGuid in $interfaceGuids)
+        foreach ($interface in $interfaceInfo)
         {
             $resultCode = [WiFi.ProfileManagement]::WlanQueryInterface(
-                $clientHandle, # handle
-                [ref] $interfaceGuid, #interfaceGuid
-                [WiFi.ProfileManagement+WLAN_INTF_OPCODE]::wlan_intf_opcode_rssi, # opcode
-                [IntPtr]::zero, # resrved
-                [ref]$dataSize, # out pdwDataSize
-                [ref]$outData, # out ppData
+                $clientHandle,
+                [ref] $interface.InterfaceGuid,
+                [WiFi.ProfileManagement+WLAN_INTF_OPCODE]::wlan_intf_opcode_rssi,
+                [IntPtr]::zero,
+                [ref]$dataSize,
+                [ref]$outData,
                 [IntPtr]::zero
             )
 
@@ -42,13 +52,19 @@ function Get-WiFiRssi
                 return $resultCode
             }
 
-            [System.Runtime.InteropServices.Marshal]::ReadInt32($outData)
-
+            $pointerCollection += $outData
+            $rssi = [PSCustomObject]@{
+                Rssi = [System.Runtime.InteropServices.Marshal]::ReadInt32($outData)
+            }
+            
+            $result += Add-DefaultProperty -InputObject $rssi -InterfaceInfo $interface
         }
+
+        $result
     }
     catch
     {
-        Write-Error -Exception $PSItem
+        $PSItem
     }
     finally
     {
@@ -59,10 +75,7 @@ function Get-WiFiRssi
 
         if ($outData)
         {
-            Invoke-WlanFreeMemory -Pointer $outData
+            Invoke-WlanFreeMemory -Pointer $pointerCollection
         }
     }
 }
-
-#https://social.msdn.microsoft.com/forums/windowsdesktop/en-us/a2daf71e-b0f2-4d0d-bbf0-54518881cafd/use-native-wlan-api-in-managed-code
-#https://github.com/coolshou/WlanQuery/blob/fa61dd63fbab250818fd94bb44b24ef8b9149588/src/WlanQuery.cpp#L358

@@ -19,7 +19,7 @@
 
         Get the WiFi profile information on wireless profile TestWiFi
 
-    .EXAMPLE 
+    .EXAMPLE
         PS C:\>Get-WiFiProfile -ProfileName TestWiFi -CLearKey
 
         SSIDName       : TestWiFi
@@ -56,17 +56,9 @@ function Get-WiFiProfile
 
     try
     {
+        $result = @()
         $profileListPointer = 0
-
-        if (!$WiFiAdapterName)
-        {
-            $interfaceGuids = (Get-WiFiInterface).Guid
-        }
-        else
-        { 
-            $interfaceGuids = Get-WiFiInterfaceGuid -WiFiAdapterName $WiFiAdapterName
-        }
-
+        $interfaceInfo = Get-InterfaceInfo -WiFiAdapterName $WiFiAdapterName
         $clientHandle = New-WiFiHandle
 
         if ($ClearKey)
@@ -80,14 +72,15 @@ function Get-WiFiProfile
 
         if (!$ProfileName)
         {
-            foreach ($interfaceGUID in $interfaceGuids)
+            foreach ($interface in $interfaceInfo)
             {
                 [void] [WiFi.ProfileManagement]::WlanGetProfileList(
                     $clientHandle,
-                    $interfaceGUID,
+                    $interface.InterfaceGuid,
                     [IntPtr]::zero,
                     [ref] $profileListPointer
                 )
+
                 $wiFiProfileList = [WiFi.ProfileManagement+WLAN_PROFILE_INFO_LIST]::new($profileListPointer)
                 $ProfileName = ($wiFiProfileList.ProfileInfo).strProfileName
             }
@@ -95,10 +88,13 @@ function Get-WiFiProfile
 
         foreach ($wiFiProfile in $ProfileName)
         {
-            foreach ($interfaceGUID in $interfaceGuids)
+            foreach ($interface in $interfaceInfo)
             {
-                Get-WiFiProfileInfo -ProfileName $wiFiProfile -InterfaceGuid $interfaceGUID -ClientHandle $clientHandle -WlanProfileFlags $wlanProfileFlags
+                $profileInfo = Get-WiFiProfileInfo -ProfileName $wiFiProfile -InterfaceGuid $interface.InterfaceGuid -ClientHandle $clientHandle -WlanProfileFlags $wlanProfileFlags
+                $result += Add-DefaultProperty -InputObject $profileInfo -InterfaceInfo $interface
             }
+
+            $result
         }
     }
     catch

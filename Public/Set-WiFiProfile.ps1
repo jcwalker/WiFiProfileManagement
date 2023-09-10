@@ -118,7 +118,7 @@ function Set-WiFiProfile
         [System.String]
         $TrustedRootCA,
 
-        [Parameter(Mandatory)]
+        [Parameter()]
         [System.String]
         $WiFiAdapterName,
 

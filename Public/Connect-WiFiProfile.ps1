@@ -54,13 +54,11 @@ function Connect-WiFiProfile
 
     begin
     {
-        if (!$WiFiAdapterName)
+        $interfaceInfo = Get-InterfaceInfo -WiFiAdapterName $WiFiAdapterName
+
+        if ($interfaceInfo.Count -gt 1)
         {
-            $interfaceGuid = (Get-WiFiInterface).Guid
-        }
-        else
-        {
-            $interfaceGuid = Get-WiFiInterfaceGuid -WiFiAdapterName $WiFiAdapterName
+            throw $Script:localizedData.ErrorMoreThanOneInterface
         }
     }
     process
@@ -69,7 +67,7 @@ function Connect-WiFiProfile
         {
             $clientHandle = New-WiFiHandle
             $connectionParameterList = New-WiFiConnectionParameter -ProfileName $ProfileName -ConnectionMode $ConnectionMode -Dot11BssType $Dot11BssType
-            Invoke-WlanConnect -ClientHandle $clientHandle -InterfaceGuid $interfaceGuid -ConnectionParameterList $connectionParameterList
+            Invoke-WlanConnect -ClientHandle $clientHandle -InterfaceGuid $interfaceInfo.InterfaceGuid -ConnectionParameterList $connectionParameterList
         }
         catch
         {

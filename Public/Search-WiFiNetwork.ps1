@@ -8,9 +8,9 @@
         The default value is 'Wi-Fi'
 
     .EXAMPLE
-        PS C:\>Search-WiFiNetwork WiFiAdapterName WiFi
+        PS C:\>Search-WiFiNetwork -WiFiAdapterName WiFi
 
-        This examples will search for WiFi netowrks on the WiFi adapter.
+        This examples will search for WiFi networks on the WiFi adapter.
 #>
 function Search-WiFiNetwork
 {
@@ -24,22 +24,15 @@ function Search-WiFiNetwork
 
     try
     {
-        if (!$WiFiAdapterName)
-        {
-            $interfaceGuids = (Get-WiFiInterface).Guid
-        }
-        else
-        {
-            $interfaceGuids = Get-WiFiInterfaceGuid -WiFiAdapterName $WiFiAdapterName
-        }
+        $interfaceInfo = Get-InterfaceInfo -WiFiAdapterName $WiFiAdapterName
 
         $clientHandle = New-WiFiHandle
 
-        foreach ($interfaceGuid in $interfaceGuids)
+        foreach ($interface in $interfaceInfo)
         {
             $resultCode = [WiFi.ProfileManagement]::WlanScan(
                 $clientHandle,
-                [ref] $interfaceGuid,
+                [ref] $interface.InterfaceGuid,
                 [IntPtr]::zero,
                 [IntPtr]::zero,
                 [IntPtr]::zero

@@ -11,16 +11,19 @@ function Invoke-WlanFreeMemory
     param
     (
         [Parameter(Mandatory = $true)]
-        [System.IntPtr]
+        [System.IntPtr[]]
         $Pointer
     )
 
-    try
+    foreach ($ptr in $Pointer)
     {
-        [WiFi.ProfileManagement]::WlanFreeMemory($Pointer)
-    }
-    catch
-    {
-        throw $($script:localizedData.ErrorFreeMemory -f $errorMessage)
+        try
+        {
+            [WiFi.ProfileManagement]::WlanFreeMemory($ptr)
+        }
+        catch
+        {
+            throw $($script:localizedData.ErrorFreeMemory -f $errorMessage)
+        }
     }
 }
