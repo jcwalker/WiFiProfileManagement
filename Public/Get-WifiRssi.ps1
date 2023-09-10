@@ -1,6 +1,6 @@
 <#
     .SYNOPSIS
-        Retrieves the RSSI (Received signal strength indicator).
+        Retrieves the RSSI (Received signal strength indicator.
 
     .PARAMETER WiFiAdapterName
         Specifies the name of the wifi adapter to get the RSSI from.
@@ -56,7 +56,7 @@ function Get-WiFiRssi
             $rssi = [PSCustomObject]@{
                 Rssi = [System.Runtime.InteropServices.Marshal]::ReadInt32($outData)
             }
-            
+
             $result += Add-DefaultProperty -InputObject $rssi -InterfaceInfo $interface
         }
 

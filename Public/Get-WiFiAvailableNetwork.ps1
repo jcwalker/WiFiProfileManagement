@@ -4,6 +4,10 @@
     .PARAMETER WiFiAdapterName
         Specifies the name of the wireless network adapter on the machine. This is used to obtain the Guid of the interface.
         The default value is 'Wi-Fi'
+
+    .PARAMETER InvokeScan
+        Switch so a scan is ran to discover additional wireless networks.
+
     .EXAMPLE
         PS C:\>Get-WiFiAvailableNetwork
 
@@ -22,14 +26,24 @@ function Get-WiFiAvailableNetwork
     (
         [Parameter()]
         [System.String]
-        $WiFiAdapterName
+        $WiFiAdapterName,
+
+        [Parameter()]
+        [switch]
+        $InvokeScan
     )
 
     try
     {
+        if ($InvokeScan.IsPresent)
+        {
+            Search-WiFiNetwork -WiFiAdapterName $WiFiAdapterName
+        }
+
         $interfaceInfo = Get-InterfaceInfo -WiFiAdapterName $WiFiAdapterName
 
         $flag = 0
+        $networkList = @()
         $pointerCollection = @()
         $clientHandle = New-WiFiHandle
 
@@ -55,12 +69,12 @@ function Get-WiFiAvailableNetwork
 
             foreach ($network in $availableNetworks.wlanAvailableNetwork)
             {
-                $result = [WiFi.ProfileManagement+WLAN_AVAILABLE_NETWORK] $network
-                $result += Add-DefaultProperty -InputObject $result -InterfaceInfo $interface
+                $networkResult = [WiFi.ProfileManagement+WLAN_AVAILABLE_NETWORK] $network
+                $networkList += Add-DefaultProperty -InputObject $networkResult -InterfaceInfo $interface
             }
         }
 
-        $result
+        $networkList
     }
     catch
     {

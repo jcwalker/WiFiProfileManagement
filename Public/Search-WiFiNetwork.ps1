@@ -8,7 +8,7 @@
         The default value is 'Wi-Fi'
 
     .EXAMPLE
-        PS C:\>Search-WiFiNetwork -WiFiAdapterName WiFi
+        Search-WiFiNetwork -WiFiAdapterName WiFi
 
         This examples will search for WiFi networks on the WiFi adapter.
 #>
@@ -46,7 +46,7 @@ function Search-WiFiNetwork
     }
     catch
     {
-        Write-Error $PSItem
+        $PSItem
     }
     finally
     {

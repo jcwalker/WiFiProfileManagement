@@ -17,4 +17,5 @@ ConvertFrom-StringData @'
     ErrorNoWiFiAdaptersFound = No wifi interfaces found.
     ErrorMoreThanOneInterface = More than one Wi-Fi interface found. Please specify a specific interface.
     ErrorNeedSingleAdapterName = More than one Wi-Fi adapter found.  Please specify a single adapter name.
+    ErrorFailedWithExitCode = Failed with exit code {0}.
 '@
