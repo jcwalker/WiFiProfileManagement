@@ -5,7 +5,6 @@
 
     .PARAMETER WiFiAdapterName
         Specifies the name of the wireless network adapter on the machine. This is used to obtain the Guid of the interface.
-        The default value is 'Wi-Fi'
 
     .EXAMPLE
         Search-WiFiNetwork -WiFiAdapterName WiFi

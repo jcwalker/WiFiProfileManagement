@@ -1,13 +1,16 @@
 <#
     .SYNOPSIS
         Lists the wireless profiles and their configuration settings.
+
     .PARAMETER ProfileName
         The name of the WiFi profile.
+
     .PARAMETER WiFiAdapterName
         Specifies the name of the wireless network adapter on the machine. This is used to obtain the Guid of the interface.
-        The default value is 'Wi-Fi'
+
     .PARAMETER ClearKey
         Specifies if the password of the profile is to be returned.
+        
     .EXAMPLE
         PS C:\>Get-WiFiProfile -ProfileName TestWiFi
 
