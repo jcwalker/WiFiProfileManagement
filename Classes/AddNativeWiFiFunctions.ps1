@@ -181,35 +181,15 @@ public struct WLAN_AVAILABLE_NETWORK
     public uint dwReserved;
 }
 
-[StructLayout(LayoutKind.Sequential)]
+[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
 public struct DOT11_SSID
 {
+    /// ULONG->unsigned int
     public uint uSSIDLength;
 
-    [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
-    public byte[] ucSSID;
-
-    public byte[] ToBytes() => ucSSID?.Take((int)uSSIDLength).ToArray();
-
-    private static Encoding _encoding =
-        Encoding.GetEncoding(65001, // UTF-8 code page
-            EncoderFallback.ReplacementFallback,
-            DecoderFallback.ExceptionFallback);
-
-    public override string ToString()
-    {
-        if (ucSSID is null)
-            return null;
-
-        try
-        {
-            return _encoding.GetString(ToBytes());
-        }
-        catch (DecoderFallbackException)
-        {
-            return null;
-        }
-    }
+    /// UCHAR[]
+    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]
+    public string ucSSID;
 }
 
 public enum DOT11_BSS_TYPE
@@ -521,20 +501,15 @@ public struct WLAN_CONNECTION_ATTRIBUTES
     public WLAN_SECURITY_ATTRIBUTES wlanSecurityAttributes;
 }
 
-[StructLayout(LayoutKind.Sequential)]
+[StructLayout(LayoutKind.Sequential, Pack = 1)]
 public struct DOT11_MAC_ADDRESS
 {
-    [MarshalAs(UnmanagedType.ByValArray, SizeConst = 6)]
-    public byte[] ucDot11MacAddress;
-
-    public byte[] ToBytes() => ucDot11MacAddress?.ToArray();
-
-    public override string ToString()
-    {
-        return (ucDot11MacAddress is not null)
-            ? BitConverter.ToString(ucDot11MacAddress).Replace('-', ':')
-            : null;
-    }
+     public byte one;
+     public byte two;
+     public byte three;
+     public byte four;
+     public byte five;
+     public byte six;
 }
 
 [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
@@ -592,4 +567,4 @@ public struct WLAN_SECURITY_ATTRIBUTES
 }
 '@
 
-Add-Type -MemberDefinition $WlanGetProfileListSig -Name ProfileManagement -Namespace WiFi -Using System.Text,System.Linq -PassThru
+Add-Type -MemberDefinition $WlanGetProfileListSig -Name ProfileManagement -Namespace WiFi -Using System.Text -PassThru
