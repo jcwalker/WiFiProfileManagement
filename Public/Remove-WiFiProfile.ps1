@@ -14,7 +14,7 @@
 function Remove-WiFiProfile
 {
     [CmdletBinding(SupportsShouldProcess = $true, ConfirmImpact = 'High')]
-    Param 
+    Param
     (
         [Parameter(Position = 0, Mandatory = $true, ValueFromPipelineByPropertyName = $true)]
         [System.String[]]
@@ -22,12 +22,12 @@ function Remove-WiFiProfile
 
         [Parameter(Position = 1)]
         [System.String]
-        $WiFiAdapterName = 'Wi-Fi'
+        $WiFiAdapterName
     )
 
     begin
     {
-        $interfaceGUID = Get-WiFiInterfaceGuid -ErrorAction Stop
+        $interfaceInfo = Get-InterfaceInfo -WiFiAdapterName $WiFiAdapterName
     }
     process
     {
@@ -37,26 +37,28 @@ function Remove-WiFiProfile
 
             foreach ($wiFiProfile in $ProfileName)
             {
-                if ($PSCmdlet.ShouldProcess("$($script:localizedData.ShouldProcessDelete -f $WiFiProfile)"))
+                foreach ($interface in $interfaceInfo)
                 {
-                    $deleteProfileResult = [WiFi.ProfileManagement]::WlanDeleteProfile(
-                        $clientHandle,
-                        $interfaceGUID,
-                        $wiFiProfile,
-                        [IntPtr]::Zero
-                    )
-
-                    $deleteProfileResultMessage = Format-Win32Exception -ReturnCode $deleteProfileResult
-
-                    if ($deleteProfileResult -ne 0)
+                    if ($PSCmdlet.ShouldProcess("$($script:localizedData.ShouldProcessDelete -f $WiFiProfile)"))
                     {
-                        Write-Error -Message ($script:localizedData.ErrorDeletingProfile -f $deleteProfileResultMessage)
-                    }
-                    else
-                    {
-                        Write-Verbose -Message $deleteProfileResultMessage
-                    }
+                        $deleteProfileResult = [WiFi.ProfileManagement]::WlanDeleteProfile(
+                            $clientHandle,
+                            $interface.InterfaceGuid,
+                            $wiFiProfile,
+                            [IntPtr]::Zero
+                        )
 
+                        $deleteProfileResultMessage = Format-Win32Exception -ReturnCode $deleteProfileResult
+
+                        if ($deleteProfileResult -ne 0)
+                        {
+                            Write-Error -Message ($script:localizedData.ErrorDeletingProfile -f $deleteProfileResultMessage)
+                        }
+                        else
+                        {
+                            Write-Verbose -Message $deleteProfileResultMessage
+                        }
+                    }
                 }
             }
         }

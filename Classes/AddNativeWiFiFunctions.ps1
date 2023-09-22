@@ -184,8 +184,10 @@ public struct WLAN_AVAILABLE_NETWORK
 [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
 public struct DOT11_SSID
 {
+    /// ULONG->unsigned int
     public uint uSSIDLength;
 
+    /// UCHAR[]
     [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]
     public string ucSSID;
 }
@@ -462,11 +464,124 @@ public struct WlanPhyRadioState
 }
 
 public enum Dot11RadioState : uint
-    {
-        Unknown = 0,
-        On,
-        Off
-    }
+{
+    Unknown = 0,
+    On,
+    Off
+}
+
+public enum WLAN_OPCODE_VALUE_TYPE
+{
+    /// wlan_opcode_value_type_query_only -> 0
+    wlan_opcode_value_type_query_only = 0,
+
+    /// wlan_opcode_value_type_set_by_group_policy -> 1
+    wlan_opcode_value_type_set_by_group_policy = 1,
+
+    /// wlan_opcode_value_type_set_by_user -> 2
+    wlan_opcode_value_type_set_by_user = 2,
+
+    /// wlan_opcode_value_type_invalid -> 3
+    wlan_opcode_value_type_invalid = 3
+}
+
+[DllImport("Wlanapi", EntryPoint = "WlanQueryInterface")]
+public static extern uint WlanQueryInterface(
+    [In] IntPtr hClientHandle,
+    [In] ref Guid pInterfaceGuid,
+    WLAN_INTF_OPCODE OpCode,
+    IntPtr pReserved,
+    [Out] out uint pdwDataSize,
+    ref IntPtr ppData,
+    IntPtr pWlanOpcodeValueType
+);
+
+[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+public struct WLAN_CONNECTION_ATTRIBUTES
+{
+    /// WLAN_INTERFACE_STATE->_WLAN_INTERFACE_STATE
+    public WLAN_INTERFACE_STATE isState;
+
+    /// WLAN_CONNECTION_MODE->_WLAN_CONNECTION_MODE
+    public WLAN_CONNECTION_MODE wlanConnectionMode;
+
+    /// WCHAR[256]
+    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
+    public string strProfileName;
+
+    /// WLAN_ASSOCIATION_ATTRIBUTES->_WLAN_ASSOCIATION_ATTRIBUTES
+    public WLAN_ASSOCIATION_ATTRIBUTES wlanAssociationAttributes;
+
+    /// WLAN_SECURITY_ATTRIBUTES->_WLAN_SECURITY_ATTRIBUTES
+    public WLAN_SECURITY_ATTRIBUTES wlanSecurityAttributes;
+}
+
+[StructLayout(LayoutKind.Sequential, Pack = 1)]
+public struct DOT11_MAC_ADDRESS
+{
+     public byte one;
+     public byte two;
+     public byte three;
+     public byte four;
+     public byte five;
+     public byte six;
+}
+
+[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+public struct WLAN_ASSOCIATION_ATTRIBUTES
+{
+    /// DOT11_SSID->_DOT11_SSID
+    public DOT11_SSID dot11Ssid;
+
+    /// DOT11_BSS_TYPE->_DOT11_BSS_TYPE
+    public DOT11_BSS_TYPE dot11BssType;
+
+    /// DOT11_MAC_ADDRESS->UCHAR[6]
+    //// public DOT11_MAC_ADDRESS dot11Bssid;
+    [MarshalAs(UnmanagedType.ByValArray, SizeConst = 6)]
+    public byte[] _dot11Bssid;
+
+    /// DOT11_PHY_TYPE->_DOT11_PHY_TYPE
+    public DOT11_PHY_TYPE dot11PhyType;
+
+    /// ULONG->unsigned int
+    public uint uDot11PhyIndex;
+
+    /// WLAN_SIGNAL_QUALITY->ULONG->unsigned int
+    public uint wlanSignalQuality;
+
+    /// ULONG->unsigned int
+    public uint ulRxRate;
+
+    /// ULONG->unsigned int
+    public uint ulTxRate;
+}
+
+[StructLayout(LayoutKind.Sequential)]
+public struct WLAN_SECURITY_ATTRIBUTES
+{
+    /// <summary>
+    /// BOOL->int
+    /// </summary>
+    [MarshalAs(UnmanagedType.Bool)]
+    public bool bSecurityEnabled;
+
+    /// <summary>
+    /// BOOL->int
+    /// </summary>
+    [MarshalAs(UnmanagedType.Bool)]
+    public bool bOneXEnabled;
+
+    /// <summary>
+    /// DOT11_AUTH_ALGORITHM->_DOT11_AUTH_ALGORITHM
+    /// </summary>
+    public DOT11_AUTH_ALGORITHM dot11AuthAlgorithm;
+
+    /// <summary>
+    /// DOT11_CIPHER_ALGORITHM->_DOT11_CIPHER_ALGORITHM
+    /// </summary>
+    public DOT11_CIPHER_ALGORITHM dot11CipherAlgorithm;
+}
 '@
 
 Add-Type -MemberDefinition $WlanGetProfileListSig -Name ProfileManagement -Namespace WiFi -Using System.Text -PassThru

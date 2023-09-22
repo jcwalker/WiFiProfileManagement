@@ -27,7 +27,7 @@
         PS C:\>$password = Read-Host -AsSecureString
         **********
 
-        PS C:\>Set-WiFiProfile -ProfileName MyNetwork -ConnectionMode auto -Authentication WPA2PSK -Encryption AES -Password $password 
+        PS C:\>Set-WiFiProfile -ProfileName MyNetwork -ConnectionMode auto -Authentication WPA2PSK -Encryption AES -Password $password
 
         This examples shows how to update or create a wireless profile by using the individual parameters.
     .EXAMPLE
@@ -36,7 +36,7 @@
         <WLANProfile xmlns="http://www.microsoft.com/networking/WLAN/profile/v1">
             <name>MyNetwork</name>
             <SSIDConfig>
-                <SSID>            
+                <SSID>
                     <name>MyNetwork</name>
                 </SSID>
             </SSIDConfig>
@@ -120,7 +120,7 @@ function Set-WiFiProfile
 
         [Parameter()]
         [System.String]
-        $WiFiAdapterName = 'Wi-Fi',
+        $WiFiAdapterName,
 
         [Parameter(Mandatory = $true, ParameterSetName = 'UsingXml')]
         [System.String]

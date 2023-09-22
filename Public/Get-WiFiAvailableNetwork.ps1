@@ -4,6 +4,10 @@
     .PARAMETER WiFiAdapterName
         Specifies the name of the wireless network adapter on the machine. This is used to obtain the Guid of the interface.
         The default value is 'Wi-Fi'
+
+    .PARAMETER InvokeScan
+        Switch so a scan is ran to discover additional wireless networks.
+
     .EXAMPLE
         PS C:\>Get-WiFiAvailableNetwork
 
@@ -22,44 +26,66 @@ function Get-WiFiAvailableNetwork
     (
         [Parameter()]
         [System.String]
-        $WiFiAdapterName = 'Wi-Fi'
-    )
+        $WiFiAdapterName,
 
-    $interfaceGUID = Get-WiFiInterfaceGuid -WiFiAdapterName $WiFiAdapterName -ErrorAction Stop
-    $clientHandle = New-WiFiHandle
-    $networkPointer = 0
-    $flag = 0
+        [Parameter()]
+        [switch]
+        $InvokeScan
+    )
 
     try
     {
-        $result = [WiFi.ProfileManagement]::WlanGetAvailableNetworkList(
-            $clientHandle,
-            $interfaceGUID,
-            $flag,
-            [IntPtr]::zero,
-            [ref] $networkPointer
-        )
-
-        if ( $result -ne 0 )
+        if ($InvokeScan.IsPresent)
         {
-            $errorMessage = Format-Win32Exception -ReturnCode $result
-            throw $($script:localizedData.ErrorGetAvailableNetworkList -f $errorMessage)
+            Search-WiFiNetwork -WiFiAdapterName $WiFiAdapterName
+            # docs says Windows certified wifi drivers should complete a scan in 4 seconds
+            # probably should figure out how to do this the right way
+            Start-Sleep -Seconds 4
         }
 
-        $availableNetworks = [WiFi.ProfileManagement+WLAN_AVAILABLE_NETWORK_LIST]::new($networkPointer)
+        $interfaceInfo = Get-InterfaceInfo -WiFiAdapterName $WiFiAdapterName
 
-        foreach ($network in $availableNetworks.wlanAvailableNetwork)
+        $flag = 0
+        $networkList = @()
+        $pointerCollection = @()
+        $clientHandle = New-WiFiHandle
+
+        foreach ($interface in $interfaceInfo)
         {
-            [WiFi.ProfileManagement+WLAN_AVAILABLE_NETWORK] $network
+            $networkPointer = 0
+            $result = [WiFi.ProfileManagement]::WlanGetAvailableNetworkList(
+                $clientHandle,
+                $interface.InterfaceGuid,
+                $flag,
+                [IntPtr]::zero,
+                [ref] $networkPointer
+            )
+
+            if ($result -ne 0)
+            {
+                $errorMessage = Format-Win32Exception -ReturnCode $result
+                throw $($script:localizedData.ErrorGetAvailableNetworkList -f $errorMessage)
+            }
+
+            $availableNetworks = [WiFi.ProfileManagement+WLAN_AVAILABLE_NETWORK_LIST]::new($networkPointer)
+            $pointerCollection += $networkPointer
+
+            foreach ($network in $availableNetworks.wlanAvailableNetwork)
+            {
+                $networkResult = [WiFi.ProfileManagement+WLAN_AVAILABLE_NETWORK] $network
+                $networkList += Add-DefaultProperty -InputObject $networkResult -InterfaceInfo $interface
+            }
         }
+
+        $networkList
     }
     catch
     {
-        Write-Error $PSItem
+        $PSItem
     }
     finally
     {
-        Invoke-WlanFreeMemory -Pointer $networkPointer
+        Invoke-WlanFreeMemory -Pointer $pointerCollection
 
         if ($clientHandle)
         {

@@ -41,7 +41,6 @@ function Invoke-WlanConnect
     }
     else
     {
-        $errorMessage = Format-Win32Exception -ReturnCode $result
         Write-Verbose -Message $($script:localizedData.SuccessWlanConnect -f $ConnectionParameterList.strProfile, $errorMessage)
     }
 }

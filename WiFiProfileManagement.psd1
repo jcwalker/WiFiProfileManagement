@@ -11,7 +11,7 @@
     RootModule        = 'WiFiProfileManagement.psm1'
 
     # Version number of this module.
-    ModuleVersion     = '1.1.0.0'
+    ModuleVersion     = '2.0.0'
 
     # ID used to uniquely identify this module
     GUID              = '91ed6e00-7f98-4f49-84f5-c3ee1a10e4d0'
@@ -40,6 +40,7 @@
     # Private data to pass to the module specified in RootModule/ModuleToProcess. This may also contain a PSData hashtable with additional module metadata used by PowerShell.
     PrivateData       = @{
         PSData = @{
+            Prerelease = 'beta4'
             # Tags applied to this module. These help with module discovery in online galleries.
             Tags       = @('WiFi')
 

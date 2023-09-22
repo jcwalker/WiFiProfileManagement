@@ -1,5 +1,5 @@
 {
-    // Automatically format code as it is typed. 
+    // Automatically format code as it is typed.
     "editor.formatOnType": true,
 
     // Controls if the editor will insert spaces for tabs.
@@ -47,5 +47,11 @@
     "powershell.integratedConsole.showOnStartup": true,
 
     // Switches focus to the console when a script selection is run or a script file is debugged. This is an accessibility feature. To disable it, set to false.
-    "powershell.integratedConsole.focusConsoleOnExecute": true
+    "powershell.integratedConsole.focusConsoleOnExecute": true,
+    "cSpell.words": [
+        "Guids",
+        "intf",
+        "Wlan",
+        "Wlanapi"
+    ]
 }

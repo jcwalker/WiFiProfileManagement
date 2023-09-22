@@ -26,7 +26,7 @@ function Set-WiFiInterface
     (
         [Parameter()]
         [System.String]
-        $WiFiAdapterName = 'Wi-Fi',
+        $WiFiAdapterName,
 
         [Parameter(Mandatory = $true)]
         [ValidateSet('On','Off')]
@@ -36,14 +36,7 @@ function Set-WiFiInterface
 
     try
     {
-        if (!$WiFiAdapterName)
-        {
-            $interfaceGuids = (Get-WiFiInterface).Guid
-        }
-        else
-        {
-            $interfaceGuids = Get-WiFiInterfaceGuid -WiFiAdapterName $WiFiAdapterName
-        }
+        $interfaceInfo = Get-InterfaceInfo -WiFiAdapterName $WiFiAdapterName
 
         $clientHandle = New-WiFiHandle
 
@@ -57,12 +50,11 @@ function Set-WiFiInterface
 
         [System.Runtime.InteropServices.Marshal]::StructureToPtr($radioState, $radioStatePtr, $false)
 
-
-        foreach ($interfaceGuid in $interfaceGuids)
+        foreach ($interface in $interfaceInfo)
         {
             $resultCode = [WiFi.ProfileManagement]::WlanSetInterface(
                 $clientHandle,
-                [ref] $interfaceGuid,
+                [ref] $interface.InterfaceGuid,
                 $opCode,
                 [System.Runtime.InteropServices.Marshal]::SizeOf([System.Type]([WiFi.ProfileManagement+WlanPhyRadioState])),
                 $radioStatePtr,

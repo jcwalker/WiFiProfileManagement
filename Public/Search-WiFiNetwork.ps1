@@ -5,12 +5,11 @@
 
     .PARAMETER WiFiAdapterName
         Specifies the name of the wireless network adapter on the machine. This is used to obtain the Guid of the interface.
-        The default value is 'Wi-Fi'
 
     .EXAMPLE
-        PS C:\>Search-WiFiNetwork WiFiAdapterName WiFi
+        Search-WiFiNetwork -WiFiAdapterName WiFi
 
-        This examples will search for WiFi netowrks on the WiFi adapter.
+        This examples will search for WiFi networks on the WiFi adapter.
 #>
 function Search-WiFiNetwork
 {
@@ -19,27 +18,20 @@ function Search-WiFiNetwork
     (
         [Parameter()]
         [System.String]
-        $WiFiAdapterName = 'Wi-Fi'
+        $WiFiAdapterName
     )
 
     try
     {
-        if (!$WiFiAdapterName)
-        {
-            $interfaceGuids = (Get-WiFiInterface).Guid
-        }
-        else
-        { 
-            $interfaceGuids = Get-WiFiInterfaceGuid -WiFiAdapterName $WiFiAdapterName
-        }
+        $interfaceInfo = Get-InterfaceInfo -WiFiAdapterName $WiFiAdapterName
 
         $clientHandle = New-WiFiHandle
 
-        foreach ($interfaceGuid in $interfaceGuids)
+        foreach ($interface in $interfaceInfo)
         {
             $resultCode = [WiFi.ProfileManagement]::WlanScan(
                 $clientHandle,
-                [ref] $interfaceGuid,
+                [ref] $interface.InterfaceGuid,
                 [IntPtr]::zero,
                 [IntPtr]::zero,
                 [IntPtr]::zero
@@ -53,7 +45,7 @@ function Search-WiFiNetwork
     }
     catch
     {
-        Write-Error $PSItem
+        $PSItem
     }
     finally
     {

@@ -1,15 +1,19 @@
 <#
     .SYNOPSIS
         Attempts to connect to a specific network.
+        
     .PARAMETER ProfileName
         The name of the profile to be connected. Profile names are case-sensitive.
+
     .PARAMETER ConnectionMode
         Specifies the mode of the connection. Valid values are Profile,TemporaryProfile,DiscoveryProfile,DiscoveryUnsecure, and Auto.
+
     .PARAMETER Dot11BssType
         A value that indicates the BSS type of the network. If a profile is provided, this BSS type must be the same as the one in the profile.
+
     .PARAMETER WiFiAdapterName
         Specifies the name of the wireless network adapter on the machine. This is used to obtain the Guid of the interface.
-        The default value is 'Wi-Fi'
+
     .EXAMPLE
         PS C:\>Connect-WiFiProfile -ProfileName FreeWiFi
 
@@ -49,22 +53,25 @@ function Connect-WiFiProfile
 
         [Parameter()]
         [System.String]
-        $WiFiAdapterName = 'Wi-Fi'
+        $WiFiAdapterName
     )
 
     begin
     {
-        $interfaceGuid = Get-WiFiInterfaceGuid -WiFiAdapterName $WiFiAdapterName -ErrorAction Stop
+        $interfaceInfo = Get-InterfaceInfo -WiFiAdapterName $WiFiAdapterName
+
+        if ($interfaceInfo.Count -gt 1)
+        {
+            throw $Script:localizedData.ErrorMoreThanOneInterface
+        }
     }
     process
     {
         try
         {
             $clientHandle = New-WiFiHandle
-
             $connectionParameterList = New-WiFiConnectionParameter -ProfileName $ProfileName -ConnectionMode $ConnectionMode -Dot11BssType $Dot11BssType
-
-            Invoke-WlanConnect -ClientHandle $clientHandle -InterfaceGuid $interfaceGuid -ConnectionParameterList $connectionParameterList
+            Invoke-WlanConnect -ClientHandle $clientHandle -InterfaceGuid $interfaceInfo.InterfaceGuid -ConnectionParameterList $connectionParameterList
         }
         catch
         {

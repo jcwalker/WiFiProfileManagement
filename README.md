@@ -21,11 +21,13 @@ Drop the root folder in your PSModulePath, remove the branch name (ex. -dev )fro
 * **Connect-WiFiProfile** Attempts to connect to a specific network.
 * **Search-WiFiNetwork** Requests a scan for available wifi networks.
 * **Set-WiFiInterface** Toggles the software wifi radio state on/off.
+* **Get-WiFiConnectionAttributes** Returns the wifi connection attributes.
+* **Get-WiFiRssi** Retrieves the RSSI (Received signal strength indicator.
 
 ### Get-WiFiProfile
 
 * **ProfileName**: The name of the WiFi profile. If not specified, The function will return all profiles.
-* **WiFiAdapterName**: Specifies the name of the wireless network adapter on the machine. This is used to obtain the Guid of the interface. The default value is 'Wi-Fi'
+* **WiFiAdapterName**: Specifies the name of the wireless network adapter on the machine. This is used to obtain the Guid of the interface.
 * **ClearKey**: Specifies if the password of the profile is to be returned.
 
 ### Set-WiFiProfile
@@ -53,28 +55,35 @@ Drop the root folder in your PSModulePath, remove the branch name (ex. -dev )fro
 ### Remove-WiFiProfile
 
 * **ProfileName**: The name of the profile to be deleted. Profile names are case-sensitive.
-* **WiFiAdapterName**: Specifies the name of the wireless network adapter on the machine. This is used to obtain the Guid of the interface. The default value is 'Wi-Fi'
+* **WiFiAdapterName**: Specifies the name of the wireless network adapter on the machine. This is used to obtain the Guid of the interface.
 
 ### Get-WiFiAvailableNetwork
 
-* **WiFiAdapterName**: Specifies the name of the wireless network adapter on the machine. This is used to obtain the Guid of the interface. The default value is 'Wi-Fi'
+* **WiFiAdapterName**: Specifies the name of the wireless network adapter on the machine. This is used to obtain the Guid of the interface.
 
 ### Connect-WiFiProfile
 
 * **ProfileName**: The name of the profile to be connected. Profile names are case-sensitive.
 * **ConnectionMode**: Specifies the mode of the connection. Valid values are Profile,TemporaryProfile,DiscoveryProfile,DiscoveryUnsecure, and Auto.
 * **Dot11BssType**: A value that indicates the BSS type of the network. If a profile is provided, this BSS type must be the same as the one in the profile.
-* **WiFiAdapterName**: Specifies the name of the wireless network adapter on the machine. This is used to obtain the Guid of the interface. The default value is 'Wi-Fi'
+* **WiFiAdapterName**: Specifies the name of the wireless network adapter on the machine. This is used to obtain the Guid of the interface.
 
 ### Search-WiFiNetwork
 
-* **WiFiAdapterName**: Specifies the name of the wireless network adapter on the machine. This is used to obtain the Guid of the interface. The default value is 'Wi-Fi'
-
+* **WiFiAdapterName**: Specifies the name of the wireless network adapter on the machine. This is used to obtain the Guid of the interface.
 
 ### Set-WiFiInterface
 
-* **WiFiAdapterName**: Specifies the name of the wireless network adapter on the machine. This is used to obtain the Guid of the interface. The default value is 'Wi-Fi'
+* **WiFiAdapterName**: Specifies the name of the wireless network adapter on the machine. This is used to obtain the Guid of the interface.
 * **State**: Specifies the state of the wifi radio.  Valid values are on/off.
+
+### Get-WiFiConnectionAttributes
+
+* **WiFiAdapterName**: Specifies the name of the wireless network adapter on the machine. This is used to obtain the Guid of the interface.
+
+### Get-WiFiRssi
+
+* **WiFiAdapterName**: Specifies the name of the wireless network adapter on the machine. This is used to obtain the Guid of the interface.
 
 ## Examples
 
@@ -189,9 +198,22 @@ PS C:\>Remove-WiFiProfile -ProfileName FreeWifi
         PS C:\> Connect-WiFiProfile -ProfileName MyNetwork
 ```
 
+### Get the RSSI for the current conection
+```PowerShell
+    PS C:\>Get-WifiRssi
+
+    Rssi WiFiAdapter InterfaceGuid
+    ---- ----------- -------------
+     -64 Wi-Fi       {e3237cae-3739-454c-82c1-3ae3eeaee182}
+```
+
 ## Versions
 
 ### Unreleased
+
+* Removed compatibility for Windows XP
+* Added Get-WiFiConectionAttributes
+* Added Get-WiFiRssi
 
 ### 1.1.0
 
@@ -225,7 +247,7 @@ PS C:\>Remove-WiFiProfile -ProfileName FreeWifi
 
 ### 0.1.1.0
 
-* Added formating
+* Added formatting
 
 ### 0.1.0.0
 

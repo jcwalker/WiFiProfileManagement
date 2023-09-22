@@ -13,4 +13,9 @@ ConvertFrom-StringData @'
     ErrorFreeMemory      = Failed to free memory. Error message: {0}
     ErrorGetAvailableNetworkList = Error invoking WlanGetAvailableNetworkList. Message {0}
     ErrorWiFiInterfaceNotFound = Wi-Fi interface not found on the system.
+    ErrorNotWiFiAdapter  = Adapter with name: {0} is not a WiFi capable.
+    ErrorNoWiFiAdaptersFound = No wifi interfaces found.
+    ErrorMoreThanOneInterface = More than one Wi-Fi interface found. Please specify a specific interface.
+    ErrorNeedSingleAdapterName = More than one Wi-Fi adapter found.  Please specify a single adapter name.
+    ErrorFailedWithExitCode = Failed with exit code {0}.
 '@
