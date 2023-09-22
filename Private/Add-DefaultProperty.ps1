@@ -25,5 +25,11 @@ function Add-DefaultProperty
     Add-Member -InputObject $InputObject -MemberType 'NoteProperty' -Name 'WiFiAdapterName' -Value $InterfaceInfo.Name -Force
     Add-Member -InputObject $InputObject -MemberType 'NoteProperty' -Name 'InterfaceGuid' -Value $InterfaceInfo.InterfaceGuid -Force
 
+    if ($InputObject -is  [WiFi.ProfileManagement+WLAN_CONNECTION_ATTRIBUTES])
+    {
+        $apMac = [System.BitConverter]::ToString($InputObject.wlanAssociationAttributes._dot11Bssid)
+        Add-Member -InputObject $InputObject -MemberType 'NoteProperty' -Name 'APMacAddress' -Value $apMac -Force
+    }
+
     return $InputObject
 }

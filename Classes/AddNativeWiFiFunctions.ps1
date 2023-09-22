@@ -470,6 +470,21 @@ public enum Dot11RadioState : uint
     Off
 }
 
+public enum WLAN_OPCODE_VALUE_TYPE
+{
+    /// wlan_opcode_value_type_query_only -> 0
+    wlan_opcode_value_type_query_only = 0,
+
+    /// wlan_opcode_value_type_set_by_group_policy -> 1
+    wlan_opcode_value_type_set_by_group_policy = 1,
+
+    /// wlan_opcode_value_type_set_by_user -> 2
+    wlan_opcode_value_type_set_by_user = 2,
+
+    /// wlan_opcode_value_type_invalid -> 3
+    wlan_opcode_value_type_invalid = 3
+}
+
 [DllImport("Wlanapi", EntryPoint = "WlanQueryInterface")]
 public static extern uint WlanQueryInterface(
     [In] IntPtr hClientHandle,
@@ -522,7 +537,9 @@ public struct WLAN_ASSOCIATION_ATTRIBUTES
     public DOT11_BSS_TYPE dot11BssType;
 
     /// DOT11_MAC_ADDRESS->UCHAR[6]
-    public DOT11_MAC_ADDRESS dot11Bssid;
+    //// public DOT11_MAC_ADDRESS dot11Bssid;
+    [MarshalAs(UnmanagedType.ByValArray, SizeConst = 6)]
+    public byte[] _dot11Bssid;
 
     /// DOT11_PHY_TYPE->_DOT11_PHY_TYPE
     public DOT11_PHY_TYPE dot11PhyType;

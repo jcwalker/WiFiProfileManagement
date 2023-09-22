@@ -38,6 +38,9 @@ function Get-WiFiAvailableNetwork
         if ($InvokeScan.IsPresent)
         {
             Search-WiFiNetwork -WiFiAdapterName $WiFiAdapterName
+            # docs says Windows certified wifi drivers should complete a scan in 4 seconds
+            # probably should figure out how to do this the right way
+            Start-Sleep -Seconds 4
         }
 
         $interfaceInfo = Get-InterfaceInfo -WiFiAdapterName $WiFiAdapterName

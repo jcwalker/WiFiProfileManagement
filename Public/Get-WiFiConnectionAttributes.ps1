@@ -80,7 +80,7 @@ function Get-WiFiConnectionAttributes
                 [System.Type]([WiFi.ProfileManagement+WLAN_CONNECTION_ATTRIBUTES])
             )
 
-            $outDataCollection += $outdata
+            $outDataCollection += $outData
 
             $result += Add-DefaultProperty -InputObject $attributes -InterfaceInfo $interface
         }

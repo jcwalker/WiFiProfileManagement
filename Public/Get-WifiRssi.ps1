@@ -32,8 +32,9 @@ function Get-WiFiRssi
         $interfaceInfo = Get-InterfaceInfo -WiFiAdapterName $WiFiAdapterName
         $clientHandle = New-WiFiHandle
 
-        $outData =  [System.UInt32]::new() # [long]0 #[System.IntPtr]::zero
-        $dataSize = [System.Runtime.InteropServices.Marshal]::SizeOf($outData)
+        $outData = [System.IntPtr]::zero
+        [int]$dataSize = 0
+        [WiFi.ProfileManagement+WLAN_OPCODE_VALUE_TYPE]$opcodeValueType = 0
 
         foreach ($interface in $interfaceInfo)
         {
@@ -44,7 +45,7 @@ function Get-WiFiRssi
                 [IntPtr]::zero,
                 [ref]$dataSize,
                 [ref]$outData,
-                [IntPtr]::zero
+                $opcodeValueType #[IntPtr]::zero
             )
 
             if ($resultCode -ne 0)
