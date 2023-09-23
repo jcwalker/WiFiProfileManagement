@@ -79,8 +79,8 @@ function Get-WifiNetworkBssList
 
             foreach ($bssEntry in $bssEntries.wlanBssEntries)
             {
-                $networkList += Format-BssEntry -BssEntry $bssEntry
-                #$networkList += Add-DefaultProperty -InputObject $bssResult -InterfaceInfo $interface
+                $bssResult = Format-BssEntry -BssEntry $bssEntry
+                $networkList += Add-DefaultProperty -InputObject $bssResult -InterfaceInfo $interface
             }
         }
 
