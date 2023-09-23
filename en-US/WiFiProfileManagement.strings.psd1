@@ -12,6 +12,7 @@ ConvertFrom-StringData @'
     ErrorReasonCode      = Failed to format reason code. Error message: {0}
     ErrorFreeMemory      = Failed to free memory. Error message: {0}
     ErrorGetAvailableNetworkList = Error invoking WlanGetAvailableNetworkList. Message {0}
+    ErrorGetNetworkBssList = Error invoking WlanGetAvailableNetworkList. Message {0}
     ErrorWiFiInterfaceNotFound = Wi-Fi interface not found on the system.
     ErrorNotWiFiAdapter  = Adapter with name: {0} is not a WiFi capable.
     ErrorNoWiFiAdaptersFound = No wifi interfaces found.

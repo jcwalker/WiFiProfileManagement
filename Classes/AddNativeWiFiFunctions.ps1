@@ -1,4 +1,4 @@
-﻿
+﻿# https://github.com/2dpodcast/ManagedNativeWifi/blob/281299931af60fcca84149939de4acceb4133820/ManagedNativeWifi/Win32/NativeMethod.cs
 $WlanGetProfileListSig = @'
 
 [DllImport("wlanapi.dll")]
@@ -581,6 +581,152 @@ public struct WLAN_SECURITY_ATTRIBUTES
     /// DOT11_CIPHER_ALGORITHM->_DOT11_CIPHER_ALGORITHM
     /// </summary>
     public DOT11_CIPHER_ALGORITHM dot11CipherAlgorithm;
+}
+
+[DllImport("wlanapi.dll")]
+public static extern int WlanGetNetworkBssList(
+    [In] IntPtr hClientHandle,
+    [In, MarshalAs(UnmanagedType.LPStruct)] Guid interfaceGuid,
+    [In] IntPtr dot11SsidInt,
+    [In] DOT11_BSS_TYPE dot11BssType,
+    [In] bool securityEnabled,
+    IntPtr reservedPtr,
+    [Out] out IntPtr wlanBssList
+);
+
+[StructLayout(LayoutKind.Sequential)]
+public struct WLAN_BSS_ENTRY
+{
+    /// <summary>
+    /// Contains the SSID of the access point (AP) associated with the BSS.
+    /// </summary>
+    public DOT11_SSID dot11Ssid;
+    /// <summary>
+    /// The identifier of the PHY on which the AP is operating.
+    /// </summary>
+    public uint phyId;
+    /// <summary>
+    /// Contains the BSS identifier.
+    /// </summary>
+    [MarshalAs(UnmanagedType.ByValArray, SizeConst = 6)]
+    public byte[] dot11Bssid;
+    /// <summary>
+    /// Specifies whether the network is infrastructure or ad hoc.
+    /// </summary>
+    public DOT11_BSS_TYPE dot11BssType;
+    public DOT11_PHY_TYPE dot11BssPhyType;
+    /// <summary>
+    /// The received signal strength in dBm.
+    /// </summary>
+    public int rssi;
+    /// <summary>
+    /// The link quality reported by the driver. Ranges from 0-100.
+    /// </summary>
+    public uint linkQuality;
+    /// <summary>
+    /// If 802.11d is not implemented, the network interface card (NIC) must set this field to TRUE. If 802.11d is implemented (but not necessarily enabled), the NIC must set this field to TRUE if the BSS operation complies with the configured regulatory domain.
+    /// </summary>
+    public bool inRegDomain;
+    /// <summary>
+    /// Contains the beacon interval value from the beacon packet or probe response.
+    /// </summary>
+    public ushort beaconPeriod;
+    /// <summary>
+    /// The timestamp from the beacon packet or probe response.
+    /// </summary>
+    public ulong timestamp;
+    /// <summary>
+    /// The host timestamp value when the beacon or probe response is received.
+    /// </summary>
+    public ulong hostTimestamp;
+    /// <summary>
+    /// The capability value from the beacon packet or probe response.
+    /// </summary>
+    public ushort capabilityInformation;
+    /// <summary>
+    /// The frequency of the center channel, in kHz.
+    /// </summary>
+    public uint chCenterFrequency;
+    /// <summary>
+    /// Contains the set of data transfer rates supported by the BSS.
+    /// </summary>
+    public WLAN_RATE_SET wlanRateSet;
+    /// <summary>
+    /// Offset of the information element (IE) data blob.
+    /// </summary>
+    public uint ieOffset;
+    /// <summary>
+    /// Size of the IE data blob, in bytes.
+    /// </summary>
+    public uint ieSize;
+}
+
+[StructLayout(LayoutKind.Sequential)]
+public struct WLAN_RATE_SET
+{
+    /// <summary>
+    /// The length, in bytes, of <see cref="rateSet"/>.
+    /// </summary>
+    private uint rateSetLength;
+    /// <summary>
+    /// An array of supported data transfer rates.
+    /// If the rate is a basic rate, the first bit of the rate value is set to 1.
+    /// A basic rate is the data transfer rate that all stations in a basic service set (BSS) can use to receive frames from the wireless medium.
+    /// </summary>
+    [MarshalAs(UnmanagedType.ByValArray, SizeConst = 126)]
+    private ushort[] rateSet;
+
+    public ushort[] Rates
+    {
+        get
+        {
+            ushort[] rates = new ushort[rateSetLength / sizeof(ushort)];
+            Array.Copy(rateSet, rates, rates.Length);
+            return rates;
+        }
+    }
+
+    /// <summary>
+    /// CalculateS the data transfer rate in Mbps for an arbitrary supported rate.
+    /// </summary>
+    /// <param name="rate"></param>
+    /// <returns></returns>
+    public double GetRateInMbps(int rate)
+    {
+        return (rateSet[rate] & 0x7FFF) * 0.5;
+    }
+}
+
+[StructLayout(LayoutKind.Sequential)]
+internal struct WlanBssListHeader
+{
+    internal uint totalSize;
+    internal uint numberOfItems;
+}
+
+public struct WLAN_BSS_LIST
+{
+    public uint dwTotalSize;
+    public uint dwNumberOfItems;
+    public WLAN_BSS_ENTRY[] wlanBssEntries;
+
+    public WLAN_BSS_LIST(IntPtr ppWlanBssList)
+    {
+        var uintSize = Marshal.SizeOf(typeof(uint)); // 4
+
+        dwTotalSize = (uint)Marshal.ReadInt32(ppWlanBssList, 0);
+        dwNumberOfItems = (uint)Marshal.ReadInt32(ppWlanBssList, uintSize /* Offset for dwTotalSize */);
+        wlanBssEntries = new WLAN_BSS_ENTRY[dwNumberOfItems];
+
+        for (int i = 0; i < dwNumberOfItems; i++)
+        {
+            var wlanBssEntry = new IntPtr(ppWlanBssList.ToInt64()
+                + (uintSize * 2) /* Offset for dwTotalSize and dwNumberOfItems */
+                + (Marshal.SizeOf(typeof(WLAN_BSS_ENTRY)) * i) /* Offset for preceding items */);
+
+            wlanBssEntries[i] = Marshal.PtrToStructure<WLAN_BSS_ENTRY>(wlanBssEntry);
+        }
+    }
 }
 '@
 

@@ -1,7 +1,7 @@
 <#
     .SYNOPSIS
         Attempts to connect to a specific network.
-        
+
     .PARAMETER ProfileName
         The name of the profile to be connected. Profile names are case-sensitive.
 
@@ -18,6 +18,7 @@
         PS C:\>Connect-WiFiProfile -ProfileName FreeWiFi
 
         This example connects to the FreeWiFi profile which is already saved on the local machine.
+        
     .EXAMPLE
         PS C:\> $password = Read-Host -AsSecureString
         ************
@@ -28,6 +29,7 @@
         PS C:\> Connect-WiFiProfile -ProfileName MyNetwork
 
         This example demonstrates how to create a WiFi profile and then connect to it.
+
     .NOTES
         https://msdn.microsoft.com/en-us/library/windows/desktop/ms706613(v=vs.85).aspx
 #>

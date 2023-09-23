@@ -8,12 +8,11 @@
     .EXAMPLE
         Get-WiFiRssi
 
-        RSSI
-        ----
-        -61
+        Rssi WiFiAdapterName InterfaceGuid
+        ---- --------------- -------------
+        -36   Wi-Fi          {ad33cbbf-771c-4864-bba9-705592093534}
 
         This examples retrieves the RSSI from the default wifi network adaptor.
-
 #>
 function Get-WiFiRssi
 {
@@ -34,7 +33,6 @@ function Get-WiFiRssi
 
         $outData = [System.IntPtr]::zero
         [int]$dataSize = 0
-        [WiFi.ProfileManagement+WLAN_OPCODE_VALUE_TYPE]$opcodeValueType = 0
 
         foreach ($interface in $interfaceInfo)
         {
@@ -45,7 +43,7 @@ function Get-WiFiRssi
                 [IntPtr]::zero,
                 [ref]$dataSize,
                 [ref]$outData,
-                $opcodeValueType #[IntPtr]::zero
+                [IntPtr]::zero
             )
 
             if ($resultCode -ne 0)

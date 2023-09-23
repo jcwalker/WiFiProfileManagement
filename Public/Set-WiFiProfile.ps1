@@ -1,28 +1,40 @@
 <#
     .SYNOPSIS
         Sets the content of a specified wireless profile.
+        
     .DESCRIPTION
         Calls the WlanSetProfile native function with override parameter set to true.
+
     .PARAMETER ProfileName
         The name of the wireless profile to be updated. Profile names are case sensitive.
+
     .PARAMETER ConnectionMode
         Indicates whether connection to the wireless LAN should be automatic ("auto") or initiated ("manual") by user.
+
     .PARAMETER Authentication
         Specifies the authentication method to be used to connect to the wireless LAN.
+
     .PARAMETER Encryption
         Sets the data encryption to use to connect to the wireless LAN.
+
     .PARAMETER Password
         The network key or passphrase of the wireless profile in the form of a secure string.
+
     .PARAMETER ConnectHiddenSSID
         Specifies whether the profile can connect to networks which does not broadcast SSID. The default is false.
+
     .PARAMETER EAPType
         (Only 802.1X) Specifies the type of 802.1X EAP. You can select "PEAP"(aka MSCHAPv2) or "TLS".
+
     .PARAMETER ServerNames
         (Only 802.1X) Specifies the server that will be connect to validate certification.
+
     .PARAMETER TrustedRootCA
         (Only 802.1X) Specifies the certificate thumbprint of the Trusted Root CA.
+
     .PARAMETER XmlProfile
         The XML representation of the profile.
+
     .EXAMPLE
         PS C:\>$password = Read-Host -AsSecureString
         **********
@@ -30,6 +42,7 @@
         PS C:\>Set-WiFiProfile -ProfileName MyNetwork -ConnectionMode auto -Authentication WPA2PSK -Encryption AES -Password $password
 
         This examples shows how to update or create a wireless profile by using the individual parameters.
+
     .EXAMPLE
         PS C:\>$templateProfileXML = @"
         <?xml version="1.0"?>
@@ -62,6 +75,7 @@
         PS C:\>Set-WiFiProfile -XmlProfile $templateProfileXML
 
         This example demonstrates how to update a wireless profile with the XmlProfile parameter.
+
     .NOTES
         https://msdn.microsoft.com/en-us/library/windows/desktop/ms706795(v=vs.85).aspx
         https://msdn.microsoft.com/en-us/library/windows/desktop/ms707381(v=vs.85).aspx

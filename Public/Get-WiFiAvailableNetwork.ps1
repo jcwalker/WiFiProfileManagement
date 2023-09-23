@@ -1,6 +1,7 @@
 <#
     .SYNOPSIS
         Retrieves the list of available networks on a wireless LAN interface.
+
     .PARAMETER WiFiAdapterName
         Specifies the name of the wireless network adapter on the machine. This is used to obtain the Guid of the interface.
         The default value is 'Wi-Fi'
@@ -15,6 +16,7 @@
         ----         ------------- ---------------  ------------------------- ---------------------------
                                 63            True   DOT11_AUTH_ALGO_RSNA_PSK      DOT11_CIPHER_ALGO_CCMP
         gogoinflight            63           False DOT11_AUTH_ALGO_80211_OPEN      DOT11_CIPHER_ALGO_NONE
+        
     .NOTES
         https://msdn.microsoft.com/en-us/library/windows/desktop/ms706749(v=vs.85).aspx
 #>
