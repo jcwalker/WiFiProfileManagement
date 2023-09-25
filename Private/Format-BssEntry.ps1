@@ -18,7 +18,7 @@ function Format-BssEntry
         @{Label = 'InRegulatoryDomain'; Expression = {$_.inRegDomain}}
         @{Label = 'BeaconPeriod'; Expression = {$_.beaconPeriod}}
         @{Label = 'TimeStamp'; Expression = {$_.timestamp}}
-        @{Label = 'HostTimeStamp'; Expression = {$_.hostTimestamp}}
+        @{Label = 'HostTimeStamp'; Expression = {[datetime]::FromFileTime($_.hostTimestamp)}}
         @{Label = 'CapabilityInformation'; Expression = {$_.capabilityInformation}}
         @{Label = 'ChannelCenterFrequency'; Expression = {$_.chCenterFrequency}}
         @{Label = 'WlanRateSet'; Expression = {$_.wlanRateSet}}

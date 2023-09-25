@@ -49,8 +49,10 @@
     // Switches focus to the console when a script selection is run or a script file is debugged. This is an accessibility feature. To disable it, set to false.
     "powershell.integratedConsole.focusConsoleOnExecute": true,
     "cSpell.words": [
+        "datetime",
         "Guids",
         "intf",
+        "RSSI",
         "Wlan",
         "Wlanapi"
     ]
